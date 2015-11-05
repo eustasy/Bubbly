@@ -9,3 +9,6 @@ If you want an A+ score on Qualys [SSL Labs](https://www.ssllabs.com/ssltest/ind
 5. Now it's time to get your certificates with `renew-ssl example.com` It will ask for the root password, and an email address, so hang around, it shouldn't take more than a few seconds.
 6. Optional: Pick a cipher list. We default to [Mozilla's Recommendation for Modern Browsers](https://mozilla.github.io/server-side-tls/ssl-config-generator/?server=nginx-2.2.15&openssl=1.0.1e&hsts=yes&profile=modern), but leaving `TLSv1.0` enabled.
 7. All that's left is to either move or symlink to your Nginx configuration, before testing it with `sudo nginx -t` and reloading the configuration with `sudo service nginx restart`
+10. Profit (or not, it's free, who cares!)
+
+![Screenshot from 2015-11-05 04:16:13.png](https://github.com/lewisgoddard/letsencrypt-with-nginx/raw/master/Screenshot from 2015-11-05 04:16:13.png "Screenshot from 2015-11-05 04:16:13.png")
