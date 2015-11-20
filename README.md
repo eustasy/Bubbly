@@ -1,5 +1,5 @@
 # Configuring Let's Encrypt with Nginx
-If you want an A+ score on Qualys [SSL Labs](https://www.ssllabs.com/ssltest/index.html), then this is what you'll need to do.
+If you want an A+ score on Qualys [SSL Labs](https://www.ssllabs.com/ssltest/index.html), then this is what you'll need to do. We assume you have already installed [Let's Encrypt](https://letsencrypt.org/) and are ready to retrieve your certificates
 
 0. Install `git` if you haven't already.
 1. `git clone https://github.com/letsencrypt/letsencrypt`
