@@ -6,4 +6,4 @@
 #  │  │  │  │  │
 #  │  │  │  │  │
 #  *  *  *  *  *  command to execute
-   22 01 23 *  *  renew-ssl -d example.com -d www.example.com >> /var/log/letsencrypt-eustasy.log
+   22 01 23 *  *  renew-ssl -d example.com -d www.example.com >> ~/letsencrypt-eustasy.log
