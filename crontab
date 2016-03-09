@@ -6,4 +6,4 @@
 #  │  │  │  │  │
 #  │  │  │  │  │
 #  *  *  *  *  *  command to execute
-   22 01 23 *  *  ~/letsencrypt-with-nginx/renew-ssl.sh -d example.com -d www.example.com >> ~/letsencrypt-eustasy.log
+   15 03 27 *  *  ~/letsencrypt-with-nginx/renew-ssl.sh -d example.com -d www.example.com >> ~/letsencrypt-with-nginx/cron.log
