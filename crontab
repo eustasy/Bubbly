@@ -5,5 +5,7 @@
 #  │  │  │  │  ┌───────────────── day of week (0 - 6) (0 to 6 are Sunday to Saturday, or use names; 7 is Sunday, the same as 0)
 #  │  │  │  │  │
 #  │  │  │  │  │
-#  *  *  *  *  *  command to execute
-   15 03 27 *  *  ~/certbot-with-nginx/renew-ssl.sh -d example.com -d www.example.com >> ~/certbot-with-nginx/cron.log
+#  *  *  *  *  *  command to executecd
+   05 03 *  *  0  cd ~/certbot && git pull
+   10 03 *  *  0  cd ~/certbot-with-nginx && git pull
+   15 03 *  *  0   ~/certbot-with-nginx/renew-ssl.sh -d example.com -d www.example.com >> ~/certbot-with-nginx/cron.log
