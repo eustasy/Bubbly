@@ -7,5 +7,5 @@
 #  │  │  │  │  │
 #  *  *  *  *  *  command to executecd
    05 03 *  *  0  cd ~/certbot && git pull
-   10 03 *  *  0  cd ~/certbot-with-nginx && git pull
-   15 03 *  *  0   ~/certbot-with-nginx/renew-ssl.sh -d example.com -d www.example.com >> ~/certbot-with-nginx/cron.log
+   10 03 *  *  0  cd ~/bubbly && git pull
+   15 03 *  *  0   ~/bubbly/bubbly-renew-ssl.sh -d example.com -d www.example.com >> ~/bubbly/cron.log
