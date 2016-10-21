@@ -1,12 +1,12 @@
 #!/bin/bash
 
-mkdir -p /tmp/certbot-with-nginx
+mkdir -p /tmp/bubbly
 
 ~/certbot/certbot-auto certonly \
 	--rsa-key-size 4096 \
 	--server https://acme-v01.api.letsencrypt.org/directory \
 	--authenticator webroot \
-	--webroot-path=/tmp/certbot-with-nginx \
+	--webroot-path=/tmp/bubbly \
 	--agree-tos \
 	--force-renew \
 	"$@"
