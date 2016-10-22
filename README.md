@@ -78,4 +78,6 @@ crontab /tmp/bubbly-crontab
 
 This is important, since Let's Encrypt certificates expire in three months.
 
+---
+
 ![Screenshot from 2015-11-05 04:16:13.png](https://raw.githubusercontent.com/eustasy/certbot-with-nginx/master/Screenshot%20from%202015-11-05%2004%3A16%3A13.png "Screenshot from 2015-11-05 04:16:13.png")
