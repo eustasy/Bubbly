@@ -32,6 +32,10 @@ Have a seat.
 
 When you've gone and made something in the 15 minutes that could well take, or you've just set up a new SSH session, replace the instances of `example.com` in `*.conf` and `crontab` with your actual domain name. Also take a look at the `[OPTION]`s and `[WARNING]`s.
 
+```
+nano ~/bubbly/*.conf
+```
+
 **4. Enable Verification**
 
 ```
