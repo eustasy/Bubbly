@@ -6,7 +6,7 @@ mkdir -p /tmp/bubbly
 	--rsa-key-size 4096 \
 	--server https://acme-v01.api.letsencrypt.org/directory \
 	--authenticator webroot \
-	--webroot-path=/tmp/bubbly \
+	--webroot-path=/tmp/bubbly-authenticator \
 	--agree-tos \
 	--force-renew \
 	"$@"
