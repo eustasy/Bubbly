@@ -1,6 +1,6 @@
 #!/bin/bash
 
-mkdir -p /tmp/bubbly
+mkdir -p /tmp/bubbly-authenticator
 
 ~/certbot/certbot-auto certonly \
 	--rsa-key-size 4096 \
