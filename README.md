@@ -30,7 +30,7 @@ Have a seat.
 
 **3. Replace Domains & Configure**
 
-When you've gone and made something in the 15 minutes that could well take, or you've just set up a new SSH session, replace the instances of `example.com` in `*.conf` and `crontab` with your actual domain name. Also take a look at the `[OPTION]`s and `[WARNING]`s.
+When you've gone and made something in the 15 minutes that could well take, or you've just set up a new SSH session, replace the instances of `example.com` in the Nginx and Crontab configuration files in `*.conf` with your actual domain name. Also take a look at the `[OPTION]`s and `[WARNING]`s.
 
 ```
 nano ~/bubbly/*.conf
@@ -68,12 +68,12 @@ sudo nginx -t && sudo service nginx reload
 
 **6. Automate Renewal**
 
-Install the edited `crontab` for automatic renewal.
+Install the edited `crontab.conf` for automatic renewal.
 
 ```
-cat ~/bubbly/crontab > /tmp/le-crontab &&
-crontab -l >> /tmp/le-crontab &&
-crontab /tmp/le-crontab
+cat ~/bubbly/crontab.conf > /tmp/bubbly-crontab &&
+crontab -l >> /tmp/bubbly-crontab &&
+crontab /tmp/bubbly-crontab
 ```
 
 This is important, since Let's Encrypt certificates expire in three months.
