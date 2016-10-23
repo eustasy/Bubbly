@@ -2,6 +2,8 @@
 
 ### For configuring Certbot with Nginx
 
+[![Bountysource](https://www.bountysource.com/badge/tracker?tracker_id=25541893)](https://www.bountysource.com/teams/eustasy/issues?tracker_ids=25541893)
+
 If you want an A+ score on Qualys [SSL Labs](https://www.ssllabs.com/ssltest/index.html), then this is what you'll need to do. You won't need any familiarity with [Certbot](https://github.com/certbot/certbot), [Let's Encrypt](https://letsencrypt.org/), the ACME spec, or SSL in general, just basic Nginx configuration.
 
 **1. Clone Certbot and Bubbly**
