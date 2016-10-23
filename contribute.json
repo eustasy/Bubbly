@@ -1,0 +1,21 @@
+{
+    "name": "Bubbly: Certbot for Nginx",
+    "description": "",
+    "repository": {
+        "url": "https://github.com/eustasy/bubbly",
+        "license": "MIT",
+        "type": "git",
+        "tests": "https://travis-ci.org/eustasy/bubbly",
+        "clone": "https://github.com/eustasy/bubbly.git"
+    },
+    "bugs": {
+        "list": "https://github.com/eustasy/bubbly/issues",
+        "report": "https://github.com/eustasy/bubbly/issues/new"
+    },
+    "keywords": [
+        "eustasy",
+        "bubbly",
+        "certbot",
+        "nginx"
+    ]
+}
