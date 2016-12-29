@@ -53,7 +53,7 @@ Alternatively, you can simply copy the location block from `nginx.verify.conf`, 
 Fetch your certificates like this:
 
 ```
-~/bubbly/renew-ssl.sh -d example.com -d www.example.com
+~/bubbly/bubbly-renew-ssl.sh -d example.com -d www.example.com
 ```
 
 It will ask for the root password, and an email address, so hang around, it shouldn't take more than a few seconds.
