@@ -2,6 +2,9 @@
 
 ### For configuring Certbot with Nginx
 
+[![Build Status](https://travis-ci.org/eustasy/bubbly.svg?branch=master)](https://travis-ci.org/eustasy/bubbly)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/ecf6627cc61b43d6a1b52b9991b86680)](https://www.codacy.com/app/lewisgoddard/bubbly?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=eustasy/bubbly&amp;utm_campaign=Badge_Grade)
+[![Code Climate](https://codeclimate.com/github/eustasy/bubbly/badges/gpa.svg)](https://codeclimate.com/github/eustasy/bubbly)
 [![Bountysource](https://www.bountysource.com/badge/tracker?tracker_id=25541893)](https://www.bountysource.com/teams/eustasy/issues?tracker_ids=25541893)
 
 If you want an A+ score on Qualys [SSL Labs](https://www.ssllabs.com/ssltest/index.html), then this is what you'll need to do. You won't need any familiarity with [Certbot](https://github.com/certbot/certbot), [Let's Encrypt](https://letsencrypt.org/), the ACME spec, or SSL in general, just basic Nginx configuration.
