@@ -1,0 +1,39 @@
+# see http://about.travis-ci.org/docs/user/languages/php/ for more hints
+
+language: php
+dist: trusty
+sudo: required
+
+php:
+  - 5.6
+  - 7.0
+  - 7.1
+  - hhvm
+
+matrix:
+  allow_failures:
+    - php: 5.6
+    - php: 7.0
+    - php: hhvm
+
+before_script:
+  - git clone https://github.com/eustasy/normal-checks.git
+  - cd normal-checks
+  - git checkout d5f1a5d9e3fbac391b905f2bdfcdcdbfe465eabf
+  - cd ../
+  - ./normal-checks/check-config.sh
+
+script:
+  - ./normal-checks/check-permissions.sh
+  - ./normal-checks/check-css.sh
+  - ./normal-checks/check-javascript.sh
+  - ./normal-checks/check-php.sh
+  - php normal-checks/check-json.php
+  - php normal-checks/check-xml.php
+
+notifications:
+  email:
+    recipients:
+      - lewisgoddard@eustasy.org
+    on_success: change
+    on_failure: change

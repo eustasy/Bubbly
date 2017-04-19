@@ -1,0 +1,14 @@
+{
+  "env": {
+    "browser": true
+  },
+  "extends": "eslint:recommended",
+  "rules": {
+    "semi": ["error", "never"],
+    "indent": ["error", "tab"],
+    "comma-dangle": ["error", "always-multiline"],
+    "no-cond-assign": ["error", "always"],
+    "no-console": "off",
+    "no-mixed-spaces-and-tabs": ["error", "smart-tabs"]
+  }
+}

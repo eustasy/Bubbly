@@ -1,0 +1,4 @@
+*.min.js
+*.pack.js
+*.custom.js
+_libs/*
