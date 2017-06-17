@@ -1,9 +1,9 @@
 # see http://about.travis-ci.org/docs/user/languages/php/ for more hints
 
-language: php
 dist: trusty
 sudo: required
 
+language: php
 php:
   - 5.6
   - 7.0
@@ -19,14 +19,14 @@ matrix:
 before_script:
   - git clone https://github.com/eustasy/normal-checks.git
   - cd normal-checks
-  - git checkout d5f1a5d9e3fbac391b905f2bdfcdcdbfe465eabf
+  - git checkout 768000d77c2818c49d8a38e66725c30aee2f281f
   - cd ../
-  - ./normal-checks/check-config.sh
 
 script:
+  - ./normal-checks/check-config.sh
   - ./normal-checks/check-permissions.sh
-  - ./normal-checks/check-css.sh
   - ./normal-checks/check-javascript.sh
+  - ./normal-checks/check-css.sh
   - ./normal-checks/check-php.sh
   - php normal-checks/check-json.php
   - php normal-checks/check-xml.php
