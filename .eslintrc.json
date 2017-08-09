@@ -5,7 +5,7 @@
   "extends": "eslint:recommended",
   "rules": {
     "semi": ["error", "never"],
-    "indent": ["error", "tab"],
+    "indent": ["error", "tab", { "SwitchCase": 1 } ],
     "comma-dangle": ["error", "always-multiline"],
     "no-cond-assign": ["error", "always"],
     "no-console": "off",

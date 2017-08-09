@@ -19,7 +19,7 @@ matrix:
 before_script:
   - git clone https://github.com/eustasy/normal-checks.git
   - cd normal-checks
-  - git checkout 768000d77c2818c49d8a38e66725c30aee2f281f
+  - git checkout 4256f55ef631900df06ca5c6167e21e6ed4cf55b
   - cd ../
 
 script:

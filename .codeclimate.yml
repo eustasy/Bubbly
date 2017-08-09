@@ -45,6 +45,10 @@ engines:
         enabled: false
       Squiz ControlStructures ForEachLoopDeclaration SpaceBeforeClose:
         enabled: false
+      Squiz ControlStructures ForLoopDeclaration SpacingAfterOpen:
+        enabled: false
+      Squiz ControlStructures ForLoopDeclaration SpacingBeforeClose:
+        enabled: false
       Squiz Functions MultiLineFunctionDeclaration BraceOnSameLine:
         enabled: false
   phpmd:
