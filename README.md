@@ -1,5 +1,7 @@
 # Bubbly
 
+TODO: Copy NGINX Configs and update instructions.
+
 ### For configuring Certbot with Nginx
 
 [![Build Status](https://travis-ci.org/eustasy/bubbly.svg?branch=master)](https://travis-ci.org/eustasy/bubbly)
