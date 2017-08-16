@@ -75,7 +75,7 @@ sudo nano /etc/nginx/sites-available/example.com.conf
 sudo nginx -t && sudo service nginx reload
 ```
 
-**6. Automate Renewal**
+**7. Automate Renewal**
 
 Edit `crontab.conf` and append it to your existing cron jobs for automatic renewal. This is important, since Let's Encrypt certificates expire in three months.
 
