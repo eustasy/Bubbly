@@ -1,6 +1,7 @@
 # Bubbly
 
 TODO: Copy NGINX Configs and update instructions.
+WARNING: This README is out of date for the master branch.
 
 ### For configuring Certbot with Nginx
 
@@ -27,8 +28,7 @@ git clone https://github.com/eustasy/bubbly
 Generate the static keys once per server.
 
 ```
-chmod 755 ~/bubbly/bubbly-generate-statics.sh &&
-~/bubbly/bubbly-generate-statics.sh
+~/bubbly/bubbly_generate-statics.sh
 ```
 
 As it will warn, this will take a while.
@@ -58,7 +58,7 @@ Alternatively, you can simply copy the location block from `nginx.verify.conf`, 
 Fetch your certificates like this:
 
 ```
-~/bubbly/bubbly-renew-ssl.sh -d example.com -d www.example.com
+~/bubbly/bubbly_renew-ssl.sh -d example.com -d www.example.com
 ```
 
 It will ask for the root password, and an email address, so hang around, it shouldn't take more than a few seconds.
