@@ -8,7 +8,7 @@ We recommend forking the repository, and then cloning your new repo.
 
     git clone git@github.com:your-username/bubbly.git
 
-Once you've made changes and committed them in your fork, preferably on a nicely named branch, you can move on to [Creating a Pull Request](#creating-a-pull-request).
+Once you've made changes and committed them in your fork, preferably on a nicely named branch with descriptive commit messages, you can move on to [Creating a Pull Request](#creating-a-pull-request).
 
 ### Filing an Issue
 
