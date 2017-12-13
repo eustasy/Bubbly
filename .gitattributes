@@ -1,1 +1,1 @@
-nginx-config/**/*.conf linguist-language=Nginx
+nginx-config/* linguist-language=Nginx
