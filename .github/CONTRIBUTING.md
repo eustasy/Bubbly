@@ -80,6 +80,8 @@ Various headers are delivered from various configuration files. This list should
 
 - [`nginx-config/directive/bubbly_security-headers.conf`](https://github.com/eustasy/bubbly/blob/master/nginx-config/directive/bubbly_security-headers.conf)
 - - `Access-Control-Allow-Origin`
+- - `Content-Security-Policy`
+- - `X-Content-Security-Policy`
 - - `X-Content-Type-Options`
 - - `Frame-Options`
 - - `X-Frame-Options`
@@ -90,10 +92,8 @@ Various headers are delivered from various configuration files. This list should
 - - `X-UA-Compatible`
 - [`nginx-config/directive/h5bp_no-transform.conf`](https://github.com/eustasy/bubbly/blob/master/nginx-config/directive/h5bp_no-transform.conf)
 - - `Cache-Control`
-- [`nginx-config/location/h5bp_cross-domain-fonts.conf`](https://github.com/eustasy/bubbly/blob/master/nginx-config/location/h5bp_cross-domain-fonts.conf)
-- - `Cache-Control`
 - [`nginx-config/location/bubbly_extensionless-php.conf`](https://github.com/eustasy/bubbly/blob/master/nginx-config/location/bubbly_extensionless-php.conf)
-- - `X-Powered-By`
+- - Suppresses `X-Powered-By`
 - [`nginx-config/directive/bubbly_rock-hard-ssl.conf`](https://github.com/eustasy/bubbly/blob/master/nginx-config/directive/bubbly_rock-hard-ssl.conf)
 - - `Strict-Transport-Security`
 
