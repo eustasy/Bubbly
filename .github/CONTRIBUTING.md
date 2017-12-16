@@ -79,6 +79,7 @@ ssl_ciphers 'ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECD
 Various headers are delivered from various configuration files. This list should help source any undesired headers you see being sent. Some headers can be sent from multiple locations.
 
 - [`nginx-config/directive/bubbly_security-headers.conf`](https://github.com/eustasy/bubbly/blob/master/nginx-config/directive/bubbly_security-headers.conf)
+- - Disable versions in `Server` 
 - - `Access-Control-Allow-Origin`
 - - `Content-Security-Policy-Report-Only`
 - - `X-Content-Security-Policy-Report-Only`
