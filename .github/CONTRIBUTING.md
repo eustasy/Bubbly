@@ -89,6 +89,7 @@ Various headers are delivered from various configuration files. This list should
 - - `X-Content-Type-Options`
 - - `Frame-Options`
 - - `X-Frame-Options`
+- - `Referrer-Policy`
 - - `X-XSS-Protection`
 - [`nginx-config/location/h5bp_expires.conf`](https://github.com/eustasy/bubbly/blob/master/nginx-config/location/h5bp_expires.conf)
 - - `Cache-Control`
