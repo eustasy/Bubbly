@@ -7,7 +7,7 @@
 [![Code Climate](https://codeclimate.com/github/eustasy/bubbly/badges/gpa.svg)](https://codeclimate.com/github/eustasy/bubbly)
 [![Bountysource](https://www.bountysource.com/badge/tracker?tracker_id=25541893)](https://www.bountysource.com/teams/eustasy/issues?tracker_ids=25541893)
 
-If you want an A+ score on Qualys [SSL Labs](https://www.ssllabs.com/ssltest/index.html), then this is what you'll need to do. You won't need any familiarity with [Certbot](https://github.com/certbot/certbot), [Let's Encrypt](https://letsencrypt.org/), the ACME spec, or SSL in general, just basic Nginx configuration.
+If you want an instant A+ score on Qualys [SSL Labs](https://www.ssllabs.com/ssltest/analyze.html?d=lewisgoddard.me.uk) and A score on [SecurityHeaders.io](https://securityheaders.io/?q=lewisgoddard.me.uk&followRedirects=on), then this is what you'll need to do. You won't need any familiarity with [Certbot](https://github.com/certbot/certbot), [Let's Encrypt](https://letsencrypt.org/), the ACME spec, or SSL in general, just basic Nginx configuration.
 
 **1. Clone Certbot and Bubbly**
 
@@ -88,4 +88,6 @@ crontab /tmp/bubbly-crontab
 
 ---
 
-![Screenshot from 2015-11-05 04:16:13.png](https://raw.githubusercontent.com/eustasy/certbot-with-nginx/master/Screenshot%20from%202015-11-05%2004%3A16%3A13.png "Screenshot from 2015-11-05 04:16:13.png")
+![Screenshot of SSLLabs.com](https://raw.githubusercontent.com/eustasy/bubbly/master/screenshot_ssllabs.com.png)
+
+![Screenshot of SecurityHeaders.io](https://raw.githubusercontent.com/eustasy/bubbly/master/screenshot_securityheaders.io.png)
