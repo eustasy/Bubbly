@@ -79,7 +79,6 @@ ssl_ciphers 'ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECD
 Various headers are delivered from various configuration files. This list should help source any undesired headers you see being sent. Some headers can be sent from multiple locations.
 
 - [`nginx-config/directive/bubbly_security-headers.conf`](https://github.com/eustasy/bubbly/blob/master/nginx-config/directive/bubbly_security-headers.conf)
-- - Disable versions in `Server` 
 - - `Access-Control-Allow-Origin`
 - - `Content-Security-Policy-Report-Only` and `X-Content-Security-Policy-Report-Only`
 - - `Content-Security-Policy` and `X-Content-Security-Policy`
@@ -87,16 +86,17 @@ Various headers are delivered from various configuration files. This list should
 - - `Expect-CT`
 - - `Frame-Options` and `X-Frame-Options`
 - - `Referrer-Policy`
+- - `Server` 
 - - `Strict-Transport-Security`
 - - `XSS-Protection` and `X-XSS-Protection`
 - [`nginx-config/location/h5bp_expires.conf`](https://github.com/eustasy/bubbly/blob/master/nginx-config/location/h5bp_expires.conf)
 - - `Cache-Control`
 - [`nginx-config/directive/h5bp_x-ua-compatible.conf`](https://github.com/eustasy/bubbly/blob/master/nginx-config/directive/h5bp_x-ua-compatible.conf)
-- - `X-UA-Compatible`
+- - `UA-Compatible` and `X-UA-Compatible`
 - [`nginx-config/directive/h5bp_no-transform.conf`](https://github.com/eustasy/bubbly/blob/master/nginx-config/directive/h5bp_no-transform.conf)
 - - `Cache-Control`
 - [`nginx-config/location/bubbly_extensionless-php.conf`](https://github.com/eustasy/bubbly/blob/master/nginx-config/location/bubbly_extensionless-php.conf)
-- - Suppresses `X-Powered-By`
+- - Suppresses `Powered-By` and `X-Powered-By`
 - [`nginx-config/directive/bubbly_rock-hard-ssl.conf`](https://github.com/eustasy/bubbly/blob/master/nginx-config/directive/bubbly_rock-hard-ssl.conf)
 
 ## Contact Points
