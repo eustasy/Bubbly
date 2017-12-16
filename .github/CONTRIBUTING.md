@@ -80,8 +80,11 @@ Various headers are delivered from various configuration files. This list should
 
 - [`nginx-config/directive/bubbly_security-headers.conf`](https://github.com/eustasy/bubbly/blob/master/nginx-config/directive/bubbly_security-headers.conf)
 - - `Access-Control-Allow-Origin`
+- - `Content-Security-Policy-Report-Only`
+- - `X-Content-Security-Policy-Report-Only`
 - - `Content-Security-Policy`
 - - `X-Content-Security-Policy`
+- - `Expect-CT`
 - - `X-Content-Type-Options`
 - - `Frame-Options`
 - - `X-Frame-Options`
