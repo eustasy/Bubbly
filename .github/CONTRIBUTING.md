@@ -1,6 +1,6 @@
 # Contributing
 
-We love pull requests from everyone. Check out our [open issues](https://github.com/eustasy/bubbly/issues), partically anything tagged as Bytesize, for things you can get to work on. By participating in this project, you agree to abide by the project [code of conduct](https://github.com/eustasy/bubbly/blob/master/CODE_OF_CONDUCT.md).
+We love pull requests from everyone. Check out our [open issues](https://github.com/eustasy/bubbly/issues), partically anything tagged as Bytesize, for things you can get to work on. By participating in this project, you agree to abide by the project [code of conduct](https://github.com/eustasy/bubbly/blob/master/.github/CODE_OF_CONDUCT.md).
 
 ## Making Changes
 
