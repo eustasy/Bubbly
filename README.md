@@ -47,6 +47,11 @@ Copy the verification site template and replace the instances of `example.com` i
 ```
 sudo cp /etc/nginx/sites-available/bubbly_verify.conf /etc/nginx/sites-available/example.com.conf
 sudo nano /etc/nginx/sites-available/example.com.conf
+```
+
+Use `Ctrl` and `\` to initiate a search and replace for `example.com` with your domain.
+
+```
 sudo ln -s /etc/nginx/sites-available/example.com.conf /etc/nginx/sites-enabled/example.com.conf
 sudo nginx -t && sudo service nginx reload
 ```
@@ -72,6 +77,11 @@ Remove the verification config you just made, and replace it with a live version
 sudo rm /etc/nginx/sites-available/example.com.conf
 sudo cp /etc/nginx/sites-available/bubbly_live.conf /etc/nginx/sites-available/example.com.conf
 sudo nano /etc/nginx/sites-available/example.com.conf
+```
+
+Use `Ctrl` and `\` to initiate a search and replace for `example.com` with your domain.
+
+```
 sudo nginx -t && sudo service nginx reload
 ```
 
