@@ -1,35 +1,42 @@
-# see http://about.travis-ci.org/docs/user/languages/php/ for more hints
+# eustasy Normalized Checks 1.10.0
 
 dist: trusty
 sudo: required
 
+# https://secure.php.net/supported-versions.php
 language: php
 php:
   - 5.6
   - 7.0
   - 7.1
+  - 7.2
   - hhvm
 
 matrix:
   allow_failures:
-    - php: 5.6
-    - php: 7.0
     - php: hhvm
+
+addons:
+  mariadb: '10.1'
 
 before_script:
   - git clone https://github.com/eustasy/normal-checks.git
   - cd normal-checks
-  - git checkout 4256f55ef631900df06ca5c6167e21e6ed4cf55b
+  - git checkout b92da74ddf4b05b698e2d12ebd56e965d6749397
   - cd ../
+  - npm install --silent -g npm
+  - npm install --silent -g acorn
 
 script:
   - ./normal-checks/check-config.sh
   - ./normal-checks/check-permissions.sh
   - ./normal-checks/check-javascript.sh
-  - ./normal-checks/check-css.sh
   - ./normal-checks/check-php.sh
   - php normal-checks/check-json.php
   - php normal-checks/check-xml.php
+  # Comment out following two lines if you don't wish to test any SQL files.
+  - sudo mysql -u root -e 'CREATE DATABASE IF NOT EXISTS tests_db;'
+  - sudo mysql -u root tests_db < empty/test.sql
 
 notifications:
   email:

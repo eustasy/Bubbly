@@ -8,6 +8,18 @@
 # For a list of all available engines, see here:
 # https://docs.codeclimate.com/docs/list-of-engines
 
+version: "2"
+checks:
+  argument-count:
+    config:
+      threshold: 10
+  method-complexity:
+    config:
+      threshold: 20
+  method-lines:
+    config:
+      threshold: 50
+
 engines:
 # to turn on an engine, add it here and set enabled to `true`
 # to turn off an engine, set enabled to `false` or remove it
@@ -35,6 +47,8 @@ engines:
   phpcodesniffer:
     enabled: true
     checks:
+      Generic Files LineLength TooLong:
+        enabled: false
       Generic WhiteSpace DisallowTabIndent TabsUsed:
         enabled: false
       PSR2 ControlStructures ControlStructureSpacing SpacingAfterOpenBrace:
@@ -54,6 +68,8 @@ engines:
   phpmd:
     enabled: true
     checks:
+      CleanCode/BooleanArgumentFlag:
+        enabled: false
       Controversial/CamelCaseParameterName:
         enabled: false
       Controversial/CamelCaseVariableName:
