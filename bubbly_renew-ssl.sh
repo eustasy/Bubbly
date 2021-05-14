@@ -1,8 +1,8 @@
 #!/bin/bash
 
-mkdir -p /tmp/bubbly-authenticator
+sudo mkdir -p /tmp/bubbly-authenticator
 
-certbot certonly \
+sudo certbot certonly \
 	--rsa-key-size 3072 \
 	--server https://acme-v02.api.letsencrypt.org/directory \
 	--authenticator webroot \
