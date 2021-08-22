@@ -1,4 +1,4 @@
-# src=https://raw.githubusercontent.com/h5bp/server-configs-nginx/master/mime.types
+# src=https://github.com/h5bp/server-configs-nginx/blob/master/mime.types
 
 types {
 
@@ -8,15 +8,21 @@ types {
     application/json                      json map topojson;
     application/ld+json                   jsonld;
     application/rss+xml                   rss;
-    application/vnd.geo+json              geojson;
-    application/xml                       rdf xml;
+    # Normalize to standard type.
+    # https://tools.ietf.org/html/rfc7946#section-12
+    application/geo+json                  geojson;
+    application/xml                       xml;
+    # Normalize to standard type.
+    # https://tools.ietf.org/html/rfc3870#section-2
+    application/rdf+xml                   rdf;
 
 
   # JavaScript
 
-    # Normalize to standard type.
-    # https://tools.ietf.org/html/rfc4329#section-7.2
-    application/javascript                js;
+    # Servers should use text/javascript for JavaScript resources.
+    # https://html.spec.whatwg.org/multipage/scripting.html#scriptingLanguages
+    text/javascript                       js mjs;
+    application/wasm                      wasm;
 
 
   # Manifest files
@@ -34,9 +40,14 @@ types {
     audio/ogg                             oga ogg opus;
     audio/x-realaudio                     ra;
     audio/x-wav                           wav;
+    audio/x-matroska                      mka;
+    image/apng                            apng;
+    image/avif                            avif;
+    image/avif-sequence                   avifs;
     image/bmp                             bmp;
     image/gif                             gif;
     image/jpeg                            jpeg jpg;
+    image/jxl                             jxl;
     image/jxr                             jxr hdp wdp;
     image/png                             png;
     image/svg+xml                         svg svgz;
@@ -55,6 +66,7 @@ types {
     video/x-ms-asf                        asf asx;
     video/x-ms-wmv                        wmv;
     video/x-msvideo                       avi;
+    video/x-matroska                      mkv mk3d;
 
     # Serving `.ico` image files with a different media type
     # prevents Internet Explorer from displaying then as images:
@@ -75,20 +87,12 @@ types {
 
   # Web fonts
 
-    application/font-woff                 woff;
-    application/font-woff2                woff2;
+    font/woff                             woff;
+    font/woff2                            woff2;
     application/vnd.ms-fontobject         eot;
-
-    # Browsers usually ignore the font media types and simply sniff
-    # the bytes to figure out the font type.
-    # https://mimesniff.spec.whatwg.org/#matching-a-font-type-pattern
-    #
-    # However, Blink and WebKit based browsers will show a warning
-    # in the console if the following font types are served with any
-    # other media types.
-
-    application/x-font-ttf                ttc ttf;
-    font/opentype                         otf;
+    font/ttf                              ttf;
+    font/collection                       ttc;
+    font/otf                              otf;
 
 
   # Other
@@ -124,10 +128,11 @@ types {
     application/xhtml+xml                 xhtml;
     application/xslt+xml                  xsl;
     application/zip                       zip;
+    text/calendar                         ics;
     text/css                              css;
     text/csv                              csv;
     text/html                             htm html shtml;
-    text/markdown                         md;
+    text/markdown                         md markdown;
     text/mathml                           mml;
     text/plain                            txt;
     text/vcard                            vcard vcf;
