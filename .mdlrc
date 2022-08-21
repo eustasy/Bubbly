@@ -1,36 +1,36 @@
-rules "MD001", // header levels increment by 1
-      "MD002", // first header should be level 1
-      "MD003", // header style - atx
-      "MD004", // unordered list style - asterick
-      "MD005", // don't allow inconsistent indentation for list items
-      "MD006", // start bullets at beginning of line
-      "MD007", // unordered list indentation should be 4 spaces
-      "MD009", // trailing spaces not allowed
-      "MD010", // hard tabs not allowed
-      "MD011", // alert on reversed link syntax
-      "MD012", // alert on multiple consecutive blank lines
-      "MD013", // line length should be no more than 80 characters
-      "MD014", // dollars signs not before commands w/o showing output
-      "MD018", // must have space after header style
-      "MD019", // no multiple spaces after header style
-      "MD022", // headers should be surrounded by blank lines
-      "MD023", // headers must start at the beginning of the line
-      "MD024", // no multiple headers with same content
-      "MD025", // only 1 level 1 header
-      "MD026", // no trailing punctuation in headers
-      "MD027", // no multiple spaces after blockquote symbol
-      "MD028", // no blank lines within blockquote
-      "MD029", // ordered list item prefix, shoulded be ordered
-      "MD030", // spaces after list markers
-      "MD031", // fenced code blocks need line surrounding
-      "MD032", // lists should be surrounded by line
-      "MD033", // Inline HTML
-      "MD034", // Bare URL used
-      "MD035", // Horizontal rule style
-      "MD036", // Emphasis used instead of a header
-      "MD037", // Spaces inside emphasis markers
-      "MD038", // Spaces inside code span elements
-      "MD039", // Spaces inside link text
-      "MD040", // Fenced code blocks should have a language specified
-      "MD041" // First line in file should be a top level header
+rules "MD001", # header levels increment by 1
+      "MD002", # first header should be level 1
+      "MD003", # header style - atx
+      "MD004", # unordered list style - asterick
+      "MD005", # don't allow inconsistent indentation for list items
+      "MD006", # start bullets at beginning of line
+      "MD007", # unordered list indentation should be 4 spaces
+      "MD009", # trailing spaces not allowed
+      "MD010", # hard tabs not allowed
+      "MD011", # alert on reversed link syntax
+      "MD012", # alert on multiple consecutive blank lines
+      "MD013", # line length should be no more than 80 characters
+      "MD014", # dollars signs not before commands w/o showing output
+      "MD018", # must have space after header style
+      "MD019", # no multiple spaces after header style
+      "MD022", # headers should be surrounded by blank lines
+      "MD023", # headers must start at the beginning of the line
+      "MD024", # no multiple headers with same content
+      "MD025", # only 1 level 1 header
+      "MD026", # no trailing punctuation in headers
+      "MD027", # no multiple spaces after blockquote symbol
+      "MD028", # no blank lines within blockquote
+      "MD029", # ordered list item prefix, shoulded be ordered
+      "MD030", # spaces after list markers
+      "MD031", # fenced code blocks need line surrounding
+      "MD032", # lists should be surrounded by line
+      "MD033", # Inline HTML
+      "MD034", # Bare URL used
+      "MD035", # Horizontal rule style
+      "MD036", # Emphasis used instead of a header
+      "MD037", # Spaces inside emphasis markers
+      "MD038", # Spaces inside code span elements
+      "MD039", # Spaces inside link text
+      "MD040", # Fenced code blocks should have a language specified
+      "MD041" # First line in file should be a top level header
 style ".mdlrc.style.rb"
