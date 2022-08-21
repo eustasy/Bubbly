@@ -2,9 +2,8 @@
 
 ### For configuring Certbot with Nginx
 
-[![Build Status](https://travis-ci.org/eustasy/bubbly.svg?branch=master)](https://travis-ci.org/eustasy/bubbly)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/ecf6627cc61b43d6a1b52b9991b86680)](https://www.codacy.com/app/lewisgoddard/bubbly?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=eustasy/bubbly&amp;utm_campaign=Badge_Grade)
-[![Maintainability](https://api.codeclimate.com/v1/badges/84d8fc91bfca7ccce137/maintainability)](https://codeclimate.com/github/eustasy/bubbly/maintainability)
+[![Build Status](https://api.travis-ci.com/eustasy/Bubbly.svg?branch=main)](https://app.travis-ci.com/github/eustasy/Bubbly)
+[![Code Climate](https://codeclimate.com/github/eustasy/Bubbly/badges/gpa.svg)](https://codeclimate.com/github/eustasy/Bubbly)
 
 If you want an instant A+ score on Qualys [SSL Labs](https://www.ssllabs.com/ssltest/analyze.html?d=lewisgoddard.me.uk) and A score on [SecurityHeaders.io](https://securityheaders.io/?q=lewisgoddard.me.uk&followRedirects=on), then this is what you'll need to do. You won't need any familiarity with [Certbot](https://github.com/certbot/certbot), [Let's Encrypt](https://letsencrypt.org/), the ACME spec, or SSL in general, just basic Nginx configuration.
 
