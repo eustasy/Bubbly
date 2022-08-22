@@ -1,0 +1,50 @@
+name: Normal
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  normal-tests:
+    strategy:
+      matrix:
+        php-version: [ "8.2", "8.1", "8.0", "7.4" ]
+    runs-on: ubuntu-latest
+    steps:
+    
+    - name: Install PHP ${{ matrix.php-version }}
+      uses: shivammathur/setup-php@2.21.2
+      with:
+        php-version: ${{ matrix.php-version }}
+        #extensions: mbstring
+        
+    - name: Install Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: "12.x"
+        
+    - name: Checkout Repo
+      uses: actions/checkout@v3
+    
+    - name: Copy .env
+      run: php -r "file_exists('.env') || copy('.env.example', '.env');"
+      
+    - name: .Normal - Setup
+      run: git clone https://github.com/eustasy/.normal.git && cd .normal && git checkout 143baa3fcdbd30302def591074cd44b09d42c4a4 && cd ../ && npm install --silent -g npm && npm install --silent -g acorn
+      
+    - name: .Normal - Check JavaScript
+      run: ./.normal/check-javascript.sh
+      
+    - name: .Normal - Check PHP
+      run: ./.normal/check-php.sh
+      
+    - name: .Normal - Check SQL
+      uses: Bidaya0/sql-lint-in-action@v0.0.2
+      
+    - name: .Normal - Check JSON
+      run: php .normal/check-json.php
+      
+    - name: .Normal - Check XML
+      run: php .normal/check-xml.php
