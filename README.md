@@ -1,6 +1,6 @@
 # Bubbly
 
-### For configuring Certbot with Nginx
+##### For configuring Certbot with Nginx as quickly and securely as possible.
 
 [![Normal](https://github.com/eustasy/Bubbly/actions/workflows/normal.yml/badge.svg)](https://github.com/eustasy/Bubbly/actions/workflows/normal.yml)
 [![Code Climate](https://codeclimate.com/github/eustasy/bubbly/badges/gpa.svg)](https://codeclimate.com/github/eustasy/bubbly)
