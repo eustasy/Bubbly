@@ -1,6 +1,9 @@
 name: Normal
 
 on:
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    - cron:  '30 5,17 * * *'
   push:
     branches: [ "main" ]
   pull_request:
@@ -15,7 +18,7 @@ jobs:
     steps:
     
     - name: Install PHP ${{ matrix.php-version }}
-      uses: shivammathur/setup-php@2.21.2
+      uses: shivammathur/setup-php@v2
       with:
         php-version: ${{ matrix.php-version }}
         #extensions: mbstring
