@@ -23,7 +23,15 @@ jobs:
     - name: Install Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: "12.x"
+        # Version Spec of the version to use in SemVer notation.
+        # It also emits such aliases as lts, latest, nightly and canary builds
+        # Examples: 12.x, 10.15.1, >=10.15.0, lts/Hydrogen, 16-nightly, latest, node
+        node-version: 'lts/*'
+        # Set this option if you want the action to check for the latest available version 
+        # that satisfies the version spec.
+        # It will only get affect for lts Nodejs versions (12.x, >=10.15.0, lts/Hydrogen). 
+        # Default: false
+        check-latest: true
         
     - name: Checkout Repo
       uses: actions/checkout@v3
