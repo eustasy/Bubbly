@@ -5,7 +5,7 @@
         "url": "https://github.com/eustasy/bubbly",
         "license": "MIT",
         "type": "git",
-        "tests": "https://travis-ci.org/eustasy/bubbly",
+        "tests": "https://github.com/eustasy/Bubbly/actions/workflows/normal.yml",
         "clone": "https://github.com/eustasy/bubbly.git"
     },
     "bugs": {
