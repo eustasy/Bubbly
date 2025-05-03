@@ -66,6 +66,8 @@ Fetch your certificates like this:
 
 It will ask for the root password, and an email address, so hang around, it shouldn't take more than a few seconds.
 
+It should also tell you Certbot set up auto-renewals in the background.
+
 **6. Start using the Certificates**
 
 Remove the verification config you just made, and replace it with a live version of the site. You'll need to more carefully review the `[OPTION]`s in this file, as you'll also need to change the certificate location to match the domain name you requested. Consider taking a look at the `[OPTION]`s and `[WARNING]`s in other linked config files.
@@ -80,17 +82,6 @@ Use `Ctrl` and `\` to initiate a search and replace for `example.com` with your 
 
 ```
 sudo nginx -t && sudo service nginx reload
-```
-
-**7. Automate Renewal**
-
-Edit `crontab.conf` and append it to your existing cron jobs for automatic renewal. This is important, since Let's Encrypt certificates expire in three months.
-
-```
-nano ~/bubbly/crontab.conf
-cat ~/bubbly/crontab.conf > /tmp/bubbly-crontab
-crontab -l >> /tmp/bubbly-crontab
-crontab /tmp/bubbly-crontab
 ```
 
 ---
