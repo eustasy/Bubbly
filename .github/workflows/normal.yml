@@ -11,20 +11,22 @@ on:
 
 jobs:
   normal-tests:
+    permissions:
+      contents: read
     strategy:
       matrix:
-        php-version: [ "8.2", "8.1", "8.0", "7.4" ]
+        php-version: [ "8.6", "8.5", "8.4", "8.3", ]
     runs-on: ubuntu-latest
     steps:
     
     - name: Install PHP ${{ matrix.php-version }}
-      uses: shivammathur/setup-php@v2
+      uses: shivammathur/setup-php@accd6127cb78bee3e8082180cb391013d204ef9f # v2.37.0
       with:
         php-version: ${{ matrix.php-version }}
         #extensions: mbstring
         
     - name: Install Node.js
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v6
       with:
         # Version Spec of the version to use in SemVer notation.
         # It also emits such aliases as lts, latest, nightly and canary builds
@@ -37,13 +39,13 @@ jobs:
         check-latest: true
         
     - name: Checkout Repo
-      uses: actions/checkout@v3
+      uses: actions/checkout@v6
     
     - name: Copy .env
       run: php -r "file_exists('.env') || copy('.env.example', '.env');"
       
     - name: .Normal - Setup
-      run: git clone https://github.com/eustasy/.normal.git && cd .normal && git checkout af240a6c8960177bcb1d07815732df7eb15970c1 && cd ../ && npm install --silent -g npm && npm install --silent -g acorn
+      run: git clone https://github.com/eustasy/.normal.git && cd .normal && git checkout af240a6c8960177bcb1d07815732df7eb15970c1 && cd ../ && npm install --silent -g npm && npm install --silent -g acorn sql-lint
       
     - name: .Normal - Check JavaScript
       run: ./.normal/check-javascript.sh
@@ -52,7 +54,7 @@ jobs:
       run: ./.normal/check-php.sh
       
     - name: .Normal - Check SQL
-      uses: Bidaya0/sql-lint-in-action@v0.0.2
+      run: sql-lint .
       
     - name: .Normal - Check JSON
       run: php .normal/check-json.php
