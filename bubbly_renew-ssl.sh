@@ -9,6 +9,7 @@ sudo certbot certonly \
 	--authenticator webroot \
 	--webroot-path=/tmp/bubbly-authenticator \
 	--agree-tos \
+	--force-renew \
 	"$@"
 
 sudo service nginx reload
