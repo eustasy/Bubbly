@@ -1,6 +1,6 @@
 # Contributing
 
-We love pull requests from everyone. Check out our [open issues](https://github.com/eustasy/bubbly/issues), partically anything tagged as Bytesize, for things you can get to work on. By participating in this project, you agree to abide by the project [code of conduct](https://github.com/eustasy/bubbly/blob/master/.github/CODE_OF_CONDUCT.md).
+We love pull requests from everyone. Check out our [open issues](https://github.com/eustasy/Bubbly/issues), particularly anything tagged as Bytesize, for things you can get to work on. By participating in this project, you agree to abide by the project [code of conduct](https://github.com/eustasy/Bubbly/blob/master/.github/CODE_OF_CONDUCT.md).
 
 ## Making Changes
 
@@ -12,21 +12,21 @@ Once you've made changes and committed them in your fork, preferably on a nicely
 
 ### Filing an Issue
 
-Filing a new issue is a partially self-documenting process, as the [`.github/ISSUE_TEMPLATE.md`](https://github.com/eustasy/bubbly/blob/master/.github/ISSUE_TEMPLATE.md) file is automatically loaded to be filled out by the user.
+Filing a new issue is a partially self-documenting process, as the [`.github/ISSUE_TEMPLATE.md`](https://github.com/eustasy/Bubbly/blob/master/.github/ISSUE_TEMPLATE.md) file is automatically loaded to be filled out by the user.
 
-[`File an Issue`](https://github.com/eustasy/bubbly/issues/new)
+[`File an Issue`](https://github.com/eustasy/Bubbly/issues/new)
 
 ### Creating a Pull Request
 
-Similar to Filing an Issue, Creating a Pull Request is partially self-documenting as the [`.github/PULL_REQUEST_TEMPLATE.md`](https://github.com/eustasy/bubbly/blob/master/.github/PULL_REQUEST_TEMPLATE.md) file is automatically loaded into the system. First though, you will need to have [made the changes](#making-changes) in your fork.
+Similar to Filing an Issue, Creating a Pull Request is partially self-documenting as the [`.github/PULL_REQUEST_TEMPLATE.md`](https://github.com/eustasy/Bubbly/blob/master/.github/PULL_REQUEST_TEMPLATE.md) file is automatically loaded into the system. First though, you will need to have [made the changes](#making-changes) in your fork.
 
-[`Create a Pull Request`](https://github.com/eustasy/bubbly/compare/)
+[`Create a Pull Request`](https://github.com/eustasy/Bubbly/compare/)
 
 ## Current State
 
 ### Cipher Sources
 
-In [`nginx-config/directive/bubbly_rock-hard-ssl.conf`](https://github.com/eustasy/bubbly/blob/master/nginx-config/directive/bubbly_rock-hard-ssl.conf) you will find a list of three cipher suite options at the bottom. It is imperative that these are kept as up to date as possible. All were up to date as of 2017-08-17.
+In [`nginx-config/directive/bubbly_rock-hard-ssl.conf`](https://github.com/eustasy/Bubbly/blob/master/nginx-config/directive/bubbly_rock-hard-ssl.conf) you will find a list of three cipher suite options at the bottom. It is imperative that these are kept as up to date as possible.
 
 #### [Cipher List](https://cipherli.st)
 
@@ -78,7 +78,7 @@ ssl_ciphers 'ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECD
 
 Various headers are delivered from various configuration files. This list should help source any undesired headers you see being sent. Some headers can be sent from multiple locations.
 
-- [`nginx-config/directive/bubbly_security-headers.conf`](https://github.com/eustasy/bubbly/blob/master/nginx-config/directive/bubbly_security-headers.conf)
+- [`nginx-config/directive/bubbly_security-headers.conf`](https://github.com/eustasy/Bubbly/blob/master/nginx-config/directive/bubbly_security-headers.conf)
 - - `Access-Control-Allow-Origin`
 - - `Content-Security-Policy-Report-Only` and `X-Content-Security-Policy-Report-Only` and `X-WebKit-CSP-Report-Only`
 - - `Content-Security-Policy` and `X-Content-Security-Policy` and `X-WebKit-CSP`
@@ -89,15 +89,15 @@ Various headers are delivered from various configuration files. This list should
 - - `Server` 
 - - `Strict-Transport-Security`
 - - `XSS-Protection` and `X-XSS-Protection`
-- [`nginx-config/location/h5bp_expires.conf`](https://github.com/eustasy/bubbly/blob/master/nginx-config/location/h5bp_expires.conf)
+- [`nginx-config/location/h5bp_expires.conf`](https://github.com/eustasy/Bubbly/blob/master/nginx-config/location/h5bp_expires.conf)
 - - `Cache-Control`
-- [`nginx-config/directive/h5bp_x-ua-compatible.conf`](https://github.com/eustasy/bubbly/blob/master/nginx-config/directive/h5bp_x-ua-compatible.conf)
+- [`nginx-config/directive/h5bp_x-ua-compatible.conf`](https://github.com/eustasy/Bubbly/blob/master/nginx-config/directive/h5bp_x-ua-compatible.conf)
 - - `UA-Compatible` and `X-UA-Compatible`
-- [`nginx-config/directive/h5bp_no-transform.conf`](https://github.com/eustasy/bubbly/blob/master/nginx-config/directive/h5bp_no-transform.conf)
+- [`nginx-config/directive/h5bp_no-transform.conf`](https://github.com/eustasy/Bubbly/blob/master/nginx-config/directive/h5bp_no-transform.conf)
 - - `Cache-Control`
-- [`nginx-config/location/bubbly_extensionless-php.conf`](https://github.com/eustasy/bubbly/blob/master/nginx-config/location/bubbly_extensionless-php.conf)
+- [`nginx-config/location/bubbly_extensionless-php.conf`](https://github.com/eustasy/Bubbly/blob/master/nginx-config/location/bubbly_extensionless-php.conf)
 - - Suppresses `Powered-By` and `X-Powered-By`
-- [`nginx-config/directive/bubbly_rock-hard-ssl.conf`](https://github.com/eustasy/bubbly/blob/master/nginx-config/directive/bubbly_rock-hard-ssl.conf)
+- [`nginx-config/directive/bubbly_rock-hard-ssl.conf`](https://github.com/eustasy/Bubbly/blob/master/nginx-config/directive/bubbly_rock-hard-ssl.conf)
 
 ## Contact Points
 

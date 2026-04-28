@@ -2,15 +2,15 @@
     "name": "Bubbly: Certbot for Nginx",
     "description": "",
     "repository": {
-        "url": "https://github.com/eustasy/bubbly",
+        "url": "https://github.com/eustasy/Bubbly",
         "license": "MIT",
         "type": "git",
         "tests": "https://github.com/eustasy/Bubbly/actions/workflows/normal.yml",
-        "clone": "https://github.com/eustasy/bubbly.git"
+        "clone": "https://github.com/eustasy/Bubbly.git"
     },
     "bugs": {
-        "list": "https://github.com/eustasy/bubbly/issues",
-        "report": "https://github.com/eustasy/bubbly/issues/new"
+        "list": "https://github.com/eustasy/Bubbly/issues",
+        "report": "https://github.com/eustasy/Bubbly/issues/new"
     },
     "keywords": [
         "eustasy",

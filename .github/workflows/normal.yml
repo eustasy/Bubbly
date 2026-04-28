@@ -15,16 +15,16 @@ jobs:
       contents: read
     strategy:
       matrix:
-        php-version: [ "8.6", "8.5", "8.4", "8.3", ]
+        php-version: [ "8.5", "8.4", "8.3", "8.2" ]
     runs-on: ubuntu-latest
     steps:
-    
+
     - name: Install PHP ${{ matrix.php-version }}
       uses: shivammathur/setup-php@accd6127cb78bee3e8082180cb391013d204ef9f # v2.37.0
       with:
         php-version: ${{ matrix.php-version }}
         #extensions: mbstring
-        
+
     - name: Install Node.js
       uses: actions/setup-node@v6
       with:
@@ -32,32 +32,32 @@ jobs:
         # It also emits such aliases as lts, latest, nightly and canary builds
         # Examples: 12.x, 10.15.1, >=10.15.0, lts/Hydrogen, 16-nightly, latest, node
         node-version: 'lts/*'
-        # Set this option if you want the action to check for the latest available version 
+        # Set this option if you want the action to check for the latest available version
         # that satisfies the version spec.
-        # It will only get affect for lts Nodejs versions (12.x, >=10.15.0, lts/Hydrogen). 
+        # It will only get affect for lts Nodejs versions (12.x, >=10.15.0, lts/Hydrogen).
         # Default: false
         check-latest: true
-        
+
     - name: Checkout Repo
       uses: actions/checkout@v6
-    
+
     - name: Copy .env
       run: php -r "file_exists('.env') || copy('.env.example', '.env');"
-      
+
     - name: .Normal - Setup
       run: git clone https://github.com/eustasy/.normal.git && cd .normal && git checkout af240a6c8960177bcb1d07815732df7eb15970c1 && cd ../ && npm install --silent -g npm && npm install --silent -g acorn sql-lint
-      
+
     - name: .Normal - Check JavaScript
       run: ./.normal/check-javascript.sh
-      
+
     - name: .Normal - Check PHP
       run: ./.normal/check-php.sh
-      
+
     - name: .Normal - Check SQL
       run: sql-lint .
-      
+
     - name: .Normal - Check JSON
       run: php .normal/check-json.php
-      
+
     - name: .Normal - Check XML
       run: php .normal/check-xml.php
