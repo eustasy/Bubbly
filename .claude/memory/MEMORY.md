@@ -1,0 +1,2 @@
+- [Keep nice formatting in config files](feedback_formatting.md) — don't flatten multi-line, aligned values when fixing bugs; use `set`-style accumulators or similar.
+- [Version-option lists — descending order, include all supported, latest is default](feedback_version_lists.md) — newest at top is `[DEFAULT]` and uncommented; include security-supported versions; keep php_sockets.conf and CI matrix in sync.
