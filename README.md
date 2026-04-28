@@ -65,7 +65,7 @@ Fetch your certificates like this:
 
 It will ask for the root password, and an email address, so hang around, it shouldn't take more than a few seconds.
 
-It should also tell you Certbot set up auto-renewals in the background.
+Certbot will set up a systemd timer that runs `certbot renew` automatically twice a day. The `--deploy-hook` passed by the script is stored in `/etc/letsencrypt/renewal/example.com.conf`, so Nginx will be reloaded automatically after each successful renewal — no cron job or manual renewal needed.
 
 **6. Start using the Certificates**
 
