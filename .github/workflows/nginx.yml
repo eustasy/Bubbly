@@ -1,0 +1,68 @@
+name: Nginx Config
+
+on:
+  push:
+    paths:
+      - 'nginx-config/**'
+      - '.github/workflows/nginx.yml'
+  pull_request:
+    paths:
+      - 'nginx-config/**'
+      - '.github/workflows/nginx.yml'
+
+jobs:
+  nginx-t:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 1
+
+      - name: Install nginx mainline
+        # Use the nginx.org mainline repo for the most up-to-date nginx build.
+        # ssl_ecdh_curve X25519MLKEM768 (post-quantum hybrid) requires
+        # nginx 1.27.3+ with OpenSSL 3.5+. If the system OpenSSL is older,
+        # the nginx -t step will fail with an unknown curve error.
+        run: |
+          curl -fsSL https://nginx.org/keys/nginx_signing.key \
+            | gpg --dearmor \
+            | sudo tee /usr/share/keyrings/nginx-archive-keyring.gpg > /dev/null
+          echo "deb [signed-by=/usr/share/keyrings/nginx-archive-keyring.gpg] \
+            https://nginx.org/packages/mainline/ubuntu $(lsb_release -cs) nginx" \
+            | sudo tee /etc/apt/sources.list.d/nginx.list
+          sudo apt-get update
+          sudo apt-get install -y nginx
+          nginx -v
+
+      - name: Copy configs to /etc/nginx
+        run: sudo rsync -avh nginx-config/ /etc/nginx/
+
+      - name: Generate session ticket key
+        run: |
+          sudo mkdir -p /etc/nginx/ssl
+          sudo openssl rand -out /etc/nginx/ssl/ticket.key 80
+
+      - name: Generate self-signed certificate for example.com
+        # bubbly_live.conf expects /etc/letsencrypt/live/example.com/*.pem.
+        # A self-signed cert satisfies nginx -t's file-existence and PEM-validity
+        # checks. OCSP stapling is not exercised during config test.
+        run: |
+          sudo mkdir -p /etc/letsencrypt/live/example.com
+          sudo openssl req -x509 \
+            -newkey ec \
+            -pkeyopt ec_paramgen_curve:P-384 \
+            -keyout /etc/letsencrypt/live/example.com/privkey.pem \
+            -out /etc/letsencrypt/live/example.com/fullchain.pem \
+            -days 1 -nodes \
+            -subj "/CN=example.com"
+
+      - name: Enable site templates
+        run: |
+          sudo rm -f /etc/nginx/sites-enabled/default
+          sudo ln -s /etc/nginx/sites-available/bubbly_verify.conf \
+            /etc/nginx/sites-enabled/bubbly_verify.conf
+          sudo ln -s /etc/nginx/sites-available/bubbly_live.conf \
+            /etc/nginx/sites-enabled/bubbly_live.conf
+
+      - name: nginx -t
+        run: sudo nginx -t
