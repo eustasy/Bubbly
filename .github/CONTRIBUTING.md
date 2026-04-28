@@ -61,6 +61,9 @@ Various headers are delivered from various configuration files. This list should
 - - `Access-Control-Allow-Origin`
 - - `Content-Security-Policy-Report-Only`
 - - `Content-Security-Policy`
+- - `Cross-Origin-Embedder-Policy`
+- - `Cross-Origin-Opener-Policy`
+- - `Cross-Origin-Resource-Policy`
 - - `X-Content-Type-Options`
 - - `X-Frame-Options`
 - - `Feature-Policy`
