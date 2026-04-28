@@ -80,10 +80,9 @@ Various headers are delivered from various configuration files. This list should
 
 - [`nginx-config/directive/bubbly_security-headers.conf`](https://github.com/eustasy/Bubbly/blob/master/nginx-config/directive/bubbly_security-headers.conf)
 - - `Access-Control-Allow-Origin`
-- - `Content-Security-Policy-Report-Only` and `X-Content-Security-Policy-Report-Only` and `X-WebKit-CSP-Report-Only`
-- - `Content-Security-Policy` and `X-Content-Security-Policy` and `X-WebKit-CSP`
+- - `Content-Security-Policy-Report-Only`
+- - `Content-Security-Policy`
 - - `X-Content-Type-Options`
-- - `Expect-CT`
 - - `X-Frame-Options`
 - - `Referrer-Policy`
 - - `Server`
@@ -91,8 +90,6 @@ Various headers are delivered from various configuration files. This list should
 - - `X-XSS-Protection`
 - [`nginx-config/location/h5bp_expires.conf`](https://github.com/eustasy/Bubbly/blob/master/nginx-config/location/h5bp_expires.conf)
 - - `Cache-Control`
-- [`nginx-config/directive/h5bp_x-ua-compatible.conf`](https://github.com/eustasy/Bubbly/blob/master/nginx-config/directive/h5bp_x-ua-compatible.conf)
-- - `X-UA-Compatible`
 - [`nginx-config/directive/h5bp_no-transform.conf`](https://github.com/eustasy/Bubbly/blob/master/nginx-config/directive/h5bp_no-transform.conf)
 - - `Cache-Control`
 - [`nginx-config/location/bubbly_extensionless-php.conf`](https://github.com/eustasy/Bubbly/blob/master/nginx-config/location/bubbly_extensionless-php.conf)
