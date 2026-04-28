@@ -42,7 +42,7 @@ The README tells operators to grep for these. Don't quietly drop or rephrase the
 
 ## CSP / security-headers structure
 
-`directive/bubbly_security-headers_csp.conf` builds the Content-Security-Policy across many `set $bubbly_csp "$bubbly_csp …";` lines so each policy directive stays on its own readable line, then emits one `add_header` per header name (`Content-Security-Policy`, `X-Content-Security-Policy`, `X-WebKit-CSP`) reusing the variable. If you extend the policy, append another `set` line — don't collapse it into a single quoted multi-line value (multi-line quoted strings produce a header value containing literal newlines, which is invalid HTTP).
+`directive/bubbly_security-headers_csp.conf` builds the Content-Security-Policy across many `set $bubbly_csp "$bubbly_csp …";` lines so each policy directive stays on its own readable line, then emits a single `add_header Content-Security-Policy $bubbly_csp always;`. If you extend the policy, append another `set` line — don't collapse it into a single quoted multi-line value (multi-line quoted strings produce a header value containing literal newlines, which is invalid HTTP).
 
 ## CI
 
