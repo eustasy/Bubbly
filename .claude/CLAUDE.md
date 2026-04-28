@@ -10,7 +10,7 @@ Bubbly is a set of Nginx configuration templates plus three helper bash scripts 
 
 The README walks through a fixed six-step setup. The three scripts at the repo root each correspond to a step:
 
-1. `bubbly_generate-statics.sh` — creates `/etc/nginx/ssl/ticket.key` (80-byte random) and `/etc/nginx/ssl/dhparam3.pem` (3072-bit DH params). Run once per server; takes a long time.
+1. `bubbly_generate-tickets.sh` — creates `/etc/nginx/ssl/ticket.key` (80-byte random). Run once per server.
 2. `bubbly_copy-configs.sh` — `rsync -avh "$SCRIPT_DIR/nginx-config/" /etc/nginx/`. The script resolves its own directory, so it works regardless of CWD. Re-running it is the way to roll out config changes.
 3. `bubbly_renew-ssl.sh -d example.com -d www.example.com` — invokes `certbot certonly --authenticator webroot --webroot-path=/tmp/bubbly-authenticator …`. After issuance/renewal it `service nginx reload`s.
 

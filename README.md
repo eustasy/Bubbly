@@ -22,10 +22,10 @@ git clone https://github.com/eustasy/Bubbly
 Generate the static keys once per server.
 
 ```bash
-~/Bubbly/bubbly_generate-statics.sh
+~/Bubbly/bubbly_generate-tickets.sh
 ```
 
-As it will warn, this will take a while.
+As it will warn, this might take a while.
 
 Have a seat.
 
