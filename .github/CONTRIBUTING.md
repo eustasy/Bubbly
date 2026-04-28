@@ -26,52 +26,31 @@ Similar to Filing an Issue, Creating a Pull Request is partially self-documentin
 
 ### Cipher Sources
 
-In [`nginx-config/directive/bubbly_rock-hard-ssl.conf`](https://github.com/eustasy/Bubbly/blob/master/nginx-config/directive/bubbly_rock-hard-ssl.conf) you will find a list of three cipher suite options at the bottom. It is imperative that these are kept as up to date as possible.
+In [`nginx-config/directive/bubbly_rock-hard-ssl.conf`](https://github.com/eustasy/Bubbly/blob/master/nginx-config/directive/bubbly_rock-hard-ssl.conf) you will find two cipher suite options. It is imperative that these are kept as up to date as possible. Both are generated from the [Mozilla SSL Configuration Generator](https://ssl-config.mozilla.org/) (Guideline v6.0).
 
-#### [Cipher List](https://cipherli.st)
+#### Option 1. Modern — TLS 1.3 only
 
-Super-modern, probably not suitable for production, very secure.
+Drops everything older than ~2020 browsers.
 
-- Grade A  (A+ with HSTS at >= 6 Months)
-- 100 % Security
-- Low Compatibility
-- - No Android 2
-- - No Java
-- - No IE < 11
-- Robust Forward Secrecy
+- Supports Firefox 63, Android 10.0, Chrome 70, Edge 75, Java 11, OpenSSL 1.1.1, Opera 57, Safari 12.1
 
 ```
-ssl_ciphers 'EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH';
+ssl_protocols TLSv1.3;
+ssl_ecdh_curve X25519MLKEM768:X25519:prime256v1:secp384r1;
+ssl_prefer_server_ciphers off;
 ```
 
-#### [DEFAULT] [Mozilla SSL Configuration Generator](https://mozilla.github.io/server-side-tls/ssl-config-generator/) using the setting "Nginx for Modern Browsers".
+#### [DEFAULT] Option 2. Intermediate — TLS 1.2 + 1.3
 
-Modern, no XP, secure.
+Supports the last several versions of every modern browser, plus a long tail.
 
-- Grade A (A+ with HSTS at >= 6 Months)
-- 90 % Security
-- Medium Compatibility
-- - No Java 6 (No DH parameters > 1024 bits)
-- - No IE on XP
-- Robust Forward Secrecy
+- Supports Firefox 31.3.0, Android 4.4.2, Chrome 49, Edge 15 on Windows 10, IE 11 on Windows 10, Java 8u161, OpenSSL 1.0.1l, Opera 20, Safari 9
 
 ```
-ssl_ciphers 'ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256';
-```
-
-#### [Mozilla SSL Configuration Generator](https://mozilla.github.io/server-side-tls/ssl-config-generator/) using the setting "Nginx for Intermediate Browsers"
-
-Intermediate, no IE <= 6, less secure.
-
-- Grade A-
-- 90 % Security
-- High Compatibility
-- - No Java 6 (No DH parameters > 1024 bits)
-- - No IE 6
-- Some Forward Secrecy
-
-```
-ssl_ciphers 'ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA:ECDHE-RSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-RSA-AES256-SHA256:DHE-RSA-AES256-SHA:ECDHE-ECDSA-DES-CBC3-SHA:ECDHE-RSA-DES-CBC3-SHA:EDH-RSA-DES-CBC3-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:DES-CBC3-SHA:!DSS';
+ssl_protocols TLSv1.2 TLSv1.3;
+ssl_ecdh_curve X25519MLKEM768:X25519:prime256v1:secp384r1;
+ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305;
+ssl_prefer_server_ciphers off;
 ```
 
 ### Headers
@@ -84,6 +63,8 @@ Various headers are delivered from various configuration files. This list should
 - - `Content-Security-Policy`
 - - `X-Content-Type-Options`
 - - `X-Frame-Options`
+- - `Feature-Policy`
+- - `Permissions-Policy`
 - - `Referrer-Policy`
 - - `Server`
 - - `Strict-Transport-Security`
