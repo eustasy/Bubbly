@@ -1,0 +1,28 @@
+# eustasy/.Normal 4.0beta1
+name: Shell
+
+on:
+  push:
+    branches: [main]
+    paths: ["**.sh"]
+  pull_request:
+    branches: [main]
+    paths: ["**.sh"]
+
+permissions:
+  contents: read
+
+jobs:
+  sh:
+    name: Lint + format
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: qltysh/qlty-action/install@v2
+
+      - name: Lint (shellcheck)
+        run: qlty check --all --no-formatters --filter=shellcheck
+
+      - name: Format check (shfmt)
+        run: qlty check --all --filter=shfmt

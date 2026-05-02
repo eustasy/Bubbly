@@ -1,0 +1,31 @@
+# eustasy/.Normal 4.0beta1
+name: XML
+
+on:
+  push:
+    branches: [main]
+    paths: ["**.xml"]
+  pull_request:
+    branches: [main]
+    paths: ["**.xml"]
+
+permissions:
+  contents: read
+
+jobs:
+  xml:
+    name: Lint + format
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install xmllint
+        run: sudo apt-get install -y libxml2-utils
+
+      - name: Lint XML (xmllint)
+        run: find . -name "*.xml" -not -path "*/vendor/*" -not -path "*/node_modules/*" | xargs xmllint --noout
+
+      - uses: qltysh/qlty-action/install@v2
+
+      - name: Format check (prettier)
+        run: qlty check --all --filter=prettier

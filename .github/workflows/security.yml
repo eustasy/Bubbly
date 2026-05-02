@@ -1,0 +1,26 @@
+# eustasy/.Normal 4.0beta1
+name: Security
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  security:
+    name: Security scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout (full history for gitleaks)
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - uses: qltysh/qlty-action/install@v2
+
+      - name: Security scan
+        run: qlty check --all --no-formatters --filter=gitleaks --filter=trivy --filter=bandit --filter=semgrep --filter=osv-scanner

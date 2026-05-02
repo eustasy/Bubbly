@@ -1,0 +1,129 @@
+[qlty]
+# Exclude patterns apply to all plugins (linting and formatting).
+# Sources: old .eslintignore, .stylelintignore, and .codeclimate.yml defaults.
+exclude_patterns = [
+  # Minified / bundled / custom overrides
+  "**/*.min.*",
+  "**/*.pack.*",
+  "**/*.custom.*",
+
+  # Legacy libs directory
+  "**/_libs/**",
+
+  # Dependency directories
+  "**/vendor/**",
+  "**/node_modules/**",
+
+  # Build output
+  "**/dist/**",
+  "**/build/**",
+  "**/out/**",
+
+  # Coverage output
+  "**/coverage/**",
+
+  # Python caches
+  "**/__pycache__/**",
+  "**/.pytest_cache/**",
+  "**/*.pyc",
+]
+
+# ── Smells ──────────────────────────────────────────────────────────────────
+# Matches Phoenix thresholds.
+
+[smells]
+[smells.identical]
+threshold = 15
+
+[smells.similar]
+threshold = 15
+
+[smells.complexity]
+threshold = 22
+
+[smells.nested_control_flow]
+threshold = 4
+
+[smells.function_parameters]
+threshold = 10
+
+# ── Linters ──────────────────────────────────────────────────────────────────
+
+[[plugin]]
+name = "oxc"
+
+[[plugin]]
+name = "stylelint"
+config_file = ".qlty/configs/.stylelintrc.json"
+
+[[plugin]]
+name = "markdownlint"
+config_file = ".qlty/configs/.markdownlint.jsonc"
+
+[[plugin]]
+name = "ruff"
+config_file = ".qlty/configs/ruff.toml"
+
+[[plugin]]
+name = "php-codesniffer"
+
+[[plugin]]
+name = "phpmd"
+
+[[plugin]]
+name = "phpstan"
+
+[[plugin]]
+name = "sqlfluff"
+config_file = ".qlty/configs/.sqlfluff"
+
+[[plugin]]
+name = "yamllint"
+
+[[plugin]]
+name = "shellcheck"
+
+[[plugin]]
+name = "actionlint"
+
+[[plugin]]
+name = "zizmor"
+
+[[plugin]]
+name = "knip"
+
+[[plugin]]
+name = "dotenv-linter"
+
+[[plugin]]
+name = "editorconfig-checker"
+
+# ── Formatters ───────────────────────────────────────────────────────────────
+
+[[plugin]]
+name = "prettier"
+config_file = ".qlty/configs/.prettierrc.json"
+
+[[plugin]]
+name = "php-cs-fixer"
+config_file = ".qlty/configs/.php-cs-fixer.php"
+
+[[plugin]]
+name = "shfmt"
+
+# ── Security ─────────────────────────────────────────────────────────────────
+
+[[plugin]]
+name = "gitleaks"
+
+[[plugin]]
+name = "bandit"
+
+[[plugin]]
+name = "trivy"
+
+[[plugin]]
+name = "semgrep"
+
+[[plugin]]
+name = "osv-scanner"

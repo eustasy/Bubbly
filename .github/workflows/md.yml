@@ -1,0 +1,28 @@
+# eustasy/.Normal 4.0beta1
+name: Markdown
+
+on:
+  push:
+    branches: [main]
+    paths: ["**.md"]
+  pull_request:
+    branches: [main]
+    paths: ["**.md"]
+
+permissions:
+  contents: read
+
+jobs:
+  md:
+    name: Lint + format
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: qltysh/qlty-action/install@v2
+
+      - name: Lint (markdownlint)
+        run: qlty check --all --no-formatters --filter=markdownlint
+
+      - name: Format check (prettier)
+        run: qlty check --all --filter=prettier

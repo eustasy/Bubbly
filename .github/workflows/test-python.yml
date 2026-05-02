@@ -1,0 +1,44 @@
+# eustasy/.Normal 4.0beta1
+name: Test (Python)
+
+# Remove the `if: false` below to activate this workflow.
+if: false
+
+on:
+  push:
+    branches: [main]
+    paths: ["**.py"]
+  pull_request:
+    branches: [main]
+    paths: ["**.py"]
+
+permissions:
+  contents: read
+
+jobs:
+  test-python:
+    name: pytest + coverage
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run pytest with coverage
+        run: pytest --cov --cov-report=xml:coverage/cobertura.xml
+
+      - name: Upload coverage to Qlty
+        if: matrix.python-version == '3.13'
+        uses: qltysh/qlty-action/coverage@v2
+        with:
+          coverage-token: ${{ secrets.QLTY_COVERAGE_TOKEN }}
+          files: coverage/cobertura.xml

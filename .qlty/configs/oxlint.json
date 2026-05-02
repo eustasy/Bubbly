@@ -1,0 +1,30 @@
+{
+  "$schema": "https://raw.githubusercontent.com/oxc-project/oxc/main/npm/oxlint/configuration_schema.json",
+  "env": {
+    "browser": true,
+    "es2024": true
+  },
+  "plugins": ["typescript", "unicorn", "import"],
+  "rules": {
+    // Carried over from old .eslintrc.json
+    "no-cond-assign": "error",
+    "no-console": "off",
+
+    // General correctness
+    "no-unused-vars": "error",
+    "no-undef": "error",
+    "no-var": "error",
+    "prefer-const": "error",
+    "eqeqeq": ["error", "always"],
+    "no-eval": "error",
+    "no-implied-eval": "error",
+    "no-new-func": "error",
+
+    // TypeScript (via typescript plugin)
+    "typescript/no-explicit-any": "warn",
+    "typescript/no-unused-vars": "error",
+
+    // Imports (via import plugin)
+    "import/no-duplicates": "error"
+  }
+}

@@ -1,0 +1,40 @@
+# eustasy/.Normal 4.0beta1
+name: Test (JavaScript / TypeScript)
+
+# Remove the `if: false` below to activate this workflow.
+if: false
+
+on:
+  push:
+    branches: [main]
+    paths: ["**.js", "**.ts", "**.mjs", "**.cjs", "**.mts", "**.cts"]
+  pull_request:
+    branches: [main]
+    paths: ["**.js", "**.ts", "**.mjs", "**.cjs", "**.mts", "**.cts"]
+
+permissions:
+  contents: read
+
+jobs:
+  test-js:
+    name: Vitest + coverage
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: lts/*
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Vitest with coverage
+        run: npx vitest run --coverage
+
+      - name: Upload coverage to Qlty
+        uses: qltysh/qlty-action/coverage@v2
+        with:
+          coverage-token: ${{ secrets.QLTY_COVERAGE_TOKEN }}
+          files: coverage/lcov.info

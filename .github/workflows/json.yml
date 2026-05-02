@@ -1,0 +1,25 @@
+# eustasy/.Normal 4.0beta1
+name: JSON
+
+on:
+  push:
+    branches: [main]
+    paths: ["**.json"]
+  pull_request:
+    branches: [main]
+    paths: ["**.json"]
+
+permissions:
+  contents: read
+
+jobs:
+  json:
+    name: Format check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: qltysh/qlty-action/install@v2
+
+      - name: Format check (prettier)
+        run: qlty check --all --filter=prettier

@@ -1,0 +1,32 @@
+# eustasy/.Normal 4.0beta1
+name: HTML
+
+on:
+  push:
+    branches: [main]
+    paths: ["**.html", "**.htm"]
+  pull_request:
+    branches: [main]
+    paths: ["**.html", "**.htm"]
+
+permissions:
+  contents: read
+
+jobs:
+  html:
+    name: Lint + format
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: lts/*
+
+      - name: Lint HTML (html-validate)
+        run: npx --yes html-validate "**/*.html" "**/*.htm"
+
+      - uses: qltysh/qlty-action/install@v2
+
+      - name: Format check (prettier)
+        run: qlty check --all --filter=prettier

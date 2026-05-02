@@ -1,0 +1,37 @@
+# eustasy/.Normal 4.0beta1
+name: PHP
+
+on:
+  push:
+    branches: [main]
+    paths: ["**.php"]
+  pull_request:
+    branches: [main]
+    paths: ["**.php"]
+
+permissions:
+  contents: read
+
+jobs:
+  php:
+    name: Lint + format
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php-version: ["8.3", "8.4", "8.5", "8.6"]
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          coverage: none
+
+      - uses: qltysh/qlty-action/install@v2
+
+      - name: Lint (phpcs, phpmd, phpstan)
+        run: qlty check --all --no-formatters --filter=php-codesniffer --filter=phpmd --filter=phpstan
+
+      - name: Format check (php-cs-fixer)
+        run: qlty check --all --filter=php-cs-fixer

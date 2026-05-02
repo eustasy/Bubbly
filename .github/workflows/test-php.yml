@@ -1,0 +1,45 @@
+# eustasy/.Normal 4.0beta1
+name: Test (PHP)
+
+# Remove the `if: false` below to activate this workflow.
+if: false
+
+on:
+  push:
+    branches: [main]
+    paths: ["**.php"]
+  pull_request:
+    branches: [main]
+    paths: ["**.php"]
+
+permissions:
+  contents: read
+
+jobs:
+  test-php:
+    name: PHPUnit + coverage
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php-version: ["8.3", "8.4", "8.5", "8.6"]
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          coverage: pcov
+
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Run PHPUnit with coverage
+        run: vendor/bin/phpunit --coverage-clover coverage/clover.xml
+
+      - name: Upload coverage to Qlty
+        if: matrix.php-version == '8.6'
+        uses: qltysh/qlty-action/coverage@v2
+        with:
+          coverage-token: ${{ secrets.QLTY_COVERAGE_TOKEN }}
+          files: coverage/clover.xml

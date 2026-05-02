@@ -1,0 +1,36 @@
+# eustasy/.Normal 4.0beta1
+name: Python
+
+on:
+  push:
+    branches: [main]
+    paths: ["**.py"]
+  pull_request:
+    branches: [main]
+    paths: ["**.py"]
+
+permissions:
+  contents: read
+
+jobs:
+  python:
+    name: Lint + format
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - uses: qltysh/qlty-action/install@v2
+
+      - name: Lint (ruff, bandit)
+        run: qlty check --all --no-formatters --filter=ruff --filter=bandit
+
+      - name: Format check (ruff)
+        run: qlty check --all --filter=ruff
