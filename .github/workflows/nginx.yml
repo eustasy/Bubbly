@@ -10,6 +10,9 @@ on:
       - 'nginx-config/**'
       - '.github/workflows/nginx.yml'
 
+permissions:
+  contents: read
+
 jobs:
   nginx-t:
     runs-on: ubuntu-latest
@@ -17,6 +20,7 @@ jobs:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 1
+          persist-credentials: false
 
       - name: Install nginx mainline
         # Use the nginx.org mainline repo for the most up-to-date nginx build.
