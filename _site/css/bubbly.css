@@ -697,6 +697,14 @@ html, body { background: var(--color-bg); }
 	padding: 3px 8px;
 	border: 1px solid var(--color-border);
 	white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+	text-decoration: none;
+	transition: color var(--duration-fast) var(--easing),
+	            border-color var(--duration-fast) var(--easing);
+	display: block; min-width: 0;
+}
+a.b-shot-url:hover {
+	color: var(--accent);
+	border-color: color-mix(in oklab, var(--accent) 35%, var(--color-border));
 }
 .b-shot-body { padding: var(--space-5); }
 .b-shot-body .b-score-block { box-shadow: none; border: 0; padding: 0; background: transparent; }
