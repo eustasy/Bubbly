@@ -5,7 +5,14 @@
 <title>Bubbly · Better SSL in Nginx, in 10 minutes</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="description" content="Drop-in Nginx configuration and Certbot setup scripts. A+ on SSL Labs and A on SecurityHeaders.io, the same day you ship.">
-<link rel="icon" href="assets/favicon.ico">
+
+<link rel="icon" type="image/png" href="assets/favicon-96x96.png" sizes="96x96" />
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+<link rel="shortcut icon" href="assets/favicon.ico" />
+<link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png" />
+<meta name="apple-mobile-web-app-title" content="eustasy/Bubbly" />
+<link rel="manifest" href="assets/site.webmanifest" />
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
@@ -134,7 +141,7 @@
 			</li>
 			<li>
 				<h3>Optional headers pack.</h3>
-				<p>CSP, X-Frame-Options, Referrer-Policy, Permissions-Policy. Drop in <code>bubbly_headers.conf</code>, get the SecurityHeaders A.</p>
+				<p>CSP, X-Frame-Options, Referrer-Policy, Permissions-Policy. Include <code>directive/bubbly_security-headers.conf</code> in your server block, get the SecurityHeaders A.</p>
 			</li>
 		</ul>
 	</section>
@@ -182,44 +189,44 @@
 					<tr>
 						<th scope="row">Nginx config that scores A+</th>
 						<td class="bc-pick"><span class="bc-cell ok"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--accent)" opacity="0.16"/><path d="M4.5 8.5 L 7 11 L 11.5 5.5" stroke="var(--accent)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></span></td>
-						<td><span class="bc-cell no"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--flexoki-red-50)"/><path d="M5 5 L 11 11 M 11 5 L 5 11" stroke="var(--flexoki-red-600)" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg><em>bring your own</em></span></td>
-						<td><span class="bc-cell no"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--flexoki-red-50)"/><path d="M5 5 L 11 11 M 11 5 L 5 11" stroke="var(--flexoki-red-600)" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg><em>bring your own</em></span></td>
+						<td><span class="bc-cell no"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--color-danger-bg)"/><path d="M5 5 L 11 11 M 11 5 L 5 11" stroke="var(--color-danger)" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg><em>bring your own</em></span></td>
+						<td><span class="bc-cell no"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--color-danger-bg)"/><path d="M5 5 L 11 11 M 11 5 L 5 11" stroke="var(--color-danger)" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg><em>bring your own</em></span></td>
 						<td><span class="bc-cell ok"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--accent)" opacity="0.16"/><path d="M4.5 8.5 L 7 11 L 11.5 5.5" stroke="var(--accent)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg><em>own server</em></span></td>
 					</tr>
 					<tr>
-						<th scope="row">Session-ticket rotation</th>
+						<th scope="row">Persistent ticket key</th>
 						<td class="bc-pick"><span class="bc-cell ok"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--accent)" opacity="0.16"/><path d="M4.5 8.5 L 7 11 L 11.5 5.5" stroke="var(--accent)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></span></td>
-						<td><span class="bc-cell no"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--flexoki-red-50)"/><path d="M5 5 L 11 11 M 11 5 L 5 11" stroke="var(--flexoki-red-600)" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg></span></td>
-						<td><span class="bc-cell no"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--flexoki-red-50)"/><path d="M5 5 L 11 11 M 11 5 L 5 11" stroke="var(--flexoki-red-600)" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg></span></td>
+						<td><span class="bc-cell no"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--color-danger-bg)"/><path d="M5 5 L 11 11 M 11 5 L 5 11" stroke="var(--color-danger)" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg></span></td>
+						<td><span class="bc-cell no"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--color-danger-bg)"/><path d="M5 5 L 11 11 M 11 5 L 5 11" stroke="var(--color-danger)" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg></span></td>
 						<td><span class="bc-cell meh"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--color-bg-tertiary)"/><path d="M4.5 8 L 11.5 8" stroke="var(--color-text-tertiary)" stroke-width="1.7" stroke-linecap="round" fill="none"/></svg></span></td>
 					</tr>
 					<tr>
 						<th scope="row">Security headers pack</th>
 						<td class="bc-pick"><span class="bc-cell ok"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--accent)" opacity="0.16"/><path d="M4.5 8.5 L 7 11 L 11.5 5.5" stroke="var(--accent)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg><em>optional</em></span></td>
-						<td><span class="bc-cell no"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--flexoki-red-50)"/><path d="M5 5 L 11 11 M 11 5 L 5 11" stroke="var(--flexoki-red-600)" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg></span></td>
-						<td><span class="bc-cell no"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--flexoki-red-50)"/><path d="M5 5 L 11 11 M 11 5 L 5 11" stroke="var(--flexoki-red-600)" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg></span></td>
-						<td><span class="bc-cell no"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--flexoki-red-50)"/><path d="M5 5 L 11 11 M 11 5 L 5 11" stroke="var(--flexoki-red-600)" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg><em>manual</em></span></td>
+						<td><span class="bc-cell no"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--color-danger-bg)"/><path d="M5 5 L 11 11 M 11 5 L 5 11" stroke="var(--color-danger)" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg></span></td>
+						<td><span class="bc-cell no"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--color-danger-bg)"/><path d="M5 5 L 11 11 M 11 5 L 5 11" stroke="var(--color-danger)" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg></span></td>
+						<td><span class="bc-cell no"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--color-danger-bg)"/><path d="M5 5 L 11 11 M 11 5 L 5 11" stroke="var(--color-danger)" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg><em>manual</em></span></td>
 					</tr>
 					<tr>
 						<th scope="row">Stays vanilla — no daemon</th>
 						<td class="bc-pick"><span class="bc-cell ok"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--accent)" opacity="0.16"/><path d="M4.5 8.5 L 7 11 L 11.5 5.5" stroke="var(--accent)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></span></td>
 						<td><span class="bc-cell ok"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--accent)" opacity="0.16"/><path d="M4.5 8.5 L 7 11 L 11.5 5.5" stroke="var(--accent)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></span></td>
 						<td><span class="bc-cell ok"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--accent)" opacity="0.16"/><path d="M4.5 8.5 L 7 11 L 11.5 5.5" stroke="var(--accent)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></span></td>
-						<td><span class="bc-cell no"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--flexoki-red-50)"/><path d="M5 5 L 11 11 M 11 5 L 5 11" stroke="var(--flexoki-red-600)" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg><em>replaces Nginx</em></span></td>
+						<td><span class="bc-cell no"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--color-danger-bg)"/><path d="M5 5 L 11 11 M 11 5 L 5 11" stroke="var(--color-danger)" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg><em>replaces Nginx</em></span></td>
 					</tr>
 					<tr>
 						<th scope="row">Read the source in 5&nbsp;min</th>
 						<td class="bc-pick"><span class="bc-cell ok"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--accent)" opacity="0.16"/><path d="M4.5 8.5 L 7 11 L 11.5 5.5" stroke="var(--accent)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg><em>bash + conf</em></span></td>
 						<td><span class="bc-cell meh"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--color-bg-tertiary)"/><path d="M4.5 8 L 11.5 8" stroke="var(--color-text-tertiary)" stroke-width="1.7" stroke-linecap="round" fill="none"/></svg><em>Python</em></span></td>
 						<td><span class="bc-cell meh"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--color-bg-tertiary)"/><path d="M4.5 8 L 11.5 8" stroke="var(--color-text-tertiary)" stroke-width="1.7" stroke-linecap="round" fill="none"/></svg></span></td>
-						<td><span class="bc-cell no"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--flexoki-red-50)"/><path d="M5 5 L 11 11 M 11 5 L 5 11" stroke="var(--flexoki-red-600)" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg><em>Go binary</em></span></td>
+						<td><span class="bc-cell no"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--color-danger-bg)"/><path d="M5 5 L 11 11 M 11 5 L 5 11" stroke="var(--color-danger)" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg><em>Go binary</em></span></td>
 					</tr>
 				</tbody>
 			</table>
 		</div>
 		<p class="b-compare-note">
 			Bubbly composes <em>with</em> Certbot — it doesn't replace it. The scripts wrap
-			<code>certbot certonly</code> and drop battle-tested snippets into <code>/etc/nginx/snippets/</code>.
+			<code>certbot certonly --webroot</code> and rsync battle-tested config blocks into <code>/etc/nginx/</code>.
 		</p>
 	</section>
 
@@ -278,7 +285,7 @@
 					</div>
 				</div>
 				<div class="b-step-body">
-					<p class="b-step-desc">Drops the snippets into <code>/etc/nginx/snippets/</code> for inclusion later.</p>
+					<p class="b-step-desc">Mirrors the repo's <code>nginx-config/</code> into <code>/etc/nginx/</code> — <code>conf.d/</code>, <code>directive/</code>, <code>location/</code>, <code>groups/</code>, and <code>sites-available/</code> all land in place.</p>
 					<div class="b-term" data-term="copy"><div class="b-term-bar"><span class="b-term-dots"><i></i><i></i><i></i></span><span class="b-term-lang">bash</span><div class="b-term-bar-spacer"></div><button type="button" class="b-copy" title="Copy to clipboard"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true"><rect x="4" y="4" width="9" height="10" rx="1.5" stroke="currentColor" stroke-width="1.4"/><path d="M3 11 V 3 a 1.5 1.5 0 0 1 1.5 -1.5 H 11" stroke="currentColor" stroke-width="1.4" fill="none"/></svg> Copy</button></div><pre class="b-term-body"></pre></div>
 				</div>
 			</li>
@@ -325,7 +332,7 @@
 					</div>
 				</div>
 				<div class="b-step-body">
-					<p class="b-step-desc">Replace the verification stub with the production site. Read the <code>[OPTION]</code>s and <code>[WARNING]</code>s; point the cert paths at your domain.</p>
+					<p class="b-step-desc">Add the HTTPS site alongside the HTTP one you already have. Keep <code>example.com_http.conf</code> symlinked — it answers ACME renewal challenges forever. Read the <code>[OPTION]</code>s and <code>[WARNING]</code>s; point the cert paths at your domain.</p>
 					<div class="b-term" data-term="swap"><div class="b-term-bar"><span class="b-term-dots"><i></i><i></i><i></i></span><span class="b-term-lang">bash</span><div class="b-term-bar-spacer"></div><button type="button" class="b-copy" title="Copy to clipboard"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true"><rect x="4" y="4" width="9" height="10" rx="1.5" stroke="currentColor" stroke-width="1.4"/><path d="M3 11 V 3 a 1.5 1.5 0 0 1 1.5 -1.5 H 11" stroke="currentColor" stroke-width="1.4" fill="none"/></svg> Copy</button></div><pre class="b-term-body"></pre></div>
 				</div>
 			</li>

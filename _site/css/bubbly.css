@@ -389,7 +389,7 @@ html, body { background: var(--color-bg); }
 	font-size: var(--font-size-xs);
 	color: var(--color-text-tertiary);
 }
-.bc-cell.no em { color: var(--flexoki-red-600); opacity: 0.85; }
+.bc-cell.no em { color: var(--color-danger); opacity: 0.85; }
 
 .b-compare-note {
 	max-width: 760px; margin: var(--space-6) auto 0;
@@ -674,7 +674,11 @@ html, body { background: var(--color-bg); }
 	border-radius: var(--rad);
 	overflow: hidden;
 	box-shadow: var(--shadow-md);
+	display: flex;
+	flex-direction: column;
 }
+.b-shot-body { flex: 1 1 auto; }
+.b-shot figcaption { margin-top: auto; }
 .b-shot-chrome {
 	display: flex; align-items: center; gap: var(--space-3);
 	padding: var(--space-2) var(--space-3);

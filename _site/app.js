@@ -9,10 +9,10 @@
 		install: 'cd &&\n{pkg} &&\ngit clone https://github.com/eustasy/Bubbly',
 		tickets: '~/Bubbly/bubbly_generate-tickets.sh',
 		copy:    '~/Bubbly/bubbly_copy-configs.sh',
-		verifyA: 'sudo cp /etc/nginx/sites-available/bubbly_verify.conf /etc/nginx/sites-available/{d}.conf\nsudo nano /etc/nginx/sites-available/{d}.conf',
-		verifyB: 'sudo ln -s /etc/nginx/sites-available/{d}.conf /etc/nginx/sites-enabled/{d}.conf\nsudo nginx -t && sudo service nginx reload',
+		verifyA: 'sudo cp /etc/nginx/sites-available/bubbly_http.conf /etc/nginx/sites-available/{d}_http.conf\nsudo nano /etc/nginx/sites-available/{d}_http.conf',
+		verifyB: 'sudo ln -s /etc/nginx/sites-available/{d}_http.conf /etc/nginx/sites-enabled/{d}_http.conf\nsudo nginx -t && sudo service nginx reload',
 		renew:   '~/Bubbly/bubbly_renew-ssl.sh -d {d} -d www.{d}',
-		swap:    'sudo rm /etc/nginx/sites-available/{d}.conf\nsudo cp /etc/nginx/sites-available/bubbly_live.conf /etc/nginx/sites-available/{d}.conf\nsudo nano /etc/nginx/sites-available/{d}.conf\nsudo nginx -t && sudo service nginx reload'
+		swap:    'sudo cp /etc/nginx/sites-available/bubbly_https.conf /etc/nginx/sites-available/{d}_https.conf\nsudo nano /etc/nginx/sites-available/{d}_https.conf\nsudo ln -s /etc/nginx/sites-available/{d}_https.conf /etc/nginx/sites-enabled/{d}_https.conf\nsudo nginx -t && sudo service nginx reload'
 	};
 
 	let currentDomain = 'example.com';
