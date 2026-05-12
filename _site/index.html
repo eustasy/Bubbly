@@ -1,0 +1,436 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Bubbly · Better SSL in Nginx, in 10 minutes</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Drop-in Nginx configuration and Certbot setup scripts. A+ on SSL Labs and A on SecurityHeaders.io, the same day you ship.">
+<link rel="icon" href="assets/favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+
+<link rel="stylesheet" href="css/flexoki.css">
+<link rel="stylesheet" href="css/reset.css">
+<link rel="stylesheet" href="css/typography.css">
+<link rel="stylesheet" href="css/button.css">
+<link rel="stylesheet" href="css/badge.css">
+<link rel="stylesheet" href="css/bubbly.css">
+<style>
+	:root {
+		--font-body: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+		--font-mono: "JetBrains Mono", "Berkeley Mono", "IBM Plex Mono", "Source Code Pro", ui-monospace, Menlo, Consolas, monospace;
+	}
+</style>
+</head>
+<body>
+<div class="b-page">
+
+	<header class="b-nav">
+		<a class="b-brand" href="#top">
+			<svg width="26" height="26" viewBox="0 0 100 100" aria-hidden="true">
+				<circle cx="50" cy="50" r="46" fill="none" stroke="currentColor" stroke-width="3"/>
+				<path d="M16 56 Q 30 42, 44 56 T 72 56 Q 80 56, 86 50" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+			</svg>
+			<span><b>eustasy</b> / bubbly</span>
+		</a>
+		<nav class="b-nav-links">
+			<a href="#steps">Setup</a>
+			<a href="#why">Why</a>
+			<a href="#compare">Compare</a>
+			<a href="#results">Results</a>
+			<a href="https://github.com/eustasy/Bubbly">GitHub ↗</a>
+		</nav>
+		<a class="btn btn-outline btn-sm" href="https://github.com/eustasy/Bubbly">Star on GitHub</a>
+	</header>
+	<div id="top"></div>
+
+	<section class="b-hero">
+		<div class="b-bubble-field" id="bubble-field" aria-hidden="true"></div>
+		<div class="b-hero-inner">
+			<div class="b-hero-text">
+				<div class="b-eyebrow">
+					<span class="badge badge-yellow">BASH</span>
+					<span class="b-eyebrow-dot">·</span>
+					<span>MIT</span>
+					<span class="b-eyebrow-dot">·</span>
+					<span>v3.0 · beta</span>
+				</div>
+				<h1 class="b-h1">
+					Better SSL in&nbsp;Nginx,<br>
+					<em>in ten minutes.</em>
+				</h1>
+				<p class="b-lead">
+					Drop-in configuration files and setup scripts for Certbot.
+					An <b>A+</b> on SSL&nbsp;Labs and an <b>A</b> on SecurityHeaders.io —
+					the same day you ship.
+				</p>
+
+				<div class="b-domain" id="b-domain">
+					<label for="b-dom-input">Your domain</label>
+					<div class="b-domain-row">
+						<span class="b-domain-prefix">https://</span>
+						<input id="b-dom-input" class="b-domain-input" type="text" placeholder="example.com" spellcheck="false" autocorrect="off" autocapitalize="off">
+						<button class="b-domain-clear" id="b-domain-clear" title="Clear" type="button">×</button>
+					</div>
+					<p class="b-domain-help">
+						We'll template <code data-domain>example.com</code> through every command below.
+					</p>
+				</div>
+
+				<div class="b-cta-row">
+					<a href="#steps" class="btn btn-primary btn-lg">Walk me through it</a>
+					<a href="https://github.com/eustasy/Bubbly" class="btn btn-ghost btn-lg">
+						git clone <code style="margin-left:4px;">eustasy/Bubbly</code>
+					</a>
+				</div>
+			</div>
+
+			<aside class="b-hero-side">
+				<div class="b-score-card">
+					<div class="b-score-card-head">
+						<span class="b-score-card-title">Test results</span>
+						<span class="b-score-card-when">last verified · today</span>
+					</div>
+					<div class="b-score-row">
+						<div class="b-score-grade plus"><span>A+</span></div>
+						<div class="b-score-meta">
+							<div class="b-score-src">ssllabs.com</div>
+							<div class="b-score-detail">Certificate · Protocols · Key exchange · Cipher strength</div>
+						</div>
+					</div>
+					<div class="b-score-row">
+						<div class="b-score-grade"><span>A</span></div>
+						<div class="b-score-meta">
+							<div class="b-score-src">securityheaders.io</div>
+							<div class="b-score-detail">HSTS · X-Frame-Options · Referrer-Policy · Permissions-Policy · CSP</div>
+						</div>
+					</div>
+					<div class="b-score-card-foot">
+						<span>Six categories, four headers, zero warnings.</span>
+					</div>
+				</div>
+			</aside>
+		</div>
+	</section>
+
+	<section class="b-why" id="why">
+		<div class="b-section-head">
+			<span class="b-section-eyebrow">Why</span>
+			<h2 class="b-h2">SSL is fiddly. This isn't.</h2>
+		</div>
+		<ul class="b-why-grid">
+			<li>
+				<h3>Vanilla, no surprises.</h3>
+				<p>Plain bash scripts. Plain Nginx config files. Read them top to bottom in five minutes. No DSL, no operator, no agent.</p>
+			</li>
+			<li>
+				<h3>One <code>--deploy-hook</code>, no cron.</h3>
+				<p>Certbot's systemd timer runs <code>certbot renew</code> twice a day. Bubbly's hook reloads Nginx on success. Set it. Forget it.</p>
+			</li>
+			<li>
+				<h3>OCSP, HSTS, session tickets.</h3>
+				<p>Stapling, perfect forward secrecy, modern ciphers, strict transport — the whole battery. The defaults match Mozilla's "Modern" profile.</p>
+			</li>
+			<li>
+				<h3>Optional headers pack.</h3>
+				<p>CSP, X-Frame-Options, Referrer-Policy, Permissions-Policy. Drop in <code>bubbly_headers.conf</code>, get the SecurityHeaders A.</p>
+			</li>
+		</ul>
+	</section>
+
+	<section class="b-compare" id="compare">
+		<div class="b-section-head">
+			<span class="b-section-eyebrow">Compare</span>
+			<h2 class="b-h2">vs. doing it by hand.</h2>
+			<p class="b-section-lede">
+				Certbot and acme.sh are great. They just don't ship the Nginx config you actually want.
+				Bubbly does — plus the headers, plus the ticket rotation, plus the renewal hook.
+			</p>
+		</div>
+		<div class="b-compare-wrap">
+			<table class="b-compare-table">
+				<colgroup>
+					<col class="bc-col-feat">
+					<col class="bc-col-pick">
+					<col><col><col>
+				</colgroup>
+				<thead>
+					<tr>
+						<th scope="col"></th>
+						<th scope="col" class="bc-pick"><span class="bc-pick-tag">Bubbly</span></th>
+						<th scope="col">Certbot, raw</th>
+						<th scope="col">acme.sh</th>
+						<th scope="col">Caddy</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<th scope="row">Issues Let's Encrypt certs</th>
+						<td class="bc-pick"><span class="bc-cell ok"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--accent)" opacity="0.16"/><path d="M4.5 8.5 L 7 11 L 11.5 5.5" stroke="var(--accent)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></span></td>
+						<td><span class="bc-cell ok"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--accent)" opacity="0.16"/><path d="M4.5 8.5 L 7 11 L 11.5 5.5" stroke="var(--accent)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></span></td>
+						<td><span class="bc-cell ok"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--accent)" opacity="0.16"/><path d="M4.5 8.5 L 7 11 L 11.5 5.5" stroke="var(--accent)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></span></td>
+						<td><span class="bc-cell ok"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--accent)" opacity="0.16"/><path d="M4.5 8.5 L 7 11 L 11.5 5.5" stroke="var(--accent)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></span></td>
+					</tr>
+					<tr>
+						<th scope="row">Auto-renews on a timer</th>
+						<td class="bc-pick"><span class="bc-cell ok"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--accent)" opacity="0.16"/><path d="M4.5 8.5 L 7 11 L 11.5 5.5" stroke="var(--accent)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></span></td>
+						<td><span class="bc-cell ok"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--accent)" opacity="0.16"/><path d="M4.5 8.5 L 7 11 L 11.5 5.5" stroke="var(--accent)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg><em>systemd</em></span></td>
+						<td><span class="bc-cell ok"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--accent)" opacity="0.16"/><path d="M4.5 8.5 L 7 11 L 11.5 5.5" stroke="var(--accent)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg><em>cron</em></span></td>
+						<td><span class="bc-cell ok"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--accent)" opacity="0.16"/><path d="M4.5 8.5 L 7 11 L 11.5 5.5" stroke="var(--accent)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></span></td>
+					</tr>
+					<tr>
+						<th scope="row">Nginx config that scores A+</th>
+						<td class="bc-pick"><span class="bc-cell ok"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--accent)" opacity="0.16"/><path d="M4.5 8.5 L 7 11 L 11.5 5.5" stroke="var(--accent)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></span></td>
+						<td><span class="bc-cell no"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--flexoki-red-50)"/><path d="M5 5 L 11 11 M 11 5 L 5 11" stroke="var(--flexoki-red-600)" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg><em>bring your own</em></span></td>
+						<td><span class="bc-cell no"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--flexoki-red-50)"/><path d="M5 5 L 11 11 M 11 5 L 5 11" stroke="var(--flexoki-red-600)" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg><em>bring your own</em></span></td>
+						<td><span class="bc-cell ok"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--accent)" opacity="0.16"/><path d="M4.5 8.5 L 7 11 L 11.5 5.5" stroke="var(--accent)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg><em>own server</em></span></td>
+					</tr>
+					<tr>
+						<th scope="row">Session-ticket rotation</th>
+						<td class="bc-pick"><span class="bc-cell ok"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--accent)" opacity="0.16"/><path d="M4.5 8.5 L 7 11 L 11.5 5.5" stroke="var(--accent)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></span></td>
+						<td><span class="bc-cell no"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--flexoki-red-50)"/><path d="M5 5 L 11 11 M 11 5 L 5 11" stroke="var(--flexoki-red-600)" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg></span></td>
+						<td><span class="bc-cell no"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--flexoki-red-50)"/><path d="M5 5 L 11 11 M 11 5 L 5 11" stroke="var(--flexoki-red-600)" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg></span></td>
+						<td><span class="bc-cell meh"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--color-bg-tertiary)"/><path d="M4.5 8 L 11.5 8" stroke="var(--color-text-tertiary)" stroke-width="1.7" stroke-linecap="round" fill="none"/></svg></span></td>
+					</tr>
+					<tr>
+						<th scope="row">Security headers pack</th>
+						<td class="bc-pick"><span class="bc-cell ok"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--accent)" opacity="0.16"/><path d="M4.5 8.5 L 7 11 L 11.5 5.5" stroke="var(--accent)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg><em>optional</em></span></td>
+						<td><span class="bc-cell no"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--flexoki-red-50)"/><path d="M5 5 L 11 11 M 11 5 L 5 11" stroke="var(--flexoki-red-600)" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg></span></td>
+						<td><span class="bc-cell no"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--flexoki-red-50)"/><path d="M5 5 L 11 11 M 11 5 L 5 11" stroke="var(--flexoki-red-600)" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg></span></td>
+						<td><span class="bc-cell no"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--flexoki-red-50)"/><path d="M5 5 L 11 11 M 11 5 L 5 11" stroke="var(--flexoki-red-600)" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg><em>manual</em></span></td>
+					</tr>
+					<tr>
+						<th scope="row">Stays vanilla — no daemon</th>
+						<td class="bc-pick"><span class="bc-cell ok"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--accent)" opacity="0.16"/><path d="M4.5 8.5 L 7 11 L 11.5 5.5" stroke="var(--accent)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></span></td>
+						<td><span class="bc-cell ok"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--accent)" opacity="0.16"/><path d="M4.5 8.5 L 7 11 L 11.5 5.5" stroke="var(--accent)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></span></td>
+						<td><span class="bc-cell ok"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--accent)" opacity="0.16"/><path d="M4.5 8.5 L 7 11 L 11.5 5.5" stroke="var(--accent)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></span></td>
+						<td><span class="bc-cell no"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--flexoki-red-50)"/><path d="M5 5 L 11 11 M 11 5 L 5 11" stroke="var(--flexoki-red-600)" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg><em>replaces Nginx</em></span></td>
+					</tr>
+					<tr>
+						<th scope="row">Read the source in 5&nbsp;min</th>
+						<td class="bc-pick"><span class="bc-cell ok"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--accent)" opacity="0.16"/><path d="M4.5 8.5 L 7 11 L 11.5 5.5" stroke="var(--accent)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg><em>bash + conf</em></span></td>
+						<td><span class="bc-cell meh"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--color-bg-tertiary)"/><path d="M4.5 8 L 11.5 8" stroke="var(--color-text-tertiary)" stroke-width="1.7" stroke-linecap="round" fill="none"/></svg><em>Python</em></span></td>
+						<td><span class="bc-cell meh"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--color-bg-tertiary)"/><path d="M4.5 8 L 11.5 8" stroke="var(--color-text-tertiary)" stroke-width="1.7" stroke-linecap="round" fill="none"/></svg></span></td>
+						<td><span class="bc-cell no"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--flexoki-red-50)"/><path d="M5 5 L 11 11 M 11 5 L 5 11" stroke="var(--flexoki-red-600)" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg><em>Go binary</em></span></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<p class="b-compare-note">
+			Bubbly composes <em>with</em> Certbot — it doesn't replace it. The scripts wrap
+			<code>certbot certonly</code> and drop battle-tested snippets into <code>/etc/nginx/snippets/</code>.
+		</p>
+	</section>
+
+	<section class="b-steps" id="steps">
+		<div class="b-section-head">
+			<span class="b-section-eyebrow">Setup · ~10 min</span>
+			<h2 class="b-h2">From cold server to A+, in six steps.</h2>
+			<p class="b-section-lede">
+				You'll need basic Nginx familiarity. You won't need to know Certbot,
+				Let's Encrypt, the ACME spec, or how SSL works underneath.
+			</p>
+		</div>
+
+		<div class="b-distro-tabs" role="tablist" aria-label="Distribution">
+			<button class="b-distro-tab on" role="tab" aria-selected="true" data-distro="ubuntu" data-pkg="sudo apt install git certbot">Ubuntu / Debian</button>
+			<button class="b-distro-tab" role="tab" aria-selected="false" data-distro="fedora" data-pkg="sudo dnf install git certbot">Fedora / RHEL</button>
+			<button class="b-distro-tab" role="tab" aria-selected="false" data-distro="arch" data-pkg="sudo pacman -S git certbot">Arch</button>
+			<button class="b-distro-tab" role="tab" aria-selected="false" data-distro="alpine" data-pkg="sudo apk add git certbot">Alpine</button>
+		</div>
+
+		<ol class="b-step-list">
+			<li class="b-step">
+				<div class="b-step-head">
+					<div class="b-step-bubble" aria-hidden="true"><span class="b-step-bubble-glint"></span><span class="b-step-num">1</span></div>
+					<div>
+						<div class="b-step-kicker">Step 1</div>
+						<h3 class="b-step-title">Install Certbot. Clone Bubbly.</h3>
+					</div>
+				</div>
+				<div class="b-step-body">
+					<p class="b-step-desc">Drop into <code>$HOME</code>, grab the dependencies, pull the repo.</p>
+					<div class="b-term" data-term="install"><div class="b-term-bar"><span class="b-term-dots"><i></i><i></i><i></i></span><span class="b-term-lang">bash</span><div class="b-term-bar-spacer"></div><button type="button" class="b-copy" title="Copy to clipboard"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true"><rect x="4" y="4" width="9" height="10" rx="1.5" stroke="currentColor" stroke-width="1.4"/><path d="M3 11 V 3 a 1.5 1.5 0 0 1 1.5 -1.5 H 11" stroke="currentColor" stroke-width="1.4" fill="none"/></svg> Copy</button></div><pre class="b-term-body"></pre></div>
+					<div class="b-step-hint"><svg width="18" height="18" viewBox="0 0 20 20" aria-hidden="true" style="flex:0 0 auto"><circle cx="10" cy="10" r="8" fill="none" stroke="var(--accent)" stroke-width="1.5"/><circle cx="7" cy="7" r="1.6" fill="var(--accent)" opacity="0.7"/></svg><span>Pick a distro above to swap the package manager.</span></div>
+				</div>
+			</li>
+			<li class="b-step">
+				<div class="b-step-head">
+					<div class="b-step-bubble" aria-hidden="true"><span class="b-step-bubble-glint"></span><span class="b-step-num">2</span></div>
+					<div>
+						<div class="b-step-kicker">Step 2</div>
+						<h3 class="b-step-title">Generate session tickets.</h3>
+					</div>
+				</div>
+				<div class="b-step-body">
+					<p class="b-step-desc">One-time per server. It is slow on purpose — the entropy is the point.</p>
+					<div class="b-term" data-term="tickets"><div class="b-term-bar"><span class="b-term-dots"><i></i><i></i><i></i></span><span class="b-term-lang">bash</span><div class="b-term-bar-spacer"></div><button type="button" class="b-copy" title="Copy to clipboard"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true"><rect x="4" y="4" width="9" height="10" rx="1.5" stroke="currentColor" stroke-width="1.4"/><path d="M3 11 V 3 a 1.5 1.5 0 0 1 1.5 -1.5 H 11" stroke="currentColor" stroke-width="1.4" fill="none"/></svg> Copy</button></div><pre class="b-term-body"></pre></div>
+					<div class="b-step-hint"><svg width="18" height="18" viewBox="0 0 20 20" aria-hidden="true" style="flex:0 0 auto"><circle cx="10" cy="10" r="8" fill="none" stroke="var(--accent)" stroke-width="1.5"/><circle cx="7" cy="7" r="1.6" fill="var(--accent)" opacity="0.7"/></svg><span>Go make a coffee. Or two.</span></div>
+				</div>
+			</li>
+			<li class="b-step">
+				<div class="b-step-head">
+					<div class="b-step-bubble" aria-hidden="true"><span class="b-step-bubble-glint"></span><span class="b-step-num">3</span></div>
+					<div>
+						<div class="b-step-kicker">Step 3</div>
+						<h3 class="b-step-title">Copy the config blocks.</h3>
+					</div>
+				</div>
+				<div class="b-step-body">
+					<p class="b-step-desc">Drops the snippets into <code>/etc/nginx/snippets/</code> for inclusion later.</p>
+					<div class="b-term" data-term="copy"><div class="b-term-bar"><span class="b-term-dots"><i></i><i></i><i></i></span><span class="b-term-lang">bash</span><div class="b-term-bar-spacer"></div><button type="button" class="b-copy" title="Copy to clipboard"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true"><rect x="4" y="4" width="9" height="10" rx="1.5" stroke="currentColor" stroke-width="1.4"/><path d="M3 11 V 3 a 1.5 1.5 0 0 1 1.5 -1.5 H 11" stroke="currentColor" stroke-width="1.4" fill="none"/></svg> Copy</button></div><pre class="b-term-body"></pre></div>
+				</div>
+			</li>
+			<li class="b-step">
+				<div class="b-step-head">
+					<div class="b-step-bubble" aria-hidden="true"><span class="b-step-bubble-glint"></span><span class="b-step-num">4</span></div>
+					<div>
+						<div class="b-step-kicker">Step 4</div>
+						<h3 class="b-step-title">Configure verification.</h3>
+					</div>
+				</div>
+				<div class="b-step-body">
+					<p class="b-step-desc">Place the ACME challenge site so Let's Encrypt can find you.</p>
+					<div class="b-term" data-term="verifyA"><div class="b-term-bar"><span class="b-term-dots"><i></i><i></i><i></i></span><span class="b-term-lang">bash</span><div class="b-term-bar-spacer"></div><button type="button" class="b-copy" title="Copy to clipboard"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true"><rect x="4" y="4" width="9" height="10" rx="1.5" stroke="currentColor" stroke-width="1.4"/><path d="M3 11 V 3 a 1.5 1.5 0 0 1 1.5 -1.5 H 11" stroke="currentColor" stroke-width="1.4" fill="none"/></svg> Copy</button></div><pre class="b-term-body"></pre></div>
+					<div class="b-step-hint"><svg width="18" height="18" viewBox="0 0 20 20" aria-hidden="true" style="flex:0 0 auto"><circle cx="10" cy="10" r="8" fill="none" stroke="var(--accent)" stroke-width="1.5"/><circle cx="7" cy="7" r="1.6" fill="var(--accent)" opacity="0.7"/></svg><span>In nano: <kbd class="b-kbd">Ctrl</kbd> + <kbd class="b-kbd">\</kbd> to search-and-replace <code>example.com</code> with your domain.</span></div>
+				</div>
+			</li>
+			<li class="b-step compact">
+				<div class="b-step-body">
+					<p class="b-step-desc">Symlink it live, lint, reload.</p>
+					<div class="b-term" data-term="verifyB"><div class="b-term-bar"><span class="b-term-dots"><i></i><i></i><i></i></span><span class="b-term-lang">bash</span><div class="b-term-bar-spacer"></div><button type="button" class="b-copy" title="Copy to clipboard"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true"><rect x="4" y="4" width="9" height="10" rx="1.5" stroke="currentColor" stroke-width="1.4"/><path d="M3 11 V 3 a 1.5 1.5 0 0 1 1.5 -1.5 H 11" stroke="currentColor" stroke-width="1.4" fill="none"/></svg> Copy</button></div><pre class="b-term-body"></pre></div>
+				</div>
+			</li>
+			<li class="b-step">
+				<div class="b-step-head">
+					<div class="b-step-bubble" aria-hidden="true"><span class="b-step-bubble-glint"></span><span class="b-step-num">5</span></div>
+					<div>
+						<div class="b-step-kicker">Step 5</div>
+						<h3 class="b-step-title">Fetch certificates.</h3>
+					</div>
+				</div>
+				<div class="b-step-body">
+					<p class="b-step-desc">It will ask for the root password and an email. Then it's done in a few seconds.</p>
+					<div class="b-term" data-term="renew"><div class="b-term-bar"><span class="b-term-dots"><i></i><i></i><i></i></span><span class="b-term-lang">bash</span><div class="b-term-bar-spacer"></div><button type="button" class="b-copy" title="Copy to clipboard"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true"><rect x="4" y="4" width="9" height="10" rx="1.5" stroke="currentColor" stroke-width="1.4"/><path d="M3 11 V 3 a 1.5 1.5 0 0 1 1.5 -1.5 H 11" stroke="currentColor" stroke-width="1.4" fill="none"/></svg> Copy</button></div><pre class="b-term-body"></pre></div>
+					<div class="b-step-hint"><svg width="18" height="18" viewBox="0 0 20 20" aria-hidden="true" style="flex:0 0 auto"><circle cx="10" cy="10" r="8" fill="none" stroke="var(--accent)" stroke-width="1.5"/><circle cx="7" cy="7" r="1.6" fill="var(--accent)" opacity="0.7"/></svg><span>Certbot installs a systemd timer running <code>certbot renew</code> twice daily. The deploy hook reloads Nginx after every successful renewal. No cron, no babysitting.</span></div>
+				</div>
+			</li>
+			<li class="b-step">
+				<div class="b-step-head">
+					<div class="b-step-bubble" aria-hidden="true"><span class="b-step-bubble-glint"></span><span class="b-step-num">6</span></div>
+					<div>
+						<div class="b-step-kicker">Step 6</div>
+						<h3 class="b-step-title">Swap in the live config.</h3>
+					</div>
+				</div>
+				<div class="b-step-body">
+					<p class="b-step-desc">Replace the verification stub with the production site. Read the <code>[OPTION]</code>s and <code>[WARNING]</code>s; point the cert paths at your domain.</p>
+					<div class="b-term" data-term="swap"><div class="b-term-bar"><span class="b-term-dots"><i></i><i></i><i></i></span><span class="b-term-lang">bash</span><div class="b-term-bar-spacer"></div><button type="button" class="b-copy" title="Copy to clipboard"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true"><rect x="4" y="4" width="9" height="10" rx="1.5" stroke="currentColor" stroke-width="1.4"/><path d="M3 11 V 3 a 1.5 1.5 0 0 1 1.5 -1.5 H 11" stroke="currentColor" stroke-width="1.4" fill="none"/></svg> Copy</button></div><pre class="b-term-body"></pre></div>
+				</div>
+			</li>
+		</ol>
+
+		<div class="b-step-coda">
+			<svg width="22" height="22" viewBox="0 0 20 20" aria-hidden="true" style="flex:0 0 auto"><circle cx="10" cy="10" r="8" fill="none" stroke="var(--accent)" stroke-width="1.5"/><circle cx="7" cy="7" r="1.6" fill="var(--accent)" opacity="0.7"/></svg>
+			<p>
+				That's it. The next time Let's Encrypt rotates your cert, Nginx will
+				reload itself. The next time you run <code>nginx -t</code>, it will pass.
+				Go test it ↓
+			</p>
+		</div>
+	</section>
+
+	<section class="b-results" id="results">
+		<div class="b-section-head">
+			<span class="b-section-eyebrow">Results</span>
+			<h2 class="b-h2">Goes straight to the top of the class.</h2>
+			<p class="b-section-lede">
+				Tested against <a href="https://www.ssllabs.com/ssltest/">SSL&nbsp;Labs</a>
+				and <a href="https://securityheaders.io/">SecurityHeaders.io</a> with the
+				defaults shipped in the repo — no extra tuning.
+			</p>
+		</div>
+		<div class="b-results-grid">
+
+			<figure class="b-shot">
+				<div class="b-shot-chrome">
+					<span class="b-shot-dots"><i></i><i></i><i></i></span>
+					<span class="b-shot-url">ssllabs.com/ssltest/analyze.html?d=lewisgoddard.me.uk</span>
+				</div>
+				<div class="b-shot-body">
+					<div class="b-score-block">
+						<div class="b-score-block-head">
+							<div class="b-score-grade plus xl"><span>A+</span></div>
+							<div>
+								<div class="b-score-block-src">Qualys SSL Labs</div>
+								<a class="b-score-block-url" href="https://www.ssllabs.com/ssltest/">ssllabs.com/ssltest</a>
+							</div>
+						</div>
+						<ul class="b-score-bars">
+							<li><span>Certificate</span><span class="b-bar"><span class="b-bar-fill" style="width:100%"></span></span><span class="v">100</span></li>
+							<li><span>Protocol Support</span><span class="b-bar"><span class="b-bar-fill" style="width:100%"></span></span><span class="v">100</span></li>
+							<li><span>Key Exchange</span><span class="b-bar"><span class="b-bar-fill" style="width:95%"></span></span><span class="v">90</span></li>
+							<li><span>Cipher Strength</span><span class="b-bar"><span class="b-bar-fill" style="width:95%"></span></span><span class="v">90</span></li>
+						</ul>
+					</div>
+				</div>
+				<figcaption>Qualys SSL Labs · screenshot</figcaption>
+			</figure>
+
+			<figure class="b-shot">
+				<div class="b-shot-chrome">
+					<span class="b-shot-dots"><i></i><i></i><i></i></span>
+					<span class="b-shot-url">securityheaders.io/?q=lewisgoddard.me.uk</span>
+				</div>
+				<div class="b-shot-body">
+					<div class="b-score-block">
+						<div class="b-score-block-head">
+							<div class="b-score-grade xl"><span>A</span></div>
+							<div>
+								<div class="b-score-block-src">SecurityHeaders.io</div>
+								<a class="b-score-block-url" href="https://securityheaders.io/">securityheaders.io</a>
+							</div>
+						</div>
+						<ul class="b-score-headers">
+							<li><svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--accent)" opacity="0.14"/><path d="M4.5 8.5 L 7 11 L 11.5 5.5" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg> <code>Strict-Transport-Security</code></li>
+							<li><svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--accent)" opacity="0.14"/><path d="M4.5 8.5 L 7 11 L 11.5 5.5" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg> <code>Content-Security-Policy</code></li>
+							<li><svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--accent)" opacity="0.14"/><path d="M4.5 8.5 L 7 11 L 11.5 5.5" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg> <code>X-Frame-Options</code></li>
+							<li><svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--accent)" opacity="0.14"/><path d="M4.5 8.5 L 7 11 L 11.5 5.5" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg> <code>X-Content-Type-Options</code></li>
+							<li><svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--accent)" opacity="0.14"/><path d="M4.5 8.5 L 7 11 L 11.5 5.5" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg> <code>Referrer-Policy</code></li>
+							<li><svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--accent)" opacity="0.14"/><path d="M4.5 8.5 L 7 11 L 11.5 5.5" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg> <code>Permissions-Policy</code></li>
+						</ul>
+					</div>
+				</div>
+				<figcaption>SecurityHeaders.io · screenshot</figcaption>
+			</figure>
+
+		</div>
+	</section>
+
+	<footer class="b-foot">
+		<div class="b-foot-row">
+			<div class="b-foot-brand">
+				<svg width="20" height="20" viewBox="0 0 100 100" aria-hidden="true">
+					<circle cx="50" cy="50" r="46" fill="none" stroke="currentColor" stroke-width="3"/>
+					<path d="M16 56 Q 30 42, 44 56 T 72 56 Q 80 56, 86 50" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+				</svg>
+				<span><b>eustasy</b> / bubbly</span>
+			</div>
+			<div class="b-foot-meta">
+				<span>MIT licensed.</span>
+				<span>Lewis Goddard.</span>
+				<span>Color palette: <a href="https://stephango.com/flexoki">Flexoki</a> by Steph Ango.</span>
+			</div>
+		</div>
+		<div class="b-foot-row b-foot-row-2">
+			<span>Vanilla first. Themable. Accessible.</span>
+			<a href="https://github.com/eustasy/Bubbly">github.com/eustasy/Bubbly ↗</a>
+		</div>
+	</footer>
+
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

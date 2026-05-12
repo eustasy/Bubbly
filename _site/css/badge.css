@@ -1,0 +1,114 @@
+/* ==========================================================================
+   Badge / Tag
+   ========================================================================== */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-0-5) var(--space-2);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-normal);
+  border-radius: var(--radius-md);
+  white-space: nowrap;
+  background-color: var(--color-surface-raised);
+  color: var(--color-text-secondary);
+}
+
+/* Color variants */
+.badge-red {
+  background-color: var(--flexoki-red-50);
+  color: var(--color-red);
+  border-color: var(--color-red);
+}
+.badge-orange {
+  background-color: var(--flexoki-orange-50);
+  color: var(--color-orange);
+  border-color: var(--color-orange);
+}
+.badge-yellow {
+  background-color: var(--flexoki-yellow-50);
+  color: var(--color-yellow);
+  border-color: var(--color-yellow);
+}
+.badge-green {
+  background-color: var(--flexoki-green-50);
+  color: var(--color-green);
+  border-color: var(--color-green);
+}
+.badge-cyan {
+  background-color: var(--flexoki-cyan-50);
+  color: var(--color-cyan);
+  border-color: var(--color-cyan);
+}
+.badge-blue {
+  background-color: var(--flexoki-blue-50);
+  color: var(--color-blue);
+  border-color: var(--color-blue);
+}
+.badge-purple {
+  background-color: var(--flexoki-purple-50);
+  color: var(--color-purple);
+  border-color: var(--color-purple);
+}
+.badge-magenta {
+  background-color: var(--flexoki-magenta-50);
+  color: var(--color-magenta);
+  border-color: var(--color-magenta);
+}
+
+/* Dark mode badge backgrounds */
+.theme-dark .badge-red {
+  background-color: var(--flexoki-red-950);
+}
+.theme-dark .badge-orange {
+  background-color: var(--flexoki-orange-950);
+}
+.theme-dark .badge-yellow {
+  background-color: var(--flexoki-yellow-950);
+}
+.theme-dark .badge-green {
+  background-color: var(--flexoki-green-950);
+}
+.theme-dark .badge-cyan {
+  background-color: var(--flexoki-cyan-950);
+}
+.theme-dark .badge-blue {
+  background-color: var(--flexoki-blue-950);
+}
+.theme-dark .badge-purple {
+  background-color: var(--flexoki-purple-950);
+}
+.theme-dark .badge-magenta {
+  background-color: var(--flexoki-magenta-950);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not(.theme-light) {
+    .badge-red {
+      background-color: var(--flexoki-red-950);
+    }
+    .badge-orange {
+      background-color: var(--flexoki-orange-950);
+    }
+    .badge-yellow {
+      background-color: var(--flexoki-yellow-950);
+    }
+    .badge-green {
+      background-color: var(--flexoki-green-950);
+    }
+    .badge-cyan {
+      background-color: var(--flexoki-cyan-950);
+    }
+    .badge-blue {
+      background-color: var(--flexoki-blue-950);
+    }
+    .badge-purple {
+      background-color: var(--flexoki-purple-950);
+    }
+    .badge-magenta {
+      background-color: var(--flexoki-magenta-950);
+    }
+  }
+}

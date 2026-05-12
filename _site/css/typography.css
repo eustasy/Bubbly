@@ -1,0 +1,302 @@
+/* ==========================================================================
+   Typography — Headings, prose, lists, code, links
+   ========================================================================== */
+
+body {
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-normal);
+  color: var(--color-text);
+  background-color: var(--color-bg);
+}
+
+/* Selection */
+::selection {
+  background-color: var(--color-selection);
+}
+
+/* --------------------------------------------------------------------------
+   Headings
+   -------------------------------------------------------------------------- */
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+  color: var(--color-text);
+}
+
+h1 {
+  font-size: var(--font-size-4xl);
+  letter-spacing: var(--letter-spacing-tight);
+  margin-block: var(--space-8) var(--space-4);
+}
+
+h2 {
+  font-size: var(--font-size-3xl);
+  letter-spacing: var(--letter-spacing-tight);
+  margin-block: var(--space-8) var(--space-3);
+}
+
+h3 {
+  font-size: var(--font-size-2xl);
+  margin-block: var(--space-6) var(--space-3);
+}
+
+h4 {
+  font-size: var(--font-size-xl);
+  margin-block: var(--space-6) var(--space-2);
+}
+
+h5 {
+  font-size: var(--font-size-lg);
+  margin-block: var(--space-4) var(--space-2);
+}
+
+h6 {
+  font-size: var(--font-size-base);
+  margin-block: var(--space-4) var(--space-2);
+}
+
+/* --------------------------------------------------------------------------
+   Prose / body text
+   -------------------------------------------------------------------------- */
+
+p {
+  margin-block: var(--space-4);
+  max-width: var(--width-prose);
+}
+
+/* Adjacent headings + paragraphs: reduce gap */
+h1 + p,
+h2 + p,
+h3 + p,
+h4 + p,
+h5 + p,
+h6 + p {
+  margin-block-start: var(--space-2);
+}
+
+/* --------------------------------------------------------------------------
+   Links
+   -------------------------------------------------------------------------- */
+
+a {
+  color: var(--color-link);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.15em;
+  transition: color var(--duration-fast) var(--easing);
+}
+
+a:hover {
+  color: var(--color-link-hover);
+}
+
+a:focus-visible {
+  outline: var(--focus-ring-width) solid var(--color-focus-ring);
+  outline-offset: var(--focus-ring-offset);
+  border-radius: var(--radius-sm);
+}
+
+/* --------------------------------------------------------------------------
+   Lists
+   -------------------------------------------------------------------------- */
+
+ul,
+ol {
+  padding-inline-start: var(--space-6);
+  margin-block: var(--space-4);
+  max-width: var(--width-prose);
+}
+
+li {
+  margin-block: var(--space-1);
+}
+
+li::marker {
+  color: var(--color-text-tertiary);
+}
+
+/* Nested lists */
+li > ul,
+li > ol {
+  margin-block: var(--space-1);
+}
+
+/* Description lists */
+dl {
+  margin-block: var(--space-4);
+  max-width: var(--width-prose);
+}
+
+dt {
+  font-weight: var(--font-weight-bold);
+  margin-block-start: var(--space-3);
+}
+
+dd {
+  margin-inline-start: var(--space-6);
+  margin-block-start: var(--space-1);
+  color: var(--color-text-secondary);
+}
+
+/* --------------------------------------------------------------------------
+   Blockquotes
+   -------------------------------------------------------------------------- */
+
+blockquote {
+  border-inline-start: var(--border-width-2) solid var(--color-border-active);
+  padding-inline-start: var(--space-4);
+  margin-block: var(--space-4);
+  margin-inline: 0;
+  color: var(--color-text-secondary);
+  font-style: italic;
+  max-width: var(--width-prose);
+}
+
+blockquote cite {
+  display: block;
+  margin-block-start: var(--space-2);
+  font-size: var(--font-size-sm);
+  font-style: normal;
+  color: var(--color-text-secondary);
+}
+
+/* --------------------------------------------------------------------------
+   Code & Preformatted
+   -------------------------------------------------------------------------- */
+
+code,
+kbd,
+samp {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+
+:not(pre) > code {
+  background-color: var(--color-code-bg);
+  border: var(--border-width) solid var(--color-code-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-0-5) var(--space-1);
+}
+
+pre {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-loose);
+  background-color: var(--color-code-bg);
+  border: var(--border-width) solid var(--color-code-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  margin-block: var(--space-4);
+  overflow-x: auto;
+  tab-size: 2;
+}
+
+pre code {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: inherit;
+}
+
+kbd {
+  background-color: var(--color-surface-raised);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-0-5) var(--space-1-5);
+  box-shadow: 0 1px 0 var(--color-border);
+}
+
+/* --------------------------------------------------------------------------
+   Horizontal rule
+   -------------------------------------------------------------------------- */
+
+hr {
+  border: none;
+  border-block-start: var(--border-width) solid var(--color-border);
+  margin-block: var(--space-8);
+}
+
+/* --------------------------------------------------------------------------
+   Inline semantics
+   -------------------------------------------------------------------------- */
+
+strong,
+b {
+  font-weight: var(--font-weight-bold);
+}
+
+small {
+  font-size: var(--font-size-sm);
+}
+
+sub,
+sup {
+  font-size: var(--font-size-xs);
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+}
+
+sup {
+  top: -0.5em;
+}
+sub {
+  bottom: -0.25em;
+}
+
+abbr[title] {
+  text-decoration: underline dotted;
+  text-underline-offset: 0.15em;
+  cursor: help;
+}
+
+mark {
+  background-color: var(--color-highlight);
+  padding-inline: var(--space-0-5);
+  border-radius: var(--radius-sm);
+}
+
+/* --------------------------------------------------------------------------
+   Figure & caption
+   -------------------------------------------------------------------------- */
+
+figure {
+  margin-block: var(--space-6);
+  margin-inline: 0;
+}
+
+figcaption {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin-block-start: var(--space-2);
+}
+
+/* --------------------------------------------------------------------------
+   Address
+   -------------------------------------------------------------------------- */
+
+address {
+  font-style: normal;
+  line-height: var(--line-height-normal);
+}
+
+/* --------------------------------------------------------------------------
+   Time, data, var
+   -------------------------------------------------------------------------- */
+
+time {
+  font-variant-numeric: tabular-nums;
+}
+
+var {
+  font-style: italic;
+  font-family: var(--font-mono);
+}

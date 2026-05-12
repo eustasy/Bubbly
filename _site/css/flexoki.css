@@ -1,0 +1,452 @@
+/* ==========================================================================
+   Flexoki 2.0 Theme for eustasy/.ui
+   Based on https://stephango.com/flexoki — MIT License
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Raw Palette — Flexoki 2.0 complete values
+   -------------------------------------------------------------------------- */
+
+:root {
+  /* Base tones */
+  --flexoki-black: #100f0f;
+  --flexoki-paper: #fffcf0;
+
+  --flexoki-950: #1c1b1a;
+  --flexoki-900: #282726;
+  --flexoki-850: #343331;
+  --flexoki-800: #403e3c;
+  --flexoki-700: #575653;
+  --flexoki-600: #6f6e69;
+  --flexoki-500: #878580;
+  --flexoki-400: #9f9d96;
+  --flexoki-300: #b7b5ac;
+  --flexoki-200: #cecdc3;
+  --flexoki-150: #dad8ce;
+  --flexoki-100: #e6e4d9;
+  --flexoki-50: #f2f0e5;
+
+  /* Red */
+  --flexoki-red-50: #ffe1d5;
+  --flexoki-red-100: #ffcabb;
+  --flexoki-red-150: #fdb2a2;
+  --flexoki-red-200: #f89a8a;
+  --flexoki-red-300: #e8705f;
+  --flexoki-red-400: #d14d41;
+  --flexoki-red-500: #c03e35;
+  --flexoki-red-600: #af3029;
+  --flexoki-red-700: #942822;
+  --flexoki-red-800: #6c201c;
+  --flexoki-red-850: #551b18;
+  --flexoki-red-900: #3e1715;
+  --flexoki-red-950: #261312;
+
+  /* Orange */
+  --flexoki-orange-50: #ffe7ce;
+  --flexoki-orange-100: #fed3af;
+  --flexoki-orange-150: #fcc192;
+  --flexoki-orange-200: #f9ae77;
+  --flexoki-orange-300: #ec8b49;
+  --flexoki-orange-400: #da702c;
+  --flexoki-orange-500: #cb6120;
+  --flexoki-orange-600: #bc5215;
+  --flexoki-orange-700: #9d4310;
+  --flexoki-orange-800: #71320d;
+  --flexoki-orange-850: #59290d;
+  --flexoki-orange-900: #40200d;
+  --flexoki-orange-950: #27180e;
+
+  /* Yellow */
+  --flexoki-yellow-50: #faeec6;
+  --flexoki-yellow-100: #f6e2a0;
+  --flexoki-yellow-150: #f1d67e;
+  --flexoki-yellow-200: #eccb60;
+  --flexoki-yellow-300: #dfb431;
+  --flexoki-yellow-400: #d0a215;
+  --flexoki-yellow-500: #be9207;
+  --flexoki-yellow-600: #ad8301;
+  --flexoki-yellow-700: #8e6b01;
+  --flexoki-yellow-800: #664d01;
+  --flexoki-yellow-850: #503d02;
+  --flexoki-yellow-900: #3a2d04;
+  --flexoki-yellow-950: #241e08;
+
+  /* Green */
+  --flexoki-green-50: #edeecf;
+  --flexoki-green-100: #dde2b2;
+  --flexoki-green-150: #cdd597;
+  --flexoki-green-200: #bec97e;
+  --flexoki-green-300: #a0af54;
+  --flexoki-green-400: #879a39;
+  --flexoki-green-500: #768d21;
+  --flexoki-green-600: #66800b;
+  --flexoki-green-700: #536907;
+  --flexoki-green-800: #3d4c07;
+  --flexoki-green-850: #313d07;
+  --flexoki-green-900: #252d09;
+  --flexoki-green-950: #1a1e0c;
+
+  /* Cyan */
+  --flexoki-cyan-50: #ddf1e4;
+  --flexoki-cyan-100: #bfe8d9;
+  --flexoki-cyan-150: #a2dece;
+  --flexoki-cyan-200: #87d3c3;
+  --flexoki-cyan-300: #5abdac;
+  --flexoki-cyan-400: #3aa99f;
+  --flexoki-cyan-500: #2f968d;
+  --flexoki-cyan-600: #24837b;
+  --flexoki-cyan-700: #1c6c66;
+  --flexoki-cyan-800: #164f4a;
+  --flexoki-cyan-850: #143f3c;
+  --flexoki-cyan-900: #122f2c;
+  --flexoki-cyan-950: #101f1d;
+
+  /* Blue */
+  --flexoki-blue-50: #e1eceb;
+  --flexoki-blue-100: #c6dde8;
+  --flexoki-blue-150: #abcfe2;
+  --flexoki-blue-200: #92bfdb;
+  --flexoki-blue-300: #66a0c8;
+  --flexoki-blue-400: #4385be;
+  --flexoki-blue-500: #3171b2;
+  --flexoki-blue-600: #205ea6;
+  --flexoki-blue-700: #1a4f8c;
+  --flexoki-blue-800: #163b66;
+  --flexoki-blue-850: #133051;
+  --flexoki-blue-900: #12253b;
+  --flexoki-blue-950: #101a24;
+
+  /* Purple */
+  --flexoki-purple-50: #f0eaec;
+  --flexoki-purple-100: #e2d9e9;
+  --flexoki-purple-150: #d3cae6;
+  --flexoki-purple-200: #c4b9e0;
+  --flexoki-purple-300: #a699d0;
+  --flexoki-purple-400: #8b7ec8;
+  --flexoki-purple-500: #735eb5;
+  --flexoki-purple-600: #5e409d;
+  --flexoki-purple-700: #4f3685;
+  --flexoki-purple-800: #3c2a62;
+  --flexoki-purple-850: #31234e;
+  --flexoki-purple-900: #261c39;
+  --flexoki-purple-950: #1a1623;
+
+  /* Magenta */
+  --flexoki-magenta-50: #fee4e5;
+  --flexoki-magenta-100: #fccfda;
+  --flexoki-magenta-150: #f9b9cf;
+  --flexoki-magenta-200: #f4a4c2;
+  --flexoki-magenta-300: #e47da8;
+  --flexoki-magenta-400: #ce5d97;
+  --flexoki-magenta-500: #b74583;
+  --flexoki-magenta-600: #a02f6f;
+  --flexoki-magenta-700: #87285e;
+  --flexoki-magenta-800: #641f46;
+  --flexoki-magenta-850: #4f1b39;
+  --flexoki-magenta-900: #39172b;
+  --flexoki-magenta-950: #24131d;
+}
+
+/* --------------------------------------------------------------------------
+   2. Design Tokens — Spacing, Typography, Borders
+   These can be overridden by any theme.
+   -------------------------------------------------------------------------- */
+
+:root {
+  /* Typography */
+  --font-body:
+    "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial,
+    sans-serif;
+  --font-heading: var(--font-body);
+  --font-mono:
+    "Berkeley Mono", "MonoLisa", "IBM Plex Mono", "Source Code Pro", Menlo,
+    SFMono-Regular, Consolas, monospace;
+
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  --font-size-3xl: 1.875rem;
+  --font-size-4xl: 2.25rem;
+
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-bold: 700;
+
+  --line-height-tight: 1.25;
+  --line-height-normal: 1.5;
+  --line-height-loose: 1.75;
+
+  --letter-spacing-tight: -0.02em;
+  --letter-spacing-normal: 0;
+  --letter-spacing-wide: 0.025em;
+
+  /* Spacing scale */
+  --space-0: 0;
+  --space-px: 1px;
+  --space-0-5: 0.125rem;
+  --space-1: 0.25rem;
+  --space-1-5: 0.375rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+
+  /* Border radius */
+  --radius-none: 0;
+  --radius-sm: 0.125rem;
+  --radius-md: 0.25rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --radius-2xl: 1rem;
+  --radius-full: 9999px;
+
+  /* Border width */
+  --border-width: 1px;
+  --border-width-2: 2px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(16, 15, 15, 0.05);
+  --shadow-md:
+    0 4px 6px -1px rgba(16, 15, 15, 0.07), 0 2px 4px -2px rgba(16, 15, 15, 0.07);
+  --shadow-lg:
+    0 10px 15px -3px rgba(16, 15, 15, 0.08),
+    0 4px 6px -4px rgba(16, 15, 15, 0.08);
+
+  /* Layout */
+  --width-prose: 80ch;
+  --width-wide: 1000px;
+  --width-input: 20em;
+
+  /* Transitions */
+  --duration-fast: 100ms;
+  --duration-normal: 200ms;
+  --duration-slow: 300ms;
+  --easing: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Focus ring */
+  --focus-ring-width: 2px;
+  --focus-ring-offset: 2px;
+}
+
+@media (max-width: 860px) {
+  :root {
+    --width-prose: 88vw;
+    --width-wide: 100vw;
+    --width-input: 100%;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   3. Semantic Color Tokens — Light Mode (default)
+   Components reference ONLY these variables, never raw palette values.
+   -------------------------------------------------------------------------- */
+
+:root,
+.theme-light {
+  color-scheme: light;
+
+  /* Backgrounds */
+  --color-bg: var(--flexoki-paper);
+  --color-bg-secondary: var(--flexoki-50);
+  --color-bg-tertiary: var(--flexoki-100);
+
+  /* Text */
+  --color-text: var(--flexoki-black);
+  --color-text-secondary: var(--flexoki-600);
+  --color-text-tertiary: var(--flexoki-500);
+  --color-text-disabled: var(--flexoki-300);
+
+  /* Borders / UI chrome */
+  --color-border: var(--flexoki-200);
+  --color-border-hover: var(--flexoki-300);
+  --color-border-active: var(--flexoki-400);
+
+  /* Surfaces (cards, inputs, etc.) */
+  --color-surface: var(--flexoki-paper);
+  --color-surface-raised: var(--flexoki-50);
+  --color-surface-overlay: var(--flexoki-100);
+
+  /* Interactive */
+  --color-action: var(--flexoki-blue-600);
+  --color-action-hover: var(--flexoki-blue-700);
+  --color-action-text: var(--flexoki-paper);
+  --color-link: var(--flexoki-cyan-700);
+  --color-link-hover: var(--flexoki-cyan-800);
+
+  /* Selection & highlight */
+  --color-selection: rgba(187, 220, 206, 0.3);
+  --color-highlight: var(--flexoki-yellow-100);
+
+  /* Focus ring */
+  --color-focus-ring: var(--flexoki-blue-600);
+
+  /* Semantic status */
+  --color-danger: var(--flexoki-red-600);
+  --color-danger-bg: var(--flexoki-red-50);
+  --color-danger-hover: var(--flexoki-red-700);
+  --color-warning: var(--flexoki-orange-700);
+  --color-warning-bg: var(--flexoki-orange-50);
+  --color-warning-hover: var(--flexoki-orange-800);
+  --color-success: var(--flexoki-green-700);
+  --color-success-bg: var(--flexoki-green-50);
+  --color-success-hover: var(--flexoki-green-800);
+  --color-info: var(--flexoki-blue-600);
+  --color-info-bg: var(--flexoki-blue-50);
+  --color-info-hover: var(--flexoki-blue-700);
+
+  /* Accent colors */
+  --color-red: var(--flexoki-red-600);
+  --color-orange: var(--flexoki-orange-600);
+  --color-yellow: var(--flexoki-yellow-600);
+  --color-green: var(--flexoki-green-600);
+  --color-cyan: var(--flexoki-cyan-600);
+  --color-blue: var(--flexoki-blue-600);
+  --color-purple: var(--flexoki-purple-600);
+  --color-magenta: var(--flexoki-magenta-600);
+
+  /* Code */
+  --color-code-bg: var(--flexoki-50);
+  --color-code-border: var(--flexoki-100);
+}
+
+/* --------------------------------------------------------------------------
+   4. Dark Mode
+   -------------------------------------------------------------------------- */
+
+@media (prefers-color-scheme: dark) {
+  :root:not(.theme-light) {
+    color-scheme: dark;
+
+    --color-bg: var(--flexoki-black);
+    --color-bg-secondary: var(--flexoki-950);
+    --color-bg-tertiary: var(--flexoki-900);
+
+    --color-text: var(--flexoki-200);
+    --color-text-secondary: var(--flexoki-400);
+    --color-text-tertiary: var(--flexoki-500);
+    --color-text-disabled: var(--flexoki-700);
+
+    --color-border: var(--flexoki-800);
+    --color-border-hover: var(--flexoki-700);
+    --color-border-active: var(--flexoki-600);
+
+    --color-surface: var(--flexoki-950);
+    --color-surface-raised: var(--flexoki-900);
+    --color-surface-overlay: var(--flexoki-850);
+
+    --color-action: var(--flexoki-blue-400);
+    --color-action-hover: var(--flexoki-blue-300);
+    --color-action-text: var(--flexoki-black);
+    --color-link: var(--flexoki-cyan-400);
+    --color-link-hover: var(--flexoki-cyan-300);
+
+    --color-selection: rgba(30, 95, 91, 0.3);
+    --color-highlight: var(--flexoki-yellow-900);
+
+    --color-focus-ring: var(--flexoki-cyan-400);
+
+    --color-danger: var(--flexoki-red-300);
+    --color-danger-bg: var(--flexoki-red-950);
+    --color-danger-hover: var(--flexoki-red-200);
+    --color-warning: var(--flexoki-orange-400);
+    --color-warning-bg: var(--flexoki-orange-950);
+    --color-warning-hover: var(--flexoki-orange-300);
+    --color-success: var(--flexoki-green-400);
+    --color-success-bg: var(--flexoki-green-950);
+    --color-success-hover: var(--flexoki-green-300);
+    --color-info: var(--flexoki-blue-400);
+    --color-info-bg: var(--flexoki-blue-950);
+    --color-info-hover: var(--flexoki-blue-300);
+
+    --color-red: var(--flexoki-red-400);
+    --color-orange: var(--flexoki-orange-400);
+    --color-yellow: var(--flexoki-yellow-400);
+    --color-green: var(--flexoki-green-400);
+    --color-cyan: var(--flexoki-cyan-400);
+    --color-blue: var(--flexoki-blue-400);
+    --color-purple: var(--flexoki-purple-400);
+    --color-magenta: var(--flexoki-magenta-400);
+
+    --color-code-bg: var(--flexoki-900);
+    --color-code-border: var(--flexoki-800);
+
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+    --shadow-md:
+      0 4px 6px -1px rgba(0, 0, 0, 0.25), 0 2px 4px -2px rgba(0, 0, 0, 0.25);
+    --shadow-lg:
+      0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -4px rgba(0, 0, 0, 0.3);
+  }
+}
+
+.theme-dark {
+  color-scheme: dark;
+
+  --color-bg: var(--flexoki-black);
+  --color-bg-secondary: var(--flexoki-950);
+  --color-bg-tertiary: var(--flexoki-900);
+
+  --color-text: var(--flexoki-200);
+  --color-text-secondary: var(--flexoki-400);
+  --color-text-tertiary: var(--flexoki-500);
+  --color-text-disabled: var(--flexoki-700);
+
+  --color-border: var(--flexoki-800);
+  --color-border-hover: var(--flexoki-700);
+  --color-border-active: var(--flexoki-600);
+
+  --color-surface: var(--flexoki-950);
+  --color-surface-raised: var(--flexoki-900);
+  --color-surface-overlay: var(--flexoki-850);
+
+  --color-action: var(--flexoki-blue-400);
+  --color-action-hover: var(--flexoki-blue-300);
+  --color-action-text: var(--flexoki-black);
+  --color-link: var(--flexoki-cyan-400);
+  --color-link-hover: var(--flexoki-cyan-300);
+
+  --color-selection: rgba(30, 95, 91, 0.3);
+  --color-highlight: var(--flexoki-yellow-900);
+
+  --color-focus-ring: var(--flexoki-cyan-400);
+
+  --color-danger: var(--flexoki-red-300);
+  --color-danger-bg: var(--flexoki-red-950);
+  --color-danger-hover: var(--flexoki-red-200);
+  --color-warning: var(--flexoki-orange-400);
+  --color-warning-bg: var(--flexoki-orange-950);
+  --color-warning-hover: var(--flexoki-orange-300);
+  --color-success: var(--flexoki-green-400);
+  --color-success-bg: var(--flexoki-green-950);
+  --color-success-hover: var(--flexoki-green-300);
+  --color-info: var(--flexoki-blue-400);
+  --color-info-bg: var(--flexoki-blue-950);
+  --color-info-hover: var(--flexoki-blue-300);
+
+  --color-red: var(--flexoki-red-400);
+  --color-orange: var(--flexoki-orange-400);
+  --color-yellow: var(--flexoki-yellow-400);
+  --color-green: var(--flexoki-green-400);
+  --color-cyan: var(--flexoki-cyan-400);
+  --color-blue: var(--flexoki-blue-400);
+  --color-purple: var(--flexoki-purple-400);
+  --color-magenta: var(--flexoki-magenta-400);
+
+  --color-code-bg: var(--flexoki-900);
+  --color-code-border: var(--flexoki-800);
+
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+  --shadow-md:
+    0 4px 6px -1px rgba(0, 0, 0, 0.25), 0 2px 4px -2px rgba(0, 0, 0, 0.25);
+  --shadow-lg:
+    0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -4px rgba(0, 0, 0, 0.3);
+}
