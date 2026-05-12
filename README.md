@@ -39,14 +39,14 @@ When you've gone and made something in the 15 minutes that could well take, or y
 Copy the verification site template and replace the instances of `example.com` in the file with your actual domain name.
 
 ```bash
-sudo cp /etc/nginx/sites-available/bubbly_verify.conf /etc/nginx/sites-available/example.com.conf
-sudo nano /etc/nginx/sites-available/example.com.conf
+sudo cp /etc/nginx/sites-available/bubbly_http.conf /etc/nginx/sites-available/example.com_http.conf
+sudo nano /etc/nginx/sites-available/example.com_http.conf
 ```
 
 Use `Ctrl` and `\` to initiate a search and replace for `example.com` with your domain.
 
 ```bash
-sudo ln -s /etc/nginx/sites-available/example.com.conf /etc/nginx/sites-enabled/example.com.conf
+sudo ln -s /etc/nginx/sites-available/example.com_http.conf /etc/nginx/sites-enabled/example.com_http.conf
 sudo nginx -t && sudo service nginx reload
 ```
 
@@ -67,19 +67,21 @@ Certbot will set up a systemd timer that runs `certbot renew` automatically twic
 
 **6. Start using the Certificates**
 
-Remove the verification config you just made, and replace it with a live version of the site. You'll need to more carefully review the `[OPTION]`s in this file, as you'll also need to change the certificate location to match the domain name you requested. Consider taking a look at the `[OPTION]`s and `[WARNING]`s in other linked config files.
+Copy the live site template alongside the verify config you already have. You'll need to more carefully review the `[OPTION]`s in this file, as you'll also need to change the certificate location to match the domain name you requested. Consider taking a look at the `[OPTION]`s and `[WARNING]`s in other linked config files.
 
 ```bash
-sudo rm /etc/nginx/sites-available/example.com.conf
-sudo cp /etc/nginx/sites-available/bubbly_live.conf /etc/nginx/sites-available/example.com.conf
-sudo nano /etc/nginx/sites-available/example.com.conf
+sudo cp /etc/nginx/sites-available/bubbly_https.conf /etc/nginx/sites-available/example.com_https.conf
+sudo nano /etc/nginx/sites-available/example.com_https.conf
 ```
 
 Use `Ctrl` and `\` to initiate a search and replace for `example.com` with your domain.
 
 ```bash
+sudo ln -s /etc/nginx/sites-available/example.com_https.conf /etc/nginx/sites-enabled/example.com_https.conf
 sudo nginx -t && sudo service nginx reload
 ```
+
+Keep `example.com_http.conf` symlinked in `sites-enabled/` permanently. It handles all HTTP traffic (including ACME renewal challenges) so that certificate renewals keep working even if the certificate has already expired.
 
 ---
 

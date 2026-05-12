@@ -14,7 +14,7 @@ The README walks through a fixed six-step setup. The three scripts at the repo r
 2. `bubbly_copy-configs.sh` — `rsync -avh "$SCRIPT_DIR/nginx-config/" /etc/nginx/`. The script resolves its own directory, so it works regardless of CWD. Re-running it is the way to roll out config changes.
 3. `bubbly_renew-ssl.sh -d example.com -d www.example.com` — invokes `certbot certonly --authenticator webroot --webroot-path=/tmp/bubbly-authenticator …`. After issuance/renewal it `service nginx reload`s.
 
-Verify-then-promote uses two site templates under `nginx-config/sites-available/`: `bubbly_verify.conf` (HTTP-only, just enough to satisfy ACME http-01) and `bubbly_live.conf` (the real HTTPS site with three server blocks: HTTP→HTTPS redirect, `www`→apex HTTPS redirect, and the apex HTTPS server). Operators copy a template to `example.com.conf`, search-and-replace `example.com` with their domain, symlink into `sites-enabled/`, and run `sudo nginx -t && sudo service nginx reload`.
+Verify-then-promote uses two site templates under `nginx-config/sites-available/`: `bubbly_http.conf` (HTTP handler: ACME passthrough + redirect to HTTPS, kept active permanently) and `bubbly_https.conf` (the real HTTPS site: `www`→apex redirect and apex HTTPS server). Operators copy each template to `example.com_http.conf` / `example.com_https.conf`, search-and-replace `example.com` with their domain, symlink both into `sites-enabled/`, and run `sudo nginx -t && sudo service nginx reload`.
 
 ## Config layout convention (matters for include paths)
 

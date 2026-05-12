@@ -47,7 +47,7 @@ jobs:
           sudo openssl rand -out /etc/nginx/ssl/ticket.key 80
 
       - name: Generate self-signed certificate for example.com
-        # bubbly_live.conf expects /etc/letsencrypt/live/example.com/*.pem.
+        # bubbly_https.conf expects /etc/letsencrypt/live/example.com/*.pem.
         # A self-signed cert satisfies nginx -t's file-existence and PEM-validity
         # checks. OCSP stapling is not exercised during config test.
         run: |
@@ -63,10 +63,10 @@ jobs:
       - name: Enable site templates
         run: |
           sudo rm -f /etc/nginx/sites-enabled/default
-          sudo ln -s /etc/nginx/sites-available/bubbly_verify.conf \
-            /etc/nginx/sites-enabled/bubbly_verify.conf
-          sudo ln -s /etc/nginx/sites-available/bubbly_live.conf \
-            /etc/nginx/sites-enabled/bubbly_live.conf
+          sudo ln -s /etc/nginx/sites-available/bubbly_http.conf \
+            /etc/nginx/sites-enabled/bubbly_http.conf
+          sudo ln -s /etc/nginx/sites-available/bubbly_https.conf \
+            /etc/nginx/sites-enabled/bubbly_https.conf
 
       - name: nginx -t
         run: sudo nginx -t
