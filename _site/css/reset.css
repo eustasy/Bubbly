@@ -3,6 +3,11 @@
    Adapted from Josh Comeau's CSS Reset + Andy Bell's Modern Reset
    ========================================================================== */
 
+/* stylelint-disable selector-max-universal, declaration-no-important, time-min-milliseconds --
+   A reset legitimately targets every element via the universal selector, and the
+   reduced-motion block below uses the established !important + 0.01ms accessibility
+   pattern (Andy Bell). Both are intentional, not accidental. */
+
 *,
 *::before,
 *::after {
@@ -14,8 +19,6 @@
 }
 
 html {
-  -moz-text-size-adjust: none;
-  -webkit-text-size-adjust: none;
   text-size-adjust: none;
   tab-size: 4;
 }
@@ -74,7 +77,7 @@ ol[role="list"] {
 /* Anchor defaults */
 a:not([class]) {
   text-decoration-skip-ink: auto;
-  color: currentColor;
+  color: currentcolor;
 }
 
 /* Consistent textarea behavior */

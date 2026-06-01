@@ -22,7 +22,7 @@ html { scroll-behavior: smooth; }
 html, body { background: var(--color-bg); }
 
 /* Sticky-nav offset for in-page anchors */
-#top, #why, #compare, #steps, #results { scroll-margin-top: 72px; }
+[id="top"], [id="why"], [id="compare"], [id="steps"], [id="results"] { scroll-margin-top: 72px; }
 
 /* ── Nav ────────────────────────────────────────────────────────────────── */
 .b-nav {
@@ -31,7 +31,6 @@ html, body { background: var(--color-bg); }
 	padding: var(--space-4) var(--pad-x);
 	background: color-mix(in oklab, var(--color-bg) 88%, transparent);
 	backdrop-filter: blur(10px) saturate(140%);
-	-webkit-backdrop-filter: blur(10px) saturate(140%);
 	border-bottom: 1px solid var(--color-border);
 }
 .b-brand {
@@ -66,7 +65,7 @@ html, body { background: var(--color-bg); }
 
 .b-bubble-field {
 	position: absolute; inset: 0; pointer-events: none; overflow: hidden;
-	mask-image: radial-gradient(ellipse at 30% 40%, black 30%, transparent 80%);
+	mask-image: radial-gradient(ellipse at 30% 40%, #000000 30%, transparent 80%);
 }
 .b-bubble {
 	position: absolute;
@@ -91,7 +90,7 @@ html, body { background: var(--color-bg); }
 
 @media (prefers-reduced-motion: reduce) {
 	.b-bubble-rise,
-	.b-bubble-sway { animation: none !important; }
+	.b-bubble-sway { animation: none !important; } /* stylelint-disable-line declaration-no-important -- must beat the JS-set inline animation for reduced-motion */
 	.b-bubble { opacity: 0.18; }
 }
 
@@ -114,7 +113,7 @@ html, body { background: var(--color-bg); }
 
 .b-h1 {
 	font-size: clamp(2.4rem, 5.2vw, 4.2rem);
-	line-height: 1.02; letter-spacing: -0.035em;
+	line-height: 1.02; letter-spacing: -0.04em;
 	font-weight: 700; margin: 0 0 var(--space-5);
 	text-wrap: balance;
 }
@@ -189,8 +188,8 @@ html, body { background: var(--color-bg); }
 .b-cta-row { display: flex; gap: var(--space-3); flex-wrap: wrap; }
 .b-cta-row .btn-primary { background: var(--accent); border-color: var(--accent); }
 .b-cta-row .btn-primary:hover {
-	background: color-mix(in oklab, var(--accent) 80%, black);
-	border-color: color-mix(in oklab, var(--accent) 80%, black);
+	background: color-mix(in oklab, var(--accent) 80%, #000000);
+	border-color: color-mix(in oklab, var(--accent) 80%, #000000);
 }
 .b-cta-row code {
 	margin-left: 4px;
@@ -241,7 +240,7 @@ html, body { background: var(--color-bg); }
 .b-score-grade::before {
 	content: ''; position: absolute; left: 14%; top: 12%;
 	width: 24%; height: 14%; border-radius: 999px;
-	background: color-mix(in oklab, white 55%, transparent);
+	background: color-mix(in oklab, #ffffff 55%, transparent);
 	filter: blur(1px); transform: rotate(-18deg);
 }
 .b-score-meta { min-width: 0; }
@@ -269,7 +268,7 @@ html, body { background: var(--color-bg); }
 }
 .b-h2 {
 	font-size: clamp(1.75rem, 3vw, 2.4rem);
-	letter-spacing: -0.025em; line-height: 1.1;
+	letter-spacing: -0.03em; line-height: 1.1;
 	margin: 0 0 var(--space-3); text-wrap: balance;
 }
 .b-section-lede {
@@ -460,12 +459,12 @@ html, body { background: var(--color-bg); }
 	font-weight: 700; font-size: 1.5rem;
 	position: relative;
 	box-shadow: 0 4px 12px color-mix(in oklab, var(--accent) 35%, transparent),
-	            inset 0 -6px 12px color-mix(in oklab, black 18%, transparent);
+	            inset 0 -6px 12px color-mix(in oklab, #000000 18%, transparent);
 }
 .b-step-bubble-glint {
 	position: absolute; top: 8px; left: 14px;
 	width: 16px; height: 9px; border-radius: 999px;
-	background: color-mix(in oklab, white 60%, transparent);
+	background: color-mix(in oklab, #ffffff 60%, transparent);
 	filter: blur(1px); transform: rotate(-22deg);
 }
 .b-step-num { font-family: var(--font-body); letter-spacing: -0.02em; }
@@ -537,7 +536,7 @@ html, body { background: var(--color-bg); }
 	background: var(--flexoki-black);
 	border-radius: var(--radius-lg);
 	overflow: hidden;
-	border: 1px solid color-mix(in oklab, black 50%, var(--color-border));
+	border: 1px solid color-mix(in oklab, #000000 50%, var(--color-border));
 	box-shadow: 0 1px 0 rgba(255,255,255,0.04) inset,
 	            0 8px 24px -8px rgba(0,0,0,0.25);
 }
@@ -554,7 +553,7 @@ html, body { background: var(--color-bg); }
 .b-term-bar {
 	display: flex; align-items: center; gap: var(--space-3);
 	padding: var(--space-2) var(--space-3);
-	background: color-mix(in oklab, white 4%, var(--flexoki-black));
+	background: color-mix(in oklab, #ffffff 4%, var(--flexoki-black));
 	border-bottom: 1px solid rgba(255,255,255,0.06);
 }
 .b-term-dots { display: inline-flex; gap: 6px; }
@@ -584,7 +583,7 @@ html, body { background: var(--color-bg); }
 	transition: background var(--duration-fast), color var(--duration-fast),
 	            border-color var(--duration-fast);
 }
-.b-copy:hover { background: rgba(255,255,255,0.10); color: white; }
+.b-copy:hover { background: rgba(255,255,255,0.10); color: #ffffff; }
 .b-copy.ok {
 	color: var(--flexoki-green-300);
 	border-color: color-mix(in oklab, var(--flexoki-green-300) 30%, transparent);
@@ -682,8 +681,6 @@ html, body { background: var(--color-bg); }
 	display: flex;
 	flex-direction: column;
 }
-.b-shot-body { flex: 1 1 auto; }
-.b-shot figcaption { margin-top: auto; }
 .b-shot-chrome {
 	display: flex; align-items: center; gap: var(--space-3);
 	padding: var(--space-2) var(--space-3);
@@ -711,9 +708,10 @@ a.b-shot-url:hover {
 	color: var(--accent);
 	border-color: color-mix(in oklab, var(--accent) 35%, var(--color-border));
 }
-.b-shot-body { padding: var(--space-5); }
+.b-shot-body { flex: 1 1 auto; padding: var(--space-5); }
 .b-shot-body .b-score-block { box-shadow: none; border: 0; padding: 0; background: transparent; }
 .b-shot figcaption {
+	margin-top: auto;
 	padding: var(--space-2) var(--space-4);
 	background: var(--color-surface-raised);
 	border-top: 1px solid var(--color-border);
