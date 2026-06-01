@@ -1,0 +1,36 @@
+# eustasy/.Normal 4.0beta8
+name: Normal (JavaScript / TypeScript)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ["**.js", "**.ts", "**.mjs", "**.cjs", "**.mts", "**.cts"]
+  pull_request:
+    branches: [main]
+    paths: ["**.js", "**.ts", "**.mjs", "**.cjs", "**.mts", "**.cts"]
+
+permissions:
+  contents: read
+
+jobs:
+  js:
+    name: Lint + format
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: lts/*
+          #cache: npm
+
+      - uses: qltysh/qlty-action/install@a19242102d17e497f437d7466aa01b528537e899 # v2.2.0
+
+      - name: Lint (oxc, knip)
+        run: qlty check --all --no-formatters --filter=oxc,knip
+
+      - name: Format check (prettier)
+        run: git ls-files -- '*.js' '*.ts' '*.mjs' '*.cjs' '*.mts' '*.cts' | xargs -r qlty check --filter=prettier

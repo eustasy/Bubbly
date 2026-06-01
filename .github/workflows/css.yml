@@ -1,0 +1,28 @@
+# eustasy/.Normal 4.0beta8
+name: Normal (CSS/SCSS)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ["**.css", "**.scss"]
+  pull_request:
+    branches: [main]
+    paths: ["**.css", "**.scss"]
+
+permissions:
+  contents: read
+
+jobs:
+  css:
+    name: Lint + format
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - uses: qltysh/qlty-action/install@a19242102d17e497f437d7466aa01b528537e899 # v2.2.0
+
+      - name: Lint + format check (stylelint)
+        run: qlty check --all --filter=stylelint

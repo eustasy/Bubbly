@@ -1,0 +1,165 @@
+config_version = "0"
+
+# Exclude patterns apply to all plugins (linting and formatting).
+# Sources: old .eslintignore, .stylelintignore, and .codeclimate.yml defaults.
+exclude_patterns = [
+  # Minified / bundled / custom overrides
+  "**/*.min.*",
+  "**/*.pack.*",
+  "**/*.custom.*",
+
+  # Legacy libs directory
+  "**/_libs/**",
+
+  # Dependency directories
+  "**/vendor/**",
+  "**/node_modules/**",
+
+  # Build output
+  "**/dist/**",
+  "**/build/**",
+  "**/out/**",
+
+  # Coverage output
+  "**/coverage/**",
+
+  # Python caches
+  "**/__pycache__/**",
+  "**/.pytest_cache/**",
+  "**/*.pyc",
+
+  # Python virtual environments
+  "**/.venv/**",
+]
+
+# ── Smells ──────────────────────────────────────────────────────────────────
+# Matches Phoenix thresholds.
+
+[smells]
+[smells.nested_control_flow]
+threshold = 4
+
+[smells.function_parameters]
+threshold = 10
+
+# ── Source ───────────────────────────────────────────────────────────────────
+
+[[source]]
+name = "default"
+default = true
+
+# ── Linters ──────────────────────────────────────────────────────────────────
+
+[[plugin]]
+name = "oxc"
+
+[[plugin]]
+name = "stylelint"
+
+[[plugin]]
+name = "markdownlint"
+
+[[plugin]]
+name = "ruff"
+
+[[plugin]]
+name = "phpstan"
+
+[[plugin]]
+name = "sqlfluff"
+
+[[plugin]]
+name = "yamllint"
+
+[[plugin]]
+name = "shellcheck"
+
+[[plugin]]
+name = "actionlint"
+
+[[plugin]]
+name = "zizmor"
+
+[[plugin]]
+name = "knip"
+
+[[plugin]]
+name = "dotenv-linter"
+
+# ── Formatters ───────────────────────────────────────────────────────────────
+
+[[plugin]]
+name = "prettier"
+
+[[plugin]]
+name = "php-cs-fixer"
+
+[[plugin]]
+name = "shfmt"
+
+# ── Security ─────────────────────────────────────────────────────────────────
+
+[[plugin]]
+name = "gitleaks"
+
+[[plugin]]
+name = "bandit"
+
+[[plugin]]
+name = "trivy"
+
+[[plugin]]
+name = "osv-scanner"
+
+# ── Per-plugin file excludes ─────────────────────────────────────────────────
+# qlty has no plugin-level `exclude_patterns` key (it is silently ignored); scope
+# file skips to specific plugins with [[exclude]] blocks instead. These are NOT
+# global, so dependency/security scanners (osv-scanner, gitleaks, trivy, bandit,
+# actionlint, zizmor) still see every file.
+
+# 1. Tool-managed config directories. No project source lives here — only tooling
+#    config/state deployed by .normal, the editor, or Claude Code — so every
+#    linter and formatter skips them (e.g. phpstan must not analyse
+#    .qlty/configs/.php-cs-fixer.dist.php; markdownlint must not lint .claude
+#    agent/command docs). Security scanners are deliberately omitted, so gitleaks
+#    et al. still scan these paths for leaked secrets.
+[[exclude]]
+plugins = [
+  "prettier", "php-cs-fixer", "shfmt", "shellcheck", "phpstan", "markdownlint",
+  "stylelint", "oxc", "knip", "ruff", "sqlfluff", "yamllint", "dotenv-linter",
+]
+file_patterns = [
+  "**/.qlty/**",   # qlty config + deployed linter/formatter configs
+  "**/.vscode/**", # editor-managed
+  "**/.claude/**", # Claude Code config (tool-managed)
+]
+
+# 2. Keep prettier's scope identical in CI and on the qlty.sh dashboard. The
+#    per-language workflows only ever run prettier on JSON and JS/TS; every other
+#    language prettier supports has a dedicated owner, so it must not format them.
+#    Without these globs the dashboard runs prettier on files CI never checks
+#    with it (markdown, CSS, …) that markdownlint / stylelint already own.
+[[exclude]]
+plugins = ["prettier"]
+file_patterns = [
+  "**/*.md",          # markdownlint
+  "**/*.css",         # stylelint
+  "**/*.scss",        # stylelint
+  "**/*.html",        # html-validate
+  "**/*.htm",         # html-validate
+  "**/*.xml",         # xmllint
+  "**/*.yml",         # yamllint / actionlint / zizmor (covers dependabot + workflows)
+  "**/*.yaml",        # yamllint / actionlint / zizmor
+  "**/composer.json", # owned by composer (inside prettier's JSON domain)
+  "**/*.lock",        # generated lockfiles (composer/yarn/Cargo/…); prettier infers no parser
+]
+
+# 3. actionlint + zizmor already lint workflows with GitHub-aware rules, so
+#    yamllint's generic style checks (e.g. the YAML 1.1 truthy false-positive on
+#    `on:`) are just noise on the install.sh-deployed workflow + dependabot files.
+[[exclude]]
+plugins = ["yamllint"]
+file_patterns = [
+  "**/.github/workflows/**",
+  "**/.github/dependabot.yml",
+]

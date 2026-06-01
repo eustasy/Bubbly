@@ -1,0 +1,20 @@
+{
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.rulers": [140],
+  "[php]": {
+    "editor.defaultFormatter": "junstyle.php-cs-fixer"
+  },
+  "php-cs-fixer.executablePath": "${workspaceFolder}/vendor/bin/php-cs-fixer",
+  "php-cs-fixer.config": "${workspaceFolder}/.qlty/configs/.php-cs-fixer.php",
+  "php-cs-fixer.onsave": true,
+  "prettier.configPath": ".qlty/configs/.prettierrc.json",
+  "extensions.recommendations": [
+    "esbenp.prettier-vscode",
+    "junstyle.php-cs-fixer",
+    "EditorConfig.EditorConfig",
+    "dbaeumer.vscode-eslint",
+    "ms-python.python",
+    "charliermarsh.ruff"
+  ]
+}
