@@ -2,6 +2,10 @@
 
 *For configuring Certbot with Nginx as quickly and securely as possible.*
 
+[![Nginx Config](https://github.com/eustasy/Bubbly/actions/workflows/nginx.yml/badge.svg)](https://github.com/eustasy/Bubbly/actions/workflows/nginx.yml)
+[![Normal (Shell)](https://github.com/eustasy/Bubbly/actions/workflows/sh.yml/badge.svg)](https://github.com/eustasy/Bubbly/actions/workflows/sh.yml)
+[![Maintainability](https://qlty.sh/gh/eustasy/projects/Bubbly/maintainability.svg)](https://qlty.sh/gh/eustasy/projects/Bubbly)
+
 If you want an instant A+ score on Qualys [SSL Labs](https://www.ssllabs.com/ssltest/analyze.html?d=lewisgoddard.me.uk) and A score on [SecurityHeaders.io](https://securityheaders.io/?q=lewisgoddard.me.uk&followRedirects=on), then this is what you'll need to do. You won't need any familiarity with [Certbot](https://github.com/certbot/certbot), [Let's Encrypt](https://letsencrypt.org/), the ACME spec, or SSL in general, just basic Nginx configuration.
 
 **1. Install Certbot and Clone Bubbly**
