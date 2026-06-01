@@ -8,7 +8,7 @@
 
 If you want an instant A+ score on Qualys [SSL Labs](https://www.ssllabs.com/ssltest/analyze.html?d=lewisgoddard.me.uk) and A score on [SecurityHeaders.io](https://securityheaders.io/?q=lewisgoddard.me.uk&followRedirects=on), then this is what you'll need to do. You won't need any familiarity with [Certbot](https://github.com/certbot/certbot), [Let's Encrypt](https://letsencrypt.org/), the ACME spec, or SSL in general, just basic Nginx configuration.
 
-**1. Install Certbot and Clone Bubbly**
+## 1. Install Certbot and Clone Bubbly
 
 We'll start off by cloning the project into the home folder with git.
 
@@ -18,7 +18,7 @@ sudo apt install git certbot &&
 git clone https://github.com/eustasy/Bubbly
 ```
 
-**2. Generate Statics**
+## 2. Generate Statics
 
 Generate the static keys once per server.
 
@@ -30,7 +30,7 @@ As it will warn, this might take a while.
 
 Have a seat.
 
-**3. Copy config blocks**
+## 3. Copy config blocks
 
 When you've gone and made something in the 15 minutes that could well take, or you've just set up a new SSH session, copy the Nginx configuration over to the Nginx area.
 
@@ -38,7 +38,7 @@ When you've gone and made something in the 15 minutes that could well take, or y
 ~/Bubbly/bubbly_copy-configs.sh
 ```
 
-**4. Configure & Enable Verification**
+## 4. Configure & Enable Verification
 
 Copy the verification site template and replace the instances of `example.com` in the file with your actual domain name.
 
@@ -56,8 +56,7 @@ sudo nginx -t && sudo service nginx reload
 
 Alternatively, you can simply add `include location/bubbly_well-known-passthrough.conf;` to an existing site you want to continue working while we upgrade.
 
-
-**5. Fetch Certificates**
+## 5. Fetch Certificates
 
 Fetch your certificates like this:
 
@@ -69,7 +68,7 @@ It will ask for the root password, and an email address, so hang around, it shou
 
 Certbot will set up a systemd timer that runs `certbot renew` automatically twice a day. The `--deploy-hook` passed by the script is stored in `/etc/letsencrypt/renewal/example.com.conf`, so Nginx will be reloaded automatically after each successful renewal — no cron job or manual renewal needed.
 
-**6. Start using the Certificates**
+## 6. Start using the Certificates
 
 Copy the live site template alongside the verify config you already have. You'll need to more carefully review the `[OPTION]`s in this file, as you'll also need to change the certificate location to match the domain name you requested. Consider taking a look at the `[OPTION]`s and `[WARNING]`s in other linked config files.
 

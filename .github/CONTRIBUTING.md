@@ -6,7 +6,9 @@ We love pull requests from everyone. Check out our [open issues](https://github.
 
 We recommend forking the repository, and then cloning your new repo.
 
-    git clone git@github.com:your-username/bubbly.git
+```bash
+git clone git@github.com:your-username/bubbly.git
+```
 
 Once you've made changes and committed them in your fork, preferably on a nicely named branch with descriptive commit messages, you can move on to [Creating a Pull Request](#creating-a-pull-request).
 
@@ -32,9 +34,9 @@ In [`nginx-config/directive/bubbly_rock-hard-ssl.conf`](https://github.com/eusta
 
 Drops everything older than ~2020 browsers.
 
-- Supports Firefox 63, Android 10.0, Chrome 70, Edge 75, Java 11, OpenSSL 1.1.1, Opera 57, Safari 12.1
+* Supports Firefox 63, Android 10.0, Chrome 70, Edge 75, Java 11, OpenSSL 1.1.1, Opera 57, Safari 12.1
 
-```
+```nginx
 ssl_protocols TLSv1.3;
 ssl_ecdh_curve X25519MLKEM768:X25519:prime256v1:secp384r1;
 ssl_prefer_server_ciphers off;
@@ -44,9 +46,9 @@ ssl_prefer_server_ciphers off;
 
 Supports the last several versions of every modern browser, plus a long tail.
 
-- Supports Firefox 31.3.0, Android 4.4.2, Chrome 49, Edge 15 on Windows 10, IE 11 on Windows 10, Java 8u161, OpenSSL 1.0.1l, Opera 20, Safari 9
+* Supports Firefox 31.3.0, Android 4.4.2, Chrome 49, Edge 15 on Windows 10, IE 11 on Windows 10, Java 8u161, OpenSSL 1.0.1l, Opera 20, Safari 9
 
-```
+```nginx
 ssl_protocols TLSv1.2 TLSv1.3;
 ssl_ecdh_curve X25519MLKEM768:X25519:prime256v1:secp384r1;
 ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305;
@@ -57,28 +59,28 @@ ssl_prefer_server_ciphers off;
 
 Various headers are delivered from various configuration files. This list should help source any undesired headers you see being sent. Some headers can be sent from multiple locations.
 
-- [`nginx-config/directive/bubbly_security-headers.conf`](https://github.com/eustasy/Bubbly/blob/master/nginx-config/directive/bubbly_security-headers.conf)
-- - `Access-Control-Allow-Origin`
-- - `Content-Security-Policy-Report-Only`
-- - `Content-Security-Policy`
-- - `Cross-Origin-Embedder-Policy`
-- - `Cross-Origin-Opener-Policy`
-- - `Cross-Origin-Resource-Policy`
-- - `X-Content-Type-Options`
-- - `X-Frame-Options`
-- - `Feature-Policy`
-- - `Permissions-Policy`
-- - `Referrer-Policy`
-- - `Server`
-- - `Strict-Transport-Security`
-- - `X-XSS-Protection`
-- [`nginx-config/location/h5bp_expires.conf`](https://github.com/eustasy/Bubbly/blob/master/nginx-config/location/h5bp_expires.conf)
-- - `Cache-Control`
-- [`nginx-config/directive/h5bp_no-transform.conf`](https://github.com/eustasy/Bubbly/blob/master/nginx-config/directive/h5bp_no-transform.conf)
-- - `Cache-Control`
-- [`nginx-config/location/bubbly_extensionless-php.conf`](https://github.com/eustasy/Bubbly/blob/master/nginx-config/location/bubbly_extensionless-php.conf)
-- - Suppresses `X-Powered-By`
-- [`nginx-config/directive/bubbly_rock-hard-ssl.conf`](https://github.com/eustasy/Bubbly/blob/master/nginx-config/directive/bubbly_rock-hard-ssl.conf)
+* [`nginx-config/directive/bubbly_security-headers.conf`](https://github.com/eustasy/Bubbly/blob/master/nginx-config/directive/bubbly_security-headers.conf)
+* * `Access-Control-Allow-Origin`
+* * `Content-Security-Policy-Report-Only`
+* * `Content-Security-Policy`
+* * `Cross-Origin-Embedder-Policy`
+* * `Cross-Origin-Opener-Policy`
+* * `Cross-Origin-Resource-Policy`
+* * `X-Content-Type-Options`
+* * `X-Frame-Options`
+* * `Feature-Policy`
+* * `Permissions-Policy`
+* * `Referrer-Policy`
+* * `Server`
+* * `Strict-Transport-Security`
+* * `X-XSS-Protection`
+* [`nginx-config/location/h5bp_expires.conf`](https://github.com/eustasy/Bubbly/blob/master/nginx-config/location/h5bp_expires.conf)
+* * `Cache-Control`
+* [`nginx-config/directive/h5bp_no-transform.conf`](https://github.com/eustasy/Bubbly/blob/master/nginx-config/directive/h5bp_no-transform.conf)
+* * `Cache-Control`
+* [`nginx-config/location/bubbly_extensionless-php.conf`](https://github.com/eustasy/Bubbly/blob/master/nginx-config/location/bubbly_extensionless-php.conf)
+* * Suppresses `X-Powered-By`
+* [`nginx-config/directive/bubbly_rock-hard-ssl.conf`](https://github.com/eustasy/Bubbly/blob/master/nginx-config/directive/bubbly_rock-hard-ssl.conf)
 
 ## Contact Points
 
