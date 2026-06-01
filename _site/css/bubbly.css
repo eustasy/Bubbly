@@ -193,6 +193,7 @@ html, body { background: var(--color-bg); }
 	border-color: color-mix(in oklab, var(--accent) 80%, black);
 }
 .b-cta-row code {
+	margin-left: 4px;
 	background: color-mix(in oklab, var(--accent) 8%, transparent);
 	border: 0; padding: 0 var(--space-1); border-radius: var(--radius-sm);
 }
@@ -503,6 +504,7 @@ html, body { background: var(--color-bg); }
 	line-height: 1.5;
 }
 .b-step-hint > span { flex: 1 1 auto; min-width: 0; }
+.b-step-hint > svg { flex: 0 0 auto; }
 .b-kbd {
 	display: inline-block; font-family: var(--font-mono);
 	font-size: 0.85em; padding: 1px 6px; margin: 0 1px;
@@ -521,6 +523,7 @@ html, body { background: var(--color-bg); }
 	display: flex; gap: var(--space-3); align-items: center;
 	box-shadow: var(--shadow-sm);
 }
+.b-step-coda > svg { flex: 0 0 auto; }
 .b-step-coda p { margin: 0; color: var(--color-text-secondary); max-width: none; }
 .b-step-coda code {
 	background: var(--color-code-bg);
@@ -659,6 +662,8 @@ html, body { background: var(--color-bg); }
 	background: var(--accent);
 	border-radius: inherit;
 }
+.b-bar-fill.w-100 { width: 100%; }
+.b-bar-fill.w-95 { width: 95%; }
 .b-score-headers { list-style: none; padding: 0; margin: 0;
 	display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2) var(--space-4);
 	font-size: var(--font-size-sm);
