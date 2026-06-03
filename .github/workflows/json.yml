@@ -22,7 +22,7 @@ jobs:
         with:
           persist-credentials: false
 
-      - uses: qltysh/qlty-action/install@a19242102d17e497f437d7466aa01b528537e899 # v2.2.0
+      - uses: qltysh/qlty-action/install@fd52dc852530a708d68c3b7342f8d33d1df4cd55 # v2.2.1
 
       - name: Format check (prettier)
         run: git ls-files -- '*.json' | xargs -r qlty check --filter=prettier
