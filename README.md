@@ -49,6 +49,10 @@ What you need a third party for is somewhere to _get_ the extra versions, becaus
 
 Note that their version strings sort above the distribution's own, so once the repository is enabled `apt` will generally prefer its builds for every PHP package — including the version your release already shipped.
 
+To put a site on a particular version, uncomment Option 2 in `location/bubbly_extensionless-php.conf` and set `$bubbly_php` in each site file to one of the upstream names in `conf.d/php_sockets.conf`. Both files explain the trade-off: selecting per site means the upstream name is resolved per request, so a typo becomes a 502 rather than something `nginx -t` catches.
+
+Worth doing at the same time, though it is PHP-FPM configuration rather than Nginx: give each site its own **pool** instead of sharing `www`. A pool has its own user, its own `pm.max_children` and its own opcache, so one site cannot read another's session files or consume all the workers. Sharing a single pool means one busy or wedged site stalls every other site on the machine, whatever Nginx is told to do.
+
 ## 1. Install Certbot and Clone Bubbly
 
 We'll start off by cloning the project into the home folder with git.

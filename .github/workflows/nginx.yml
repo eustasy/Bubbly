@@ -53,7 +53,7 @@ jobs:
       - name: Install Nginx and tooling
         run: |
           apt-get update
-          apt-get install -y nginx openssl curl rsync sudo git ca-certificates
+          apt-get install -y nginx php-fpm openssl curl rsync sudo git ca-certificates
           nginx -V
 
       - uses: actions/checkout@v7
@@ -263,6 +263,68 @@ jobs:
             echo "ok   HTML over HTTPS is no-cache, as the map specifies"
           else
             echo "::error::the HTTPS site is missing the caching headers groups/performance-common.conf should apply"
+            status=1
+          fi
+
+          exit $status
+
+      - name: Sites can select different PHP versions
+        # Each distribution ships exactly one PHP branch, so rather than
+        # installing a second from a third-party repo, alpha.test points at the
+        # branch that is present and beta.test at one that is not. A 200 from one
+        # and a 502 from the other proves the two sites resolved different
+        # upstreams — which is the whole claim of per-site selection.
+        run: |
+          status=0
+
+          mkdir -p /run/php
+          ver="$(ls /etc/php | head -1)"
+          real="php$(echo "$ver" | tr -d .)"
+          fake=php82
+          test "$real" != "$fake"
+          echo "installed PHP $ver -> upstream $real; absent upstream $fake"
+          php-fpm"$ver" -D
+          test -S "/run/php/php$ver-fpm.sock"
+
+          # Switch the PHP location to Option 2, the per-site variable.
+          sed -i -e 's|^\tfastcgi_pass php_sockets;|\t#fastcgi_pass php_sockets;|' \
+                 -e 's|^\t#fastcgi_pass \$bubbly_php;|\tfastcgi_pass $bubbly_php;|' \
+            /etc/nginx/location/bubbly_extensionless-php.conf
+          grep -nE '^[[:space:]]*#?fastcgi_pass' \
+            /etc/nginx/location/bubbly_extensionless-php.conf
+
+          # Uncomment each site's `set`, aiming them at different upstreams.
+          sed -i "s|^\t#set \$bubbly_php php85;|\tset \$bubbly_php $real;|" \
+            /etc/nginx/sites-available/alpha.test_https.conf
+          sed -i "s|^\t#set \$bubbly_php php85;|\tset \$bubbly_php $fake;|" \
+            /etc/nginx/sites-available/beta.test_https.conf
+          grep -H 'bubbly_php' /etc/nginx/sites-available/alpha.test_https.conf \
+            /etc/nginx/sites-available/beta.test_https.conf
+
+          mkdir -p /path/to/alpha.test /path/to/beta.test
+          printf '<?php echo "php-ok";' | tee /path/to/alpha.test/probe.php \
+            > /path/to/beta.test/probe.php
+
+          nginx -t
+          nginx -s reload
+          sleep 1
+
+          a="$(curl -sS -k --max-time 10 --resolve alpha.test:443:127.0.0.1 \
+            https://alpha.test/probe.php)"
+          b="$(curl -sS -k -o /dev/null -w '%{http_code}' --max-time 10 \
+            --resolve beta.test:443:127.0.0.1 https://beta.test/probe.php)"
+          echo "alpha body=[$a]  beta status=$b"
+
+          if [ "$a" = "php-ok" ]; then
+            echo "ok   alpha.test reached the $real pool"
+          else
+            echo "::error::alpha.test did not reach the $real pool; body was [$a]"
+            status=1
+          fi
+          if [ "$b" = "502" ]; then
+            echo "ok   beta.test got 502 from the absent $fake socket"
+          else
+            echo "::error::beta.test returned $b, expected 502 from the absent $fake socket"
             status=1
           fi
 
