@@ -311,13 +311,20 @@ jobs:
             return 0
           }
 
+          # The shipped zones run at 20r/s, which would need well over a hundred
+          # requests inside one second to trip. Only the rate is rewritten here;
+          # the key expressions — the thing actually under test — stay exactly as
+          # shipped.
+          sed -i 's|rate=20r/s|rate=1r/s|' /etc/nginx/conf.d/bubbly_limits.conf
+          grep -n 'rate=' /etc/nginx/conf.d/bubbly_limits.conf
+
           # Keyed on the client address alone: beta.test is charged for the
           # traffic alpha.test just sent, and is refused.
-          check reqPerSec1 503 || status=1
+          check reqPerSec20 503 || status=1
 
           # Keyed on the server name too: beta.test has its own budget, so it is
           # served the token.
-          check siteReqPerSec1 200 || status=1
+          check siteReqPerSec20 200 || status=1
 
           exit $status
 
