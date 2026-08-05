@@ -91,6 +91,21 @@ Two further interactions worth remembering: clients behind NAT count as one, so 
 
 CI rewrites only `rate=20r/s` to `1r/s` before the isolation test, leaving the key expressions — the thing under test — exactly as shipped.
 
+**Renamed for what they key on, not their rate** (user's call): `reqPerSec20`→`reqPerIP`, `siteReqPerSec20`→`siteReqPerIP`, and `bubbly_limits_{20,site_20,server_2k}.conf`→`bubbly_limits_{ip,site,server}.conf`. The rate had been encoded in the zone name, the rate itself and the filename, so changing it meant renaming or lying. `rate=` must live on `limit_req_zone` — `limit_req` accepts only `burst=` and `nodelay`/`delay=` — so a second rate means a second zone.
+
+### Making the limits survivable behind shared addresses (2026-08-05)
+
+The NAT question turned out to have a worse sibling. All four mitigations shipped:
+
+1. **Scope to PHP.** The recommended placement is now inside `location ~ \.php$`, with a commented include in `location/bubbly_extensionless-php.conf`. At server level every asset is counted, so one cold-cache page load — around seventy requests for a median page — spends most of a 100 burst by itself. Limiting only PHP makes a page load cost roughly one token, which turns NAT from a real risk into a non-issue.
+2. **`directive/bubbly_real-ip.conf`.** Behind a proxy or CDN, `$binary_remote_addr` is the proxy, so every zone collapses to one bucket for the entire audience — silently. Bubbly had no `real_ip` or `proxy_protocol` handling at all. Ships fully commented, with the critical warning that `set_real_ip_from` on a range you do not control lets anyone in it forge their address and evade the limit. Cloudflare's ranges are deliberately not copied in, only the commands to fetch them, since they go stale.
+3. **429, not 503.** `limit_req_status`/`limit_conn_status` are 429, and rejections log at `warn` rather than nginx's `error` — being limited is expected under load, and a 503 on a stylesheet reads as an outage.
+4. **`delay=50` replaces `nodelay`.** Half the burst passes immediately, the rest is paced instead of refused, so a shared address degrades into slowness. `nodelay` remains an `[OPTION]`.
+
+CI asserts the realip module exists on both platforms, that the real-ip include parses with an option enabled, and that a rejection really is 429.
+
+Still open, and now a much smaller step: whether to include `bubbly_limits_site.conf` by default. Nothing limiting ships enabled today — the never-included list is `bubbly_limits_{ip,site,server}.conf`, `bubbly_uploads.conf` (so uploads sit at nginx's 1m, not Bubbly's 10M), `bubbly_logs.conf`, `location/bubbly_errors.conf` and `location/bubbly_methods.conf`.
+
 Original plan:
 
 `conf.d/bubbly_limits.conf` keys its zones on `$binary_remote_addr` alone, so one client's traffic to site A spends site B's budget and `limit_conn conPerIP 20` is a box-wide per-IP cap. Add site-scoped zones keyed `$server_name$binary_remote_addr` (`siteReqPerSec20`, `siteConPerIP`) and a `directive/bubbly_limits_site_20.conf` variant; keep the existing global zones and files for back-compat and document the trade-off with `[OPTION]`/`[WARNING]`. Zones consume shared memory whether used or not, so keep the new ones at the current 1m/10m sizes. Low risk: neither limits file is included by either group today, so this is entirely opt-in.
