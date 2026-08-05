@@ -11,35 +11,35 @@ If you want an instant A+ score on Qualys [SSL Labs](https://www.ssllabs.com/ssl
 
 ## Requirements
 
-**Nginx 1.25.1+** for the `http2` directive, and **OpenSSL 3.5+** for the `X25519MLKEM768` post-quantum group. Both are marked `[WARNING]` in the config files, beside what to change to do without them. Check with `nginx -V`, which reports the OpenSSL Nginx was built against — not necessarily the `openssl` on your `$PATH`.
+- **Nginx 1.25.1+** for the `http2` directive,
+- **OpenSSL 3.5+** for the `X25519MLKEM768` post-quantum group.
+
+> _Check with `nginx -V`, which reports the OpenSSL Nginx was built against, not the `openssl` on your `$PATH`. Consider deploying on an unsupported releases using [Bubbly 2.2.0](https://github.com/eustasy/Bubbly/tree/2.2.0)._
 
 | Platform | Nginx | OpenSSL | Supported |
 | --- | --- | --- | --- |
 | Ubuntu 26.04 LTS | 1.28 | 3.5 | Yes |
 | Debian 13 | 1.26 | 3.5 | Yes |
 | Ubuntu 25.10 | 1.28 | 3.5 | Meets both, but end of life |
-| Ubuntu 25.04 | 1.26 | 3.4 | No |
-| Ubuntu 24.10 | 1.26 | 3.3 | No |
 | Ubuntu 24.04 LTS | 1.24 | 3.0 | No |
-| Ubuntu 22.04 LTS | 1.18 | 3.0 | No |
 | Debian 12 | 1.22 | 3.0 | No |
 
-OpenSSL is the binding gate — Nginx has been new enough since 24.10. On the unsupported releases use [Bubbly 2.2.0](https://github.com/eustasy/Bubbly/tree/2.2.0), which needs neither. Raising OpenSSL there isn't practical: nginx.org's packages link the system OpenSSL, and `ppa:ondrej/nginx` was [deprecated in January 2026](https://codeberg.org/oerdnj/deb.sury.org/issues/67).
+We recommend the use of the distribution's own Nginx, with no third-party repositories.
 
-Use the distribution's own Nginx, with no third-party repositories. It is also the only route to Brotli, which Ubuntu and Debian package as `libnginx-mod-http-brotli-filter` — in `universe`, built against one exact Nginx ABI — while [nginx.org's packages](https://nginx.org/en/linux_packages.html#Ubuntu) ship [no Brotli at all](https://codeberg.org/oerdnj/deb.sury.org/issues/67#issuecomment-14373032).
+## PHP
 
-### Several PHP versions
+Ubuntu 26.04 LTS ships PHP 8.5, which `conf.d/php_sockets.conf` selects by default. Run `ls /etc/php/` to list the versions installed and `ls /var/run/php/` the sockets that exist.
 
-Ubuntu 26.04 ships PHP 8.5, which `conf.d/php_sockets.conf` selects by default. `ls /etc/php/` lists the versions installed and `ls /var/run/php/` the sockets that exist — the paths that file has to match.
-
-Versions are co-installable as they stand: `php8.5-fpm` and `php8.4-fpm` each get their own `/etc/php/` tree, systemd unit and socket. Each release only _carries_ one, though — 26.04 has 8.5, 24.04 has 8.3, Debian 13 has 8.4 — so extra versions come from Ondřej Surý:
+Multiple PHP versions can be easily installed: `php8.5-fpm` and `php8.4-fpm` each get their own `/etc/php/` tree, systemd unit and socket. Each release only _carries_ one, though — 26.04 has 8.5, 24.04 has 8.3, Debian 13 has 8.4 — so extra versions come from Ondřej Surý:
 
 * Ubuntu 22.04 and 24.04: [`ppa:ondrej/php`](https://launchpad.net/~ondrej/+archive/ubuntu/php)
 * Ubuntu 26.04 and Debian: [packages.sury.org/php](https://packages.sury.org/php/), which the PPA is merging into
 
 Their version strings sort above the distribution's, so `apt` prefers their builds for every PHP package once enabled. To put a site on a given version, uncomment Option 2 in `location/bubbly_extensionless-php.conf` and set `$bubbly_php` in each site file. Give each site its own FPM pool while you are there, so one cannot exhaust the workers or read another's sessions.
 
-## 1. Install Certbot and Clone Bubbly
+## Installation
+
+### 1. Install Certbot and Clone Bubbly
 
 We'll start off by cloning the project into the home folder with git.
 
@@ -49,7 +49,7 @@ sudo apt install git certbot &&
 git clone https://github.com/eustasy/Bubbly
 ```
 
-## 2. Copy config blocks
+### 2. Copy config blocks
 
 Copy the configuration into place. Run it again whenever you pull a newer Bubbly.
 
@@ -59,7 +59,7 @@ Copy the configuration into place. Run it again whenever you pull a newer Bubbly
 
 This installs `conf.d/bubbly_ssl.conf`, which Nginx loads by itself: the shared TLS session cache and the OCSP resolver. Protocols, key exchange groups and ciphers live in `directive/bubbly_ssl-profile.conf` instead, because Nginx takes those from the default server for the socket whatever a site file asks for — hence the next step.
 
-## 3. Enable the default server
+### 3. Enable the default server
 
 Once per server, before any site. It answers whatever no site claims: an unknown `Host`, a connection with no SNI, a probe at your IP address.
 
@@ -73,7 +73,7 @@ The `rm` drops the distribution's default site, which also claims `default_serve
 
 This matters more than it looks. The default server sets the TLS protocol list and key exchange groups for **every** site on the machine, so without one of your own the role falls to whichever `sites-enabled/` file sorts first — and a new site sorting earlier would change them underneath you. Site files include the same profile as a safety net.
 
-## 4. Configure & Enable Verification
+### 4. Configure & Enable Verification
 
 Copy the verification template and replace `example.com` with your domain.
 
@@ -91,7 +91,7 @@ sudo nginx -t && sudo service nginx reload
 
 Or, to keep an existing site running while you migrate, add `include location/bubbly_well-known-passthrough.conf;` to it instead.
 
-## 5. Fetch Certificates
+### 5. Fetch Certificates
 
 ```bash
 ~/Bubbly/bubbly_renew-ssl.sh -d example.com -d www.example.com
@@ -103,7 +103,7 @@ Certbot installs a systemd timer that runs `certbot renew` twice a day, and the 
 
 Renewal being automatic is why this script always passes `--force-renew`: running it by hand means you want a certificate now. Don't loop it — [Let's Encrypt allows 5 certificates per identical set of names every 7 days](https://letsencrypt.org/docs/rate-limits/), refilling one every 34 hours, and that limit cannot be raised. Add `--dry-run` to rehearse against staging.
 
-## 6. Start using the Certificates
+### 6. Start using the Certificates
 
 Copy the live template alongside the verification one. Review its `[OPTION]`s more carefully — the certificate paths have to match the domain you requested — and the `[OPTION]`s and `[WARNING]`s in the files it includes.
 
@@ -121,7 +121,7 @@ sudo nginx -t && sudo service nginx reload
 
 Keep `example.com_http.conf` symlinked permanently. It serves all HTTP traffic, ACME challenges included, so renewals keep working even after a certificate has expired.
 
-## Optional: shared session ticket keys
+### Optional: shared session ticket keys
 
 Nginx 1.23.2+ generates and rotates ticket keys itself, in the shared session cache. You only need your own if **several Nginx instances behind a load balancer** have to resume each other's tickets.
 
