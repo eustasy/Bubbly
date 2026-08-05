@@ -1,7 +1,8 @@
 ---
-name: keep nice formatting in config files
+name: config-formatting
 description: When fixing bugs in config/source files, preserve the user's existing multi-line layout, alignment, and indentation rather than collapsing to single lines.
-type: feedback
+metadata:
+  type: feedback
 ---
 
 When fixing bugs in nginx (or similar) config files, do not collapse multi-line, nicely-aligned values to a single line just because that's the simplest fix.

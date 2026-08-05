@@ -1,10 +1,11 @@
 ---
-name: version-option lists — descending order, include all supported, latest is default
+name: version-option-lists
 description: When listing version options in config files, list newest at the top and oldest at the bottom; include every version still receiving any form of support (security included); the newest version is always the default.
-type: feedback
+metadata:
+  type: feedback
 ---
 
-When editing lists of versioned options in this repo (e.g. PHP socket options in `nginx-config/conf.d/php_sockets.conf`, and the PHP CI matrix — note that `.github/workflows/normal.yml` no longer exists and as of 2026-08-05 there is no PHP matrix in CI at all; restoring one is item B of [[multisite-refactor-plan]]):
+When editing lists of versioned options in this repo — currently the PHP socket options in `nginx-config/conf.d/php_sockets.conf`:
 
 1. **Order descending** — newest version at the top, oldest at the bottom.
 2. **Keep every still-supported version** — include versions still receiving security support, not only those in active support. Don't drop a version just because its active-support window has ended.
@@ -18,5 +19,4 @@ When editing lists of versioned options in this repo (e.g. PHP socket options in
 **How to apply:**
 - Sort newest → oldest top-to-bottom every time.
 - Cross-reference [PHP supported versions](https://www.php.net/supported-versions.php) (or equivalent project page) and include each version listed there, including those in security-only support. **Verify the dates rather than trusting the ones already in the file** — in August 2026 every "Supported until" date in `php_sockets.conf` was wrong, apparently active-support ends from a superseded schedule. PHP retires a branch at the end of a calendar year, so every date should be a 31 December, and active and security windows are worth stating separately.
-- Mark the top (newest) entry as `[DEFAULT]` and leave its `server`/active line uncommented; mark every older entry as `[DISABLED]` with the line commented out. Any backup-socket reference should also point at the latest version.
-- Keep `php_sockets.conf` and the CI workflow matrix in sync (once the matrix is restored — see above).
+- The newest entry is the default target. In `php_sockets.conf` that means the `php_sockets` upstream points at it, since every branch now has an upstream of its own rather than options being commented in and out.
