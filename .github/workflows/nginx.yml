@@ -355,6 +355,65 @@ jobs:
 
           exit $status
 
+      - name: Brotli compresses once the module is installed
+        # Debian 13 and Ubuntu 26.04 both package the filter module, built against
+        # their own Nginx ABI. nginx.org's builds ship no Brotli at all, which is
+        # part of why Bubbly recommends the distribution's Nginx.
+        run: |
+          status=0
+
+          apt-get install -y libnginx-mod-http-brotli-filter
+          # A dynamic module, so it shows up in the effective config rather than
+          # in `nginx -V`.
+          nginx -T 2>/dev/null | grep -i 'load_module.*brotli'
+
+          sed -i 's|^#include directive/bubbly_brotli.conf;|include directive/bubbly_brotli.conf;|' \
+            /etc/nginx/groups/performance-common.conf
+          grep -n brotli /etc/nginx/groups/performance-common.conf
+
+          # Compressible, and comfortably past brotli_min_length.
+          for _ in $(seq 1 100); do
+            printf 'body { color: #123456; } /* padding to clear min_length */\n'
+          done > /path/to/alpha.test/big.css
+
+          nginx -t
+          nginx -s reload
+          sleep 1
+
+          br="$(curl -sS -k -o /dev/null -D - --max-time 10 \
+            --resolve alpha.test:443:127.0.0.1 \
+            -H 'Accept-Encoding: br' https://alpha.test/big.css)"
+          gz="$(curl -sS -k -o /dev/null -D - --max-time 10 \
+            --resolve alpha.test:443:127.0.0.1 \
+            -H 'Accept-Encoding: gzip' https://alpha.test/big.css)"
+          echo "--- with Accept-Encoding: br ---"
+          echo "$br"
+
+          if echo "$br" | grep -qi '^content-encoding: *br'; then
+            echo "ok   Brotli used when the client offers br"
+          else
+            echo "::error::a text/css response was not Brotli encoded"
+            status=1
+          fi
+
+          if echo "$gz" | grep -qi '^content-encoding: *gzip'; then
+            echo "ok   gzip still used when br is not offered"
+          else
+            echo "::error::enabling Brotli broke gzip for clients that only offer gzip"
+            status=1
+          fi
+
+          # Reported, not asserted: ngx_brotli has no brotli_vary, and whether it
+          # honours gzip_vary is undocumented. The answer belongs in
+          # directive/bubbly_brotli.conf once measured.
+          if echo "$br" | grep -qi '^vary: *accept-encoding'; then
+            echo "::notice::Vary: Accept-Encoding IS present on a Brotli response, so gzip_vary covers it"
+          else
+            echo "::notice::Vary: Accept-Encoding is MISSING on a Brotli response — gzip_vary does not cover Brotli, so the config needs an explicit add_header"
+          fi
+
+          exit $status
+
       - name: The real-ip include parses once an option is enabled
         # Everything in directive/bubbly_real-ip.conf ships commented out, so
         # nothing would otherwise parse it. Enable the loopback option and load
@@ -520,14 +579,37 @@ jobs:
 
           exit $status
 
-  scripts:
-    name: Helper scripts are executable
+  repo-checks:
+    name: Repo consistency
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 1
           persist-credentials: false
+
+      - name: gzip_types and brotli_types match
+        # The two lists are necessarily duplicated — nginx has no way to share
+        # one — so they are compared here rather than trusted to a comment.
+        run: |
+          types() { # $1 = directive prefix, $2 = file
+            sed -n "/^${1}_types/,/;/p" "$2" \
+              | tr '\n' ' ' \
+              | sed -E "s/^${1}_types//; s/;.*//" \
+              | tr -s '[:space:]' '\n' \
+              | grep -v '^$' \
+              | sort
+          }
+          gz=$(types gzip nginx-config/directive/bubbly_gzip.conf)
+          br=$(types brotli nginx-config/directive/bubbly_brotli.conf)
+          echo "gzip_types: $(echo "$gz" | wc -l) entries"
+          echo "brotli_types: $(echo "$br" | wc -l) entries"
+          if diff <(echo "$gz") <(echo "$br"); then
+            echo "ok   the two lists match"
+          else
+            echo "::error::gzip_types and brotli_types have drifted; the diff above is gzip on the left"
+            exit 1
+          fi
 
       - name: Every bubbly_*.sh is executable
         # The README tells operators to run these directly, so a missing
