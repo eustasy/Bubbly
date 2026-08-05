@@ -74,6 +74,11 @@ jobs:
             exit 1
           }
 
+      - name: Confirm the realip module is available
+        # directive/bubbly_real-ip.conf depends on it. Debian and Ubuntu build it
+        # in; some third-party builds do not.
+        run: nginx -V 2>&1 | grep -o with-http_realip_module
+
       - name: Generate self-signed certificates
         # bubbly_https.conf expects /etc/letsencrypt/live/<domain>/*.pem. A
         # self-signed certificate satisfies the file-existence and PEM-validity
@@ -263,6 +268,25 @@ jobs:
 
           exit $status
 
+      - name: The real-ip include parses once an option is enabled
+        # Everything in directive/bubbly_real-ip.conf ships commented out, so
+        # nothing would otherwise parse it. Enable the loopback option and load
+        # it to prove the syntax. Harmless for the checks that follow: the
+        # requests come from 127.0.0.1 and send no X-Forwarded-For, so there is
+        # nothing for real_ip to substitute.
+        run: |
+          sed -e 's|#set_real_ip_from 127.0.0.1;|set_real_ip_from 127.0.0.1;|' \
+              -e 's|#real_ip_header X-Forwarded-For;|real_ip_header X-Forwarded-For;|' \
+            /etc/nginx/directive/bubbly_real-ip.conf \
+            > /etc/nginx/directive/ci_real-ip.conf
+          grep -E '^[[:space:]]*(set_real_ip_from|real_ip_header)' \
+            /etc/nginx/directive/ci_real-ip.conf
+          test "$(grep -cE '^[[:space:]]*(set_real_ip_from|real_ip_header)' \
+            /etc/nginx/directive/ci_real-ip.conf)" = 2
+          echo 'include directive/ci_real-ip.conf;' >> /etc/nginx/groups/security-common.conf
+          nginx -t
+          nginx -s reload
+
       - name: Rate limits are shared server-wide but isolated per site
         # The point of the site-scoped zones in conf.d/bubbly_limits.conf. Both
         # families are exercised with the 1r/s zones and no burst, so the second
@@ -298,10 +322,12 @@ jobs:
             beta="$(curl -sS -o /dev/null -w '%{http_code}' --max-time 5 \
               -H 'Host: beta.test' "$probe")"
             echo "zone=$1  alpha=[$alpha]  beta=$beta  (beta expected $2)"
+            # 429 rather than Nginx's default 503, per limit_req_status in
+            # conf.d/bubbly_limits.conf.
             case "$alpha" in
-              *503*) ;;
+              *429*) ;;
               *)
-                echo "::error::zone $1 never returned 503, so the limit was not applied and the result below means nothing"
+                echo "::error::zone $1 never returned 429, so either the limit was not applied or limit_req_status is not in force; the result below means nothing"
                 return 1 ;;
             esac
             if [ "$beta" != "$2" ]; then
@@ -320,7 +346,7 @@ jobs:
 
           # Keyed on the client address alone: beta.test is charged for the
           # traffic alpha.test just sent, and is refused.
-          check reqPerIP 503 || status=1
+          check reqPerIP 429 || status=1
 
           # Keyed on the server name too: beta.test has its own budget, so it is
           # served the token.
