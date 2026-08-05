@@ -614,6 +614,29 @@ jobs:
             exit 1
           fi
 
+      - name: Documentation links point at files that exist
+        # Three links to .github/ templates and a code of conduct sat in
+        # CONTRIBUTING.md returning 404, and a rename left every link on the
+        # master branch. Checked here so docs rot fails the build instead.
+        run: |
+          status=0
+          paths=$(grep -rhoE 'Bubbly/blob/[^/]+/[^)]+' --include='*.md' \
+            --exclude-dir=.claude . | sed -E 's|.*Bubbly/blob/[^/]+/||' | sort -u)
+          for p in $paths; do
+            if [ -e "$p" ]; then
+              echo "ok      $p"
+            else
+              echo "::error::a Markdown file links to $p, which does not exist"
+              status=1
+            fi
+          done
+          if grep -rn 'Bubbly/blob/master\|Bubbly/tree/master\|Bubbly/master/' \
+              --include='*.md' --exclude-dir=.claude .; then
+            echo "::error::links above still reference the master branch; this repo uses main"
+            status=1
+          fi
+          exit $status
+
       - name: The ACME webroot matches in the script and the config
         # If these drift, Certbot writes the challenge where Nginx is not looking
         # and validation 404s — with nothing in either file looking wrong.

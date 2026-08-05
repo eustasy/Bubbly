@@ -135,6 +135,6 @@ Either way, every site shares one session cache — and on 1.23.2+ the automatic
 
 ---
 
-![Screenshot of SSLLabs.com](https://raw.githubusercontent.com/eustasy/Bubbly/master/screenshot_ssllabs.com.png)
+![Screenshot of SSLLabs.com](https://raw.githubusercontent.com/eustasy/Bubbly/main/screenshot_ssllabs.com.png)
 
-![Screenshot of SecurityHeaders.io](https://raw.githubusercontent.com/eustasy/Bubbly/master/screenshot_securityheaders.io.png)
+![Screenshot of SecurityHeaders.io](https://raw.githubusercontent.com/eustasy/Bubbly/main/screenshot_securityheaders.io.png)
