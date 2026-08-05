@@ -28,13 +28,11 @@ Similar to Filing an Issue, Creating a Pull Request is partially self-documentin
 
 ### Cipher Sources
 
-In [`nginx-config/directive/bubbly_rock-hard-ssl.conf`](https://github.com/eustasy/Bubbly/blob/master/nginx-config/directive/bubbly_rock-hard-ssl.conf) you will find two cipher suite options. It is imperative that these are kept as up to date as possible. Both are generated from the [Mozilla SSL Configuration Generator](https://ssl-config.mozilla.org/) (Guideline v6.0).
+In [`nginx-config/directive/bubbly_ssl-profile.conf`](https://github.com/eustasy/Bubbly/blob/master/nginx-config/directive/bubbly_ssl-profile.conf) you will find two cipher suite options. It is imperative that these are kept as up to date as possible. Both are generated from the [TLSRef Configurator](https://configurator.tlsref.org/) (Guideline v6.0) for Nginx 1.28 with OpenSSL 3.5, Bubbly's reference target. Regenerate for those versions, not the newest the configurator offers, or the output will reference groups and ciphers the supported platforms cannot use.
 
 #### Option 1. Modern — TLS 1.3 only
 
 Drops everything older than ~2020 browsers.
-
-* Supports Firefox 63, Android 10.0, Chrome 70, Edge 75, Java 11, OpenSSL 1.1.1, Opera 57, Safari 12.1
 
 ```nginx
 ssl_protocols TLSv1.3;
@@ -44,9 +42,7 @@ ssl_prefer_server_ciphers off;
 
 #### [DEFAULT] Option 2. Intermediate — TLS 1.2 + 1.3
 
-Supports the last several versions of every modern browser, plus a long tail.
-
-* Supports Firefox 31.3.0, Android 4.4.2, Chrome 49, Edge 15 on Windows 10, IE 11 on Windows 10, Java 8u161, OpenSSL 1.0.1l, Opera 20, Safari 9
+Supports the last several versions of every modern browser, plus a long tail. The configurator carries the current client list for each level; it is not duplicated here, where it would go stale.
 
 ```nginx
 ssl_protocols TLSv1.2 TLSv1.3;
@@ -80,7 +76,6 @@ Various headers are delivered from various configuration files. This list should
 * * `Cache-Control`
 * [`nginx-config/location/bubbly_extensionless-php.conf`](https://github.com/eustasy/Bubbly/blob/master/nginx-config/location/bubbly_extensionless-php.conf)
 * * Suppresses `X-Powered-By`
-* [`nginx-config/directive/bubbly_rock-hard-ssl.conf`](https://github.com/eustasy/Bubbly/blob/master/nginx-config/directive/bubbly_rock-hard-ssl.conf)
 
 ## Contact Points
 
