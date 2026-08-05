@@ -7,7 +7,7 @@ metadata:
 
 Plan agreed 2026-08-05 after auditing the config for "several sites, several PHP versions, different ciphers, one server". Per-item progress is in the Status line below; each completed item carries an "as built" note where the result differed from the plan. All work must respect [[nginx-version-floor]], the tab indentation and aligned-column conventions in [[feedback_formatting]], and the `[OPTION]`/`[DEFAULT]`/`[WARNING]` marker idiom.
 
-**Status:** A, B, C, D, E and G are **done** and pushed (2026-08-05), CI green on both platforms. When checking a run after pushing, select it by `headSha` — `gh run list --limit 1` races GitHub's run creation and returns the previous commit's run, which cost two wasted verification cycles here. F's ticket-key decision landed with C, since moving the key to the http level would have made a missing key file break every site; F's remaining work is script hardening. Remaining sequence: I → F's leftovers → H → docs.
+**Status:** A, B, C, D, E, F and G are **done** and pushed (2026-08-05), CI green on both platforms. When checking a run after pushing, select it by `headSha` — `gh run list --limit 1` races GitHub's run creation and returns the previous commit's run, which cost two wasted verification cycles here. F's config half landed with C, since moving the key to the http level would have made a missing key file break every site; its script half followed. Remaining sequence: I → F's leftovers → H → docs.
 
 ## A. Declare the floor — done 2026-08-05
 
@@ -110,7 +110,17 @@ Original plan:
 
 `conf.d/bubbly_limits.conf` keys its zones on `$binary_remote_addr` alone, so one client's traffic to site A spends site B's budget and `limit_conn conPerIP 20` is a box-wide per-IP cap. Add site-scoped zones keyed `$server_name$binary_remote_addr` (`siteReqPerSec20`, `siteConPerIP`) and a `directive/bubbly_limits_site_20.conf` variant; keep the existing global zones and files for back-compat and document the trade-off with `[OPTION]`/`[WARNING]`. Zones consume shared memory whether used or not, so keep the new ones at the current 1m/10m sizes. Low risk: neither limits file is included by either group today, so this is entirely opt-in.
 
-## F. Ticket key — commented out by default, opt-in as a separate setup step
+## F. Ticket key — done 2026-08-05 (config half landed with C, script half here)
+
+**The script was leaking a secret.** `bubbly_generate-tickets.sh` wrote the key at the caller's umask, so a file that decrypts session tickets landed world-readable — anyone with a shell could decrypt captured resumed sessions. Key and directory are now 600 and 700, which is sufficient because nginx reads the file as the **master** process at config load, never as a worker.
+
+It also overwrote the key, invalidating every outstanding ticket. It now rotates: the existing key moves to `ticket.old.key` and a fresh one is written, matching the two commented lines in `conf.d/bubbly_ssl.conf`. nginx encrypts with the first key listed and decrypts with any of them. The script prints the lines to paste and the reload command, and opens by saying 1.23.2+ probably does not need it.
+
+Documented in the README and the config: every site shares one session cache, and on 1.23.2+ the automatic ticket keys live in that cache, so a session begun on one site can be resumed against another. Fine across sites you own, but one site's TLS settings are therefore not a boundary around it; a site needing one declares its own cache zone.
+
+CI runs the script twice, asserts the rotated key differs from its predecessor, checks all three modes, then uncomments both ticket key lines and loads the config. `sh.yml` (shellcheck and shfmt) passes on the rewritten script.
+
+Original plan:
 
 Decided 2026-08-05 by the user: keep the key mechanism, but make generating it and enabling it a **separate, conditional setup step** — "run this command, uncomment this line, if your nginx is old enough to need it" — rather than part of the mandatory happy path.
 
