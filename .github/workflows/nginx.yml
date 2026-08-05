@@ -403,13 +403,16 @@ jobs:
             status=1
           fi
 
-          # Reported, not asserted: ngx_brotli has no brotli_vary, and whether it
-          # honours gzip_vary is undocumented. The answer belongs in
-          # directive/bubbly_brotli.conf once measured.
+          # ngx_brotli has no brotli_vary. Measured 2026-08-05 on Nginx 1.26 and
+          # 1.28: the header is present anyway, from gzip_vary in
+          # directive/bubbly_gzip.conf. Asserted so that dropping gzip, or a
+          # change upstream, cannot silently leave caches able to serve a Brotli
+          # response to a client that cannot read it.
           if echo "$br" | grep -qi '^vary: *accept-encoding'; then
-            echo "::notice::Vary: Accept-Encoding IS present on a Brotli response, so gzip_vary covers it"
+            echo "ok   Vary: Accept-Encoding present on the Brotli response"
           else
-            echo "::notice::Vary: Accept-Encoding is MISSING on a Brotli response — gzip_vary does not cover Brotli, so the config needs an explicit add_header"
+            echo "::error::no Vary: Accept-Encoding on a Brotli response, so caches may serve it to clients that cannot read br. gzip_vary no longer covers Brotli — add an explicit add_header to bubbly_brotli.conf"
+            status=1
           fi
 
           exit $status

@@ -7,7 +7,7 @@ metadata:
 
 Plan agreed 2026-08-05 after auditing the config for "several sites, several PHP versions, different ciphers, one server". Per-item progress is in the Status line below; each completed item carries an "as built" note where the result differed from the plan. All work must respect [[nginx-version-floor]], the tab indentation and aligned-column conventions in [[feedback_formatting]], and the `[OPTION]`/`[DEFAULT]`/`[WARNING]` marker idiom.
 
-**Status:** A, B, C, D, E, F and G are **done** and pushed (2026-08-05), CI green on both platforms. When checking a run after pushing, select it by `headSha` — `gh run list --limit 1` races GitHub's run creation and returns the previous commit's run, which cost two wasted verification cycles here. F's config half landed with C, since moving the key to the http level would have made a missing key file break every site; its script half followed. Remaining sequence: I → H → docs.
+**Status:** A, B, C, D, E, F, G and I are **done** and pushed (2026-08-05), CI green on both platforms. When checking a run after pushing, select it by `headSha` — `gh run list --limit 1` races GitHub's run creation and returns the previous commit's run, which cost two wasted verification cycles here. F's config half landed with C, since moving the key to the http level would have made a missing key file break every site; its script half followed. Remaining sequence: H → docs. Also open: whether to enable a rate limit by default.
 
 ## A. Declare the floor — done 2026-08-05
 
@@ -164,7 +164,21 @@ Original plan:
 
 `bubbly_renew-ssl.sh:13` passes `--force-renew` unconditionally. Per-site invocations on a multi-domain box burn Let's Encrypt allowances — 5 duplicate certificates per week for an identical name set, 50 certs per week per registered domain. Make it opt-in via a wrapper flag, or drop it and let certbot's own "not yet due" logic run, and document `--cert-name` for managing several lineages on one server.
 
-## I. Brotli (added 2026-08-05)
+## I. Brotli — done 2026-08-05
+
+Built as planned, with two things better than expected. **Debian 13 packages the filter too** (`libnginx-mod-http-brotli-filter` 1.0.0~rc-6, `nginx-abi-1.26.3-1`), not just Ubuntu 26.04, so CI exercises Brotli on both platforms. And `brotli_buffers` turned out to be deprecated and ignored upstream, so it is not used.
+
+Level 5 rather than the module's default 6, matching `gzip_comp_level`, since Brotli already beats gzip on size at the same level and above ~6 the CPU cost climbs steeply for very little gain. `brotli_min_length 256` matches gzip, because the module's 20-byte default compresses responses too small to benefit. `brotli_static` is an `[OPTION]` needing the separate `-static` package.
+
+Kept **opt-in** via a commented include in `groups/performance-common.conf`, because without the module package `brotli on;` is an unknown directive that stops nginx loading *any* config — every site at once, not just the one that wanted Brotli.
+
+Corrected while writing it: a dynamic module does **not** appear in `nginx -V`, so the check to document is `nginx -T | grep -i brotli`, which shows the `load_module` line the package drops into `modules-enabled/`.
+
+**Measured, then asserted:** ngx_brotli has no `brotli_vary`, and whether it honours `gzip_vary` is undocumented. CI reported it first — `vary: Accept-Encoding` **is** present on a Brotli-encoded response on both 1.26 and 1.28, from `gzip_vary on;` in `bubbly_gzip.conf` — and the check is now an assertion, so dropping gzip or an upstream change cannot silently leave caches able to hand a Brotli response to a client that cannot read it.
+
+`brotli_types` necessarily duplicates `gzip_types`, since nginx cannot share one list, so the renamed `repo-checks` job (was `scripts`) compares the two and fails on drift rather than trusting a comment. 31 entries each.
+
+Original plan:
 
 The packaging decision in [[nginx-version-floor]] makes Brotli available to Bubbly for the first time: Ubuntu 26.04 ships it for its own nginx, and the operator is now told to use the distribution's build.
 
