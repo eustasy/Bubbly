@@ -67,7 +67,13 @@ Why: nginx docs, [Virtual server selection](https://nginx.org/en/docs/http/serve
 - `ssl_conf_command` is also available at this floor (1.19.4+), so TLS 1.3 ciphersuite selection is now possible via `ssl_conf_command Ciphersuites=…` — relevant only if the answer to the open question below is that per-site suites are genuinely wanted.
 - README: new step for enabling the default server once per server, alongside step 4.
 
-## D. Stop `expires` leaking to every vhost
+## D. Stop `expires` leaking to every vhost — done 2026-08-05
+
+Built as planned: the `expires $expires;` line is gone from `conf.d/expires-map.conf`, which now only defines the variable, with a `[WARNING]` recording what changed and that the map is inert until a site includes `groups/performance-common.conf`. CI asserts both directions, using the ACME challenge response as the negative probe — it is `text/plain`, so it used to collect the map's `1y` fallback, and now comes back with no `Expires` at all, while `text/html` on the HTTPS site still returns `epoch`/`no-cache`.
+
+Noticed while verifying, not acted on: a response from a site including both groups carries **two** `Cache-Control` headers — `no-cache` from `expires`, and `no-transform` from `directive/h5bp_no-transform.conf`. Valid HTTP, since clients merge them, but worth knowing before debugging cache behaviour. Also `default 1y` still catches `text/plain`, so `robots.txt` and friends on a Bubbly site get a year — worth revisiting when touching the map.
+
+Original plan:
 
 `conf.d/expires-map.conf:52` applies `expires $expires;` at **http** context, so it hits every vhost on the machine — including sites never onboarded to Bubbly — with `default 1y` for unlisted content types such as `text/plain`. Delete that line, keep the `map`. `location/h5bp_expires.conf` (via `groups/performance-common.conf`) already applies it per site, so the opt-in path is preserved. Behaviour change for anyone relying on the global default — call it out in the README/release notes.
 
