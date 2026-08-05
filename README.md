@@ -67,7 +67,9 @@ Copy the Nginx configuration over to the Nginx area. Run this again whenever you
 ~/Bubbly/bubbly_copy-configs.sh
 ```
 
-Among other things this installs `conf.d/bubbly_ssl.conf`, which Nginx loads by itself. It holds the TLS settings that apply to the whole server — protocols, key exchange groups, the default cipher list and session resumption — because Nginx cannot vary those per site. A handshake begins before SNI has chosen a site, so those values always come from the default server for the listening address, whatever a site file asks for.
+Among other things this installs `conf.d/bubbly_ssl.conf`, which Nginx loads by itself, holding the TLS session cache and the OCSP resolver that every site shares.
+
+The protocol list, key exchange groups and cipher list live in `directive/bubbly_ssl-profile.conf` instead, because Nginx cannot vary them per site: a handshake begins before SNI has chosen a site, so those values always come from the default server for the listening address, whatever a site file asks for. Which is why the next step matters more than it looks.
 
 ## 3. Enable the default server
 
@@ -82,6 +84,8 @@ sudo nginx -t && sudo service nginx reload
 The `rm` removes the distribution's own default site, which also claims `default_server`; leaving both in place makes Nginx refuse to start with "a duplicate default server".
 
 Without a default server of your own, the role falls to whichever file in `sites-enabled/` sorts first, and that file's first `server` block silently decides the TLS protocol list and key exchange groups for **every** site on the machine. Adding a site whose filename sorts earlier would change them underneath you.
+
+`bubbly_default.conf` includes the TLS profile itself for exactly this reason, so the socket's protocols and groups are set deliberately rather than inherited from the distribution's `nginx.conf` — which on Debian and Ubuntu still permits TLS 1.0 and 1.1. Site files include the same profile as a safety net, so nothing is weakened if you skip this step, but the default server is what actually decides.
 
 ## 4. Configure & Enable Verification
 
