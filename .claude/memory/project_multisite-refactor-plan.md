@@ -83,7 +83,13 @@ Built as planned: site-scoped zones keyed `$server_name$binary_remote_addr` (`si
 
 **`limit_req` and `limit_conn` never apply to a `return` response.** Discovered when the first version of the test hammered `/` and got five 308s with no 503 on either platform. `return` is handled in the rewrite phase, which precedes the preaccess phase where the limits are evaluated, so the response is finalised without consulting them — meaning Bubbly's HTTP-to-HTTPS redirect **cannot** be rate-limited by these directives at all. Both limits files carry a `[WARNING]` about it, and the CI test uses the ACME path, which serves a static file and so reaches preaccess.
 
-Memory: the zones now reserve 36MB as shipped (6MB across six request zones, 30MB across three connection zones), documented in `conf.d/bubbly_limits.conf` with the per-state arithmetic — roughly 128 bytes per `limit_req` state and 64 per `limit_conn` state on 64-bit. It is reserved address space with pages committed as used, but `conPerServer` holds one state per *site* and so does not need 10m.
+**Trimmed to one zone per kind, on the user's call, and sized by state lifetime.** Nine zones reserving 36MB became five reserving 15MB: `reqPerSec20:2m`, `conPerIP:5m`, `siteReqPerSec20:2m`, `siteConPerIP:5m`, `conPerServer:1m`. Four request zones differing only in rate were referenced by nothing; the file now says to copy a line and rename it if a second rate is wanted.
+
+The sizing reasoning, documented in the file: a `limit_req` state is ~128 bytes and survives only about `burst/rate` seconds past a client's last request — five seconds at 20r/s with burst 100 — so the zone needs just the clients active in that window. A `limit_conn` state is ~64 bytes but lives as long as the connection, and Bubbly sets `keepalive_timeout 300s`, so those zones need to be several times larger. `conPerServer` holds one state per site, not per client, so 1m is already thousands of times more than needed.
+
+Two further interactions worth remembering: clients behind NAT count as one, so raise the *rate* not the size for them; and `limit_conn conPerServer 2000` is unreachable unless `worker_processes × worker_connections` exceeds it, which at Debian and Ubuntu's 768 per worker needs three cores.
+
+CI rewrites only `rate=20r/s` to `1r/s` before the isolation test, leaving the key expressions — the thing under test — exactly as shipped.
 
 Original plan:
 
