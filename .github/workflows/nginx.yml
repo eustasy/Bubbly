@@ -320,11 +320,11 @@ jobs:
 
           # Keyed on the client address alone: beta.test is charged for the
           # traffic alpha.test just sent, and is refused.
-          check reqPerSec20 503 || status=1
+          check reqPerIP 503 || status=1
 
           # Keyed on the server name too: beta.test has its own budget, so it is
           # served the token.
-          check siteReqPerSec20 200 || status=1
+          check siteReqPerIP 200 || status=1
 
           exit $status
 
