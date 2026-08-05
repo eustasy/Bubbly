@@ -263,6 +263,57 @@ jobs:
 
           exit $status
 
+      - name: Rate limits are shared server-wide but isolated per site
+        # The point of the site-scoped zones in conf.d/bubbly_limits.conf. Both
+        # families are exercised with the 1r/s zones and no burst, so the second
+        # request within a second is refused: hammer alpha.test, then ask
+        # beta.test once and see whether it was charged for alpha's traffic.
+        run: |
+          status=0
+
+          # Applied through security-common, which both sites include, so the
+          # limit lands inside each server block without editing site files.
+          echo 'include directive/ci_limit.conf;' >> /etc/nginx/groups/security-common.conf
+
+          hammer() {
+            for _ in 1 2 3 4 5; do
+              curl -sS -o /dev/null -w '%{http_code} ' --max-time 5 \
+                -H "Host: $1" http://127.0.0.1/
+            done
+          }
+
+          check() { # $1 = zone, $2 = status beta.test should return
+            printf 'limit_req zone=%s;\n' "$1" > /etc/nginx/directive/ci_limit.conf
+            nginx -t
+            nginx -s reload
+            sleep 1
+            alpha="$(hammer alpha.test)"
+            beta="$(curl -sS -o /dev/null -w '%{http_code}' --max-time 5 \
+              -H 'Host: beta.test' http://127.0.0.1/)"
+            echo "zone=$1  alpha=[$alpha]  beta=$beta  (beta expected $2)"
+            case "$alpha" in
+              *503*) ;;
+              *)
+                echo "::error::zone $1 never returned 503, so the limit was not applied and the result below means nothing"
+                return 1 ;;
+            esac
+            if [ "$beta" != "$2" ]; then
+              echo "::error::with zone $1, beta.test returned $beta but $2 was expected"
+              return 1
+            fi
+            return 0
+          }
+
+          # Keyed on the client address alone: beta.test is charged for the
+          # traffic alpha.test just sent, and is refused.
+          check reqPerSec1 503 || status=1
+
+          # Keyed on the server name too: beta.test has its own budget and is
+          # served, getting the redirect to HTTPS.
+          check siteReqPerSec1 308 || status=1
+
+          exit $status
+
       - name: SNI selects the matching certificate
         run: |
           status=0
