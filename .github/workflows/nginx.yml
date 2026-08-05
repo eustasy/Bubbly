@@ -19,6 +19,13 @@ permissions:
 env:
   DEBIAN_FRONTEND: noninteractive
 
+# Container jobs default to `sh -e`, not bash — the runner does not probe the
+# image for it. Declaring bash keeps every run block on one interpreter, and on
+# the same one the helper scripts use.
+defaults:
+  run:
+    shell: bash
+
 jobs:
   nginx-t:
     name: nginx -t (${{ matrix.name }})
