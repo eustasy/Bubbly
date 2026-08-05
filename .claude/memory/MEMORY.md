@@ -1,2 +1,4 @@
 - [Keep nice formatting in config files](feedback_formatting.md) — don't flatten multi-line, aligned values when fixing bugs; use `set`-style accumulators or similar.
 - [Version-option lists — descending order, include all supported, latest is default](feedback_version_lists.md) — newest at top is `[DEFAULT]` and uncommented; include security-supported versions; keep php_sockets.conf and CI matrix in sync.
+- [Version floor for v3 is Ubuntu 26.04 — nginx 1.25.1+ / OpenSSL 3.5+](project_nginx-version-floor.md) — drops Ubuntu 22.04, 24.04 and Debian 12; verified per-platform package versions and the two gates that set the floor.
+- [Multi-site / multi-PHP / multi-TLS refactor plan](project_multisite-refactor-plan.md) — agreed 2026-08-05, not yet implemented; items A–H in dependency order, from 1.18 compat through per-version PHP upstreams to the SSL http/server split.

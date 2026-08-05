@@ -44,13 +44,23 @@ The README tells operators to grep for these. Don't quietly drop or rephrase the
 
 `directive/bubbly_security-headers_csp.conf` builds the Content-Security-Policy across many `set $bubbly_csp "$bubbly_csp …";` lines so each policy directive stays on its own readable line, then emits a single `add_header Content-Security-Policy $bubbly_csp always;`. If you extend the policy, append another `set` line — don't collapse it into a single quoted multi-line value (multi-line quoted strings produce a header value containing literal newlines, which is invalid HTTP).
 
+## Supported platforms (version floor)
+
+Bubbly 3.x targets **Ubuntu 26.04 LTS** — in practice **Nginx 1.25.1+** (for the `http2` directive) and **OpenSSL 3.5+** (for `X25519MLKEM768` in `ssl_ecdh_curve`). Ubuntu 24.04, Ubuntu 22.04 and Debian 12 fail both gates and are out of support for 3.x; the README points those operators at the `2.2.0` tag. Debian 13 qualifies on Nginx 1.26, making it the *lowest* supported Nginx.
+
+Don't add fallback spellings or `[OPTION]` pairs for pre-floor versions. Where a directive needs something newer than a still-common distro provides, mark it `# [WARNING]` naming the minimum and the older equivalent — as done for `http2 on;` in `sites-available/bubbly_https.conf` and `ssl_ecdh_curve` in `directive/bubbly_rock-hard-ssl.conf`. The README's Requirements section is the operator-facing version of this; keep the two in sync.
+
+PHP versions are co-installable out of the box — Debian and Ubuntu version the packages throughout (`/etc/php/8.5/`, `php8.4-fpm.service`, `/run/php/php8.4-fpm.sock`), so nothing special is needed to run several at once. Each release only *carries* one, though: Ubuntu 26.04 has 8.5 (matching the `[DEFAULT]` in `php_sockets.conf`), Ubuntu 24.04 has 8.3, Debian 13 has 8.4. Extra versions come from Ondřej Surý's packages (`ppa:ondrej/php`, or packages.sury.org/php on Ubuntu 26.04 and Debian).
+
 ## CI
 
-Keep the matrix `php-version` array in sync with the option list in `nginx-config/conf.d/php_sockets.conf`.
+`.github/workflows/nginx.yml` installs Nginx mainline from nginx.org, rsyncs `nginx-config/` into `/etc/nginx/`, generates a self-signed cert plus a session ticket key, symlinks both site templates and runs `nginx -t`.
+
+There is currently **no** PHP version matrix in any workflow — the `.github/workflows/normal.yml` that older notes refer to no longer exists. If you restore one, keep its `php-version` array in sync with the option list in `nginx-config/conf.d/php_sockets.conf`.
 
 ## Repo conventions to honour when editing
 
-- **Version-option lists are descending and include all still-supported versions, with the newest as `[DEFAULT]`.** Applies to `nginx-config/conf.d/php_sockets.conf` and the `php-version` matrix in `.github/workflows/normal.yml` — keep them in sync. Include security-supported versions, not only actively-developed ones.
+- **Version-option lists are descending and include all still-supported versions, with the newest as `[DEFAULT]`.** Applies to `nginx-config/conf.d/php_sockets.conf`, and to any PHP matrix restored in CI (see above) — keep them in sync. Include security-supported versions, not only actively-developed ones.
 - **Preserve multi-line, aligned formatting in config files** when fixing bugs. If a fix would force collapsing nice columns to a single line, find another way (e.g. `set` accumulators) or ask first.
 - **Tabs**, not spaces, inside Nginx `.conf` files (the existing files are tab-indented).
 - **`example.com`** is the placeholder domain used throughout `sites-available/` templates; the README tells operators to search-and-replace it.

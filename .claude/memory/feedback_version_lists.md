@@ -4,7 +4,7 @@ description: When listing version options in config files, list newest at the to
 type: feedback
 ---
 
-When editing lists of versioned options in this repo (e.g. PHP socket options in `nginx-config/conf.d/php_sockets.conf`, the PHP CI matrix in `.github/workflows/normal.yml`):
+When editing lists of versioned options in this repo (e.g. PHP socket options in `nginx-config/conf.d/php_sockets.conf`, and the PHP CI matrix — note that `.github/workflows/normal.yml` no longer exists and as of 2026-08-05 there is no PHP matrix in CI at all; restoring one is item B of [[multisite-refactor-plan]]):
 
 1. **Order descending** — newest version at the top, oldest at the bottom.
 2. **Keep every still-supported version** — include versions still receiving security support, not only those in active support. Don't drop a version just because its active-support window has ended.
@@ -19,4 +19,4 @@ When editing lists of versioned options in this repo (e.g. PHP socket options in
 - Sort newest → oldest top-to-bottom every time.
 - Cross-reference [PHP supported versions](https://www.php.net/supported-versions.php) (or equivalent project page) and include each version listed there, including those in security-only support.
 - Mark the top (newest) entry as `[DEFAULT]` and leave its `server`/active line uncommented; mark every older entry as `[DISABLED]` with the line commented out. Any backup-socket reference should also point at the latest version.
-- Keep `php_sockets.conf` and the workflow matrix in `.github/workflows/normal.yml` in sync.
+- Keep `php_sockets.conf` and the CI workflow matrix in sync (once the matrix is restored — see above).

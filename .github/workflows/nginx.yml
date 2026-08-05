@@ -1,20 +1,250 @@
 name: Nginx Config
 
 on:
+  workflow_dispatch:
   push:
     paths:
       - 'nginx-config/**'
+      - 'bubbly_*.sh'
       - '.github/workflows/nginx.yml'
   pull_request:
     paths:
       - 'nginx-config/**'
+      - 'bubbly_*.sh'
       - '.github/workflows/nginx.yml'
 
 permissions:
   contents: read
 
+env:
+  DEBIAN_FRONTEND: noninteractive
+
 jobs:
   nginx-t:
+    name: nginx -t (${{ matrix.name }})
+    runs-on: ubuntu-latest
+    container:
+      image: ${{ matrix.image }}
+    strategy:
+      fail-fast: false
+      matrix:
+        # Bubbly 3.x runs on the distribution's own Nginx, with no third-party
+        # repositories — see the Requirements section of the README. Using
+        # distro packages here also tests the layout Bubbly assumes: Debian and
+        # Ubuntu include sites-enabled/ from nginx.conf, which the packages
+        # from nginx.org do not.
+        include:
+          # The reference target: Nginx 1.28, OpenSSL 3.5.
+          - name: Ubuntu 26.04 LTS
+            image: ubuntu:26.04
+          # The lowest supported Nginx: 1.26, OpenSSL 3.5.
+          - name: Debian 13
+            image: debian:13
+    steps:
+      # Installed before checkout so actions/checkout uses git rather than
+      # falling back to downloading a tarball.
+      - name: Install Nginx and tooling
+        run: |
+          apt-get update
+          apt-get install -y nginx openssl rsync sudo git ca-certificates
+          nginx -V
+
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Deploy the config with bubbly_copy-configs.sh
+        run: ./bubbly_copy-configs.sh
+
+      # [WARNING] When the session ticket key becomes opt-in, drop this step:
+      # the shipped config must then load without the key file existing.
+      - name: Generate the session ticket key with bubbly_generate-tickets.sh
+        run: ./bubbly_generate-tickets.sh
+
+      - name: Confirm nginx.conf includes sites-enabled
+        # Bubbly's whole sites-available/sites-enabled layout depends on this.
+        # Without the include, everything below would pass while the site
+        # templates were never read at all.
+        run: |
+          grep -q 'sites-enabled' /etc/nginx/nginx.conf || {
+            echo "::error::This Nginx does not include sites-enabled/, so Bubbly's site templates would never be read"
+            exit 1
+          }
+
+      - name: Generate self-signed certificates
+        # bubbly_https.conf expects /etc/letsencrypt/live/<domain>/*.pem. A
+        # self-signed certificate satisfies the file-existence and PEM-validity
+        # checks nginx -t performs. It has no issuer to fetch OCSP from, so
+        # nginx -t warns that ssl_stapling is ignored; that warning is expected.
+        run: |
+          for domain in example.com alpha.test beta.test; do
+            mkdir -p "/etc/letsencrypt/live/$domain"
+            openssl req -x509 \
+              -newkey ec \
+              -pkeyopt ec_paramgen_curve:P-384 \
+              -keyout "/etc/letsencrypt/live/$domain/privkey.pem" \
+              -out "/etc/letsencrypt/live/$domain/fullchain.pem" \
+              -days 1 -nodes \
+              -subj "/CN=$domain"
+          done
+
+      - name: Enable the templates as shipped
+        run: |
+          rm -f /etc/nginx/sites-enabled/default
+          ln -sf /etc/nginx/sites-available/bubbly_http.conf \
+            /etc/nginx/sites-enabled/bubbly_http.conf
+          ln -sf /etc/nginx/sites-available/bubbly_https.conf \
+            /etc/nginx/sites-enabled/bubbly_https.conf
+
+      - name: nginx -t (one site)
+        run: nginx -t
+
+      # Two more sites, set up exactly the way the README tells operators to:
+      # copy the template, replace example.com, symlink it into sites-enabled.
+      # This is what exercises the problems that only appear once a server
+      # hosts more than one site.
+      - name: Add two more sites
+        run: |
+          for domain in alpha.test beta.test; do
+            for kind in http https; do
+              sed "s/example\.com/$domain/g" \
+                "/etc/nginx/sites-available/bubbly_$kind.conf" \
+                > "/etc/nginx/sites-available/${domain}_$kind.conf"
+              ln -sf "/etc/nginx/sites-available/${domain}_$kind.conf" \
+                "/etc/nginx/sites-enabled/${domain}_$kind.conf"
+            done
+          done
+
+      - name: nginx -t (three sites)
+        run: nginx -t
+
+      - name: Confirm every site reached the effective config
+        run: |
+          nginx -T > /tmp/effective.conf
+          for name in example.com alpha.test beta.test; do
+            grep -q "server_name $name;" /tmp/effective.conf || {
+              echo "::error::$name is missing from the effective config"
+              exit 1
+            }
+          done
+
+      # ── Runtime TLS probe ──────────────────────────────────────────────────
+      # nginx -t only proves the config parses. The steps below start Nginx and
+      # measure what each vhost actually negotiates, to establish whether
+      # per-server TLS settings take effect at all. The documentation states
+      # that ssl_protocols is taken from the default server for the listening
+      # socket; ssl_ciphers and ssl_ecdh_curve are undocumented in that
+      # respect, so they are measured here rather than assumed.
+      - name: Give beta.test a deliberately different TLS profile
+        run: |
+          cat > /etc/nginx/directive/ci_beta-ssl.conf <<'EOF'
+          # CI fixture, not part of Bubbly. Every value differs from
+          # bubbly_rock-hard-ssl.conf so the probe can tell which server
+          # block's settings were actually applied.
+          ssl_protocols TLSv1.3;
+          ssl_ciphers ECDHE-ECDSA-AES256-SHA384;
+          ssl_ecdh_curve prime256v1;
+          ssl_prefer_server_ciphers on;
+          EOF
+          sed -i 's|include directive/bubbly_rock-hard-ssl.conf;|include directive/ci_beta-ssl.conf;|' \
+            /etc/nginx/sites-available/beta.test_https.conf
+          grep -n 'ci_beta-ssl.conf' /etc/nginx/sites-available/beta.test_https.conf
+
+      - name: nginx -t (mixed TLS profiles)
+        run: nginx -t
+
+      - name: Start Nginx
+        run: |
+          nginx
+          for _ in $(seq 1 20); do
+            if openssl s_client -connect 127.0.0.1:443 -brief </dev/null >/dev/null 2>&1; then
+              break
+            fi
+            sleep 0.5
+          done
+          openssl s_client -connect 127.0.0.1:443 -brief </dev/null >/dev/null 2>&1 || {
+            echo "::error::Nginx did not accept TLS connections after starting"
+            cat /var/log/nginx/error.log || true
+            exit 1
+          }
+
+      - name: Which server answers without SNI
+        # Without SNI the default server for 0.0.0.0:443 answers. No template
+        # sets default_server, so that is whichever sites-enabled file sorts
+        # first — alpha.test_https.conf, whose first block is the www redirect.
+        run: |
+          out="$(openssl s_client -connect 127.0.0.1:443 -noservername -brief </dev/null 2>&1)"
+          echo "$out"
+          cn="$(echo "$out" | sed -n 's/^Peer certificate: .*CN *= *//p' | head -1)"
+          echo "::notice::With no SNI, :443 serves the certificate for ${cn:-unknown}"
+
+      - name: SNI selects the matching certificate
+        run: |
+          status=0
+          for name in example.com alpha.test beta.test; do
+            out="$(openssl s_client -connect 127.0.0.1:443 -servername "$name" -brief </dev/null 2>&1)"
+            cn="$(echo "$out" | sed -n 's/^Peer certificate: .*CN *= *//p' | head -1)"
+            proto="$(echo "$out" | sed -n 's/^Protocol version: *//p' | head -1)"
+            suite="$(echo "$out" | sed -n 's/^Ciphersuite: *//p' | head -1)"
+            group="$(echo "$out" | sed -n 's/^Negotiated TLS1.3 group: *//p' | head -1)"
+            printf '%-12s cert=%-12s %s %s group=%s\n' \
+              "$name" "${cn:-none}" "${proto:-?}" "${suite:-?}" "${group:-none}"
+            if [ "$cn" != "$name" ]; then
+              echo "::error::$name was served a certificate for ${cn:-nothing}"
+              echo "$out"
+              status=1
+            fi
+          done
+          exit $status
+
+      - name: Measure whether per-vhost TLS settings apply
+        # beta.test asks for TLS 1.3 only, one CBC cipher, and prime256v1.
+        # alpha.test — the default server — asks for TLS 1.2 + 1.3, GCM and
+        # ChaCha ciphers, and X25519MLKEM768. Whichever set beta negotiates
+        # tells us which block won. Reported, not asserted: the answers are
+        # what item C needs, and turning them into assertions is that item's
+        # job once the behaviour is known.
+        run: |
+          echo "--- alpha.test (default server, intermediate) over TLS 1.2 ---"
+          if openssl s_client -connect 127.0.0.1:443 -servername alpha.test -tls1_2 -brief \
+              </dev/null 2>&1 | tee /tmp/alpha12 | grep -q '^Protocol version'; then
+            echo "accepted, cipher $(sed -n 's/^Ciphersuite: *//p' /tmp/alpha12 | head -1)"
+          else
+            echo "refused"
+            cat /tmp/alpha12
+          fi
+
+          echo "--- beta.test (asks for TLS 1.3 only) over TLS 1.2 ---"
+          if openssl s_client -connect 127.0.0.1:443 -servername beta.test -tls1_2 -brief \
+              </dev/null 2>&1 | tee /tmp/beta12 | grep -q '^Protocol version'; then
+            suite="$(sed -n 's/^Ciphersuite: *//p' /tmp/beta12 | head -1)"
+            echo "::notice::beta.test accepted TLS 1.2 despite ssl_protocols TLSv1.3 — per-vhost ssl_protocols did NOT apply (cipher $suite)"
+            if [ "$suite" = "ECDHE-ECDSA-AES256-SHA384" ]; then
+              echo "::notice::per-vhost ssl_ciphers DID apply — beta's single cipher was used"
+            else
+              echo "::notice::per-vhost ssl_ciphers did NOT apply — the default server's list was used"
+            fi
+          else
+            echo "::notice::beta.test refused TLS 1.2 — per-vhost ssl_protocols DID apply"
+            cat /tmp/beta12
+          fi
+
+          echo "--- beta.test over TLS 1.3, negotiated group ---"
+          openssl s_client -connect 127.0.0.1:443 -servername beta.test -tls1_3 -brief \
+            </dev/null 2>&1 | tee /tmp/beta13
+          group="$(sed -n 's/^Negotiated TLS1.3 group: *//p' /tmp/beta13 | head -1)"
+          case "$group" in
+            prime256v1 | P-256 | secp256r1)
+              echo "::notice::per-vhost ssl_ecdh_curve DID apply — group $group" ;;
+            "")
+              echo "::notice::could not read the negotiated group from openssl s_client -brief" ;;
+            *)
+              echo "::notice::per-vhost ssl_ecdh_curve did NOT apply — group $group" ;;
+          esac
+
+  scripts:
+    name: Helper scripts are executable
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -22,51 +252,57 @@ jobs:
           fetch-depth: 1
           persist-credentials: false
 
-      - name: Install nginx mainline
-        # Use the nginx.org mainline repo for the most up-to-date nginx build.
-        # ssl_ecdh_curve X25519MLKEM768 (post-quantum hybrid) requires
-        # nginx 1.27.3+ with OpenSSL 3.5+. If the system OpenSSL is older,
-        # the nginx -t step will fail with an unknown curve error.
+      - name: Every bubbly_*.sh is executable
+        # The README tells operators to run these directly, so a missing
+        # execute bit breaks the documented flow with "Permission denied".
+        # bubbly_renew-ssl.sh is never run by the other jobs — it would have to
+        # talk to Let's Encrypt — so without this its mode goes unchecked.
         run: |
-          curl -fsSL https://nginx.org/keys/nginx_signing.key \
-            | gpg --dearmor \
-            | sudo tee /usr/share/keyrings/nginx-archive-keyring.gpg > /dev/null
-          echo "deb [signed-by=/usr/share/keyrings/nginx-archive-keyring.gpg] \
-            https://nginx.org/packages/mainline/ubuntu $(lsb_release -cs) nginx" \
-            | sudo tee /etc/apt/sources.list.d/nginx.list
-          sudo apt-get update
-          sudo apt-get install -y nginx
-          nginx -v
+          status=0
+          for f in bubbly_*.sh; do
+            if [ -x "$f" ]; then
+              echo "ok   $f"
+            else
+              echo "::error file=$f::$f is not executable; its git mode should be 100755"
+              status=1
+            fi
+          done
+          exit $status
 
-      - name: Copy configs to /etc/nginx
-        run: sudo rsync -avh nginx-config/ /etc/nginx/
-
-      - name: Generate session ticket key
+  php-socket-path:
+    name: PHP socket path matches the platform
+    runs-on: ubuntu-latest
+    container:
+      image: ubuntu:26.04
+    steps:
+      - name: Install PHP-FPM
+        # php-cli is installed alongside php-fpm only so that `php -v` — the
+        # check the README suggests — is available to report the version.
         run: |
-          sudo mkdir -p /etc/nginx/ssl
-          sudo openssl rand -out /etc/nginx/ssl/ticket.key 80
+          apt-get update
+          apt-get install -y php-fpm php-cli git ca-certificates
+          php -v
 
-      - name: Generate self-signed certificate for example.com
-        # bubbly_https.conf expects /etc/letsencrypt/live/example.com/*.pem.
-        # A self-signed cert satisfies nginx -t's file-existence and PEM-validity
-        # checks. OCSP stapling is not exercised during config test.
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Compare the active socket with the php-fpm pool
+        # The [DEFAULT] option in php_sockets.conf has to name the socket the
+        # reference platform's PHP-FPM actually listens on. Compared by
+        # basename, because Bubbly writes /var/run/php/… while the pool config
+        # writes /run/php/… — the same file, as /var/run is a symlink to /run.
         run: |
-          sudo mkdir -p /etc/letsencrypt/live/example.com
-          sudo openssl req -x509 \
-            -newkey ec \
-            -pkeyopt ec_paramgen_curve:P-384 \
-            -keyout /etc/letsencrypt/live/example.com/privkey.pem \
-            -out /etc/letsencrypt/live/example.com/fullchain.pem \
-            -days 1 -nodes \
-            -subj "/CN=example.com"
-
-      - name: Enable site templates
-        run: |
-          sudo rm -f /etc/nginx/sites-enabled/default
-          sudo ln -s /etc/nginx/sites-available/bubbly_http.conf \
-            /etc/nginx/sites-enabled/bubbly_http.conf
-          sudo ln -s /etc/nginx/sites-available/bubbly_https.conf \
-            /etc/nginx/sites-enabled/bubbly_https.conf
-
-      - name: nginx -t
-        run: sudo nginx -t
+          bubbly_sock="$(sed -n 's/^[[:space:]]*server[[:space:]]\+unix:\([^;]*\);.*/\1/p' \
+            nginx-config/conf.d/php_sockets.conf | head -1)"
+          pool_sock="$(sed -n 's/^listen[[:space:]]*=[[:space:]]*//p' \
+            /etc/php/*/fpm/pool.d/www.conf | head -1)"
+          echo "php_sockets.conf: ${bubbly_sock:-<none found>}"
+          echo "php-fpm pool:     ${pool_sock:-<none found>}"
+          test -n "$bubbly_sock"
+          test -n "$pool_sock"
+          if [ "$(basename "$bubbly_sock")" != "$(basename "$pool_sock")" ]; then
+            echo "::error::php_sockets.conf selects $(basename "$bubbly_sock") but this platform's PHP-FPM listens on $(basename "$pool_sock")"
+            exit 1
+          fi
