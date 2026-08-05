@@ -17,6 +17,6 @@ When editing lists of versioned options in this repo (e.g. PHP socket options in
 
 **How to apply:**
 - Sort newest → oldest top-to-bottom every time.
-- Cross-reference [PHP supported versions](https://www.php.net/supported-versions.php) (or equivalent project page) and include each version listed there, including those in security-only support.
+- Cross-reference [PHP supported versions](https://www.php.net/supported-versions.php) (or equivalent project page) and include each version listed there, including those in security-only support. **Verify the dates rather than trusting the ones already in the file** — in August 2026 every "Supported until" date in `php_sockets.conf` was wrong, apparently active-support ends from a superseded schedule. PHP retires a branch at the end of a calendar year, so every date should be a 31 December, and active and security windows are worth stating separately.
 - Mark the top (newest) entry as `[DEFAULT]` and leave its `server`/active line uncommented; mark every older entry as `[DISABLED]` with the line commented out. Any backup-socket reference should also point at the latest version.
 - Keep `php_sockets.conf` and the CI workflow matrix in sync (once the matrix is restored — see above).

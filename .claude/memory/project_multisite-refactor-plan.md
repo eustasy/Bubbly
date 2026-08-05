@@ -7,7 +7,7 @@ metadata:
 
 Plan agreed 2026-08-05 after auditing the config for "several sites, several PHP versions, different ciphers, one server". Per-item progress is in the Status line below; each completed item carries an "as built" note where the result differed from the plan. All work must respect [[nginx-version-floor]], the tab indentation and aligned-column conventions in [[feedback_formatting]], and the `[OPTION]`/`[DEFAULT]`/`[WARNING]` marker idiom.
 
-**Status:** A, B, C, D and E are **done** and pushed (2026-08-05), CI green on both platforms. When checking a run after pushing, select it by `headSha` — `gh run list --limit 1` races GitHub's run creation and returns the previous commit's run, which cost two wasted verification cycles here. F's ticket-key decision landed with C, since moving the key to the http level would have made a missing key file break every site; F's remaining work is script hardening. Remaining sequence: G → I → F's leftovers → H → docs.
+**Status:** A, B, C, D, E and G are **done** and pushed (2026-08-05), CI green on both platforms. When checking a run after pushing, select it by `headSha` — `gh run list --limit 1` races GitHub's run creation and returns the previous commit's run, which cost two wasted verification cycles here. F's ticket-key decision landed with C, since moving the key to the http level would have made a missing key file break every site; F's remaining work is script hardening. Remaining sequence: I → F's leftovers → H → docs.
 
 ## A. Declare the floor — done 2026-08-05
 
@@ -126,7 +126,19 @@ Rationale, from the nginx docs for `ssl_session_ticket_key`: "The directive is n
 - Multi-site nuance to document, not solve: on 1.23.2+ the auto key is stored in the shared cache zone, so vhosts sharing `shared:SSL:10m` still share ticket keys. This makes the key rotating rather than static, but resumption is still not scoped per site, so per-site TLS settings remain not a security boundary. Per-site isolation would need per-site cache zones — offer as an `[OPTION]`, not a default.
 - CI: no job should generate the key file by default, proving the shipped config loads without it. One job may uncomment the line and generate a key to cover the shared-key path.
 
-## G. PHP — per-version upstreams and per-site selection
+## G. PHP — per-version upstreams and per-site selection — done 2026-08-05
+
+Built as planned, with one deliberate deviation: **`fastcgi_pass php_sockets;` stays the shipped default and the variable form is `[OPTION] 2`**, rather than switching to `$bubbly_php` outright. Two reasons. nginx resolves a *literal* upstream name when the config loads, so a typo fails `nginx -t`; a variable is resolved per request, so a missing or misspelled `set` is a 502 with a clean config test. And an operator upgrading from an older Bubbly gets our replaced location file but keeps their own site files, which would have no `set` — the variable form would have broken every site on upgrade.
+
+There is now an upstream per supported branch (`php85`, `php84`, `php83`, `php82`), all active, plus `php_sockets` as the shared default pointing at the newest. `sites-available/bubbly_https.conf` carries a commented `set $bubbly_php php85;`.
+
+**The support dates in the old file were all wrong** — they looked like active-support ends from a superseded schedule. PHP retires branches at the end of a calendar year, so 8.3 runs to 2027-12-31, not the 2026-11-23 the file claimed. Corrected against php.net with active and security windows stated separately; all four branches are still supported as of 2026-08.
+
+Also documented, both confirmed against the nginx docs: `fastcgi_pass` with a variable searches server groups first and falls back to a resolver, and `fastcgi_keep_conn on` is "necessary, in particular, for keepalive connections to function" — so it does nothing without `keepalive` in the upstream. Enabling keepalive pins an FPM child per idle connection, so `worker_processes × keepalive` must fit inside `pm.max_children`.
+
+CI proves per-site selection with no third-party repo: each distribution ships one branch, so alpha.test is aimed at the installed one and beta.test at an absent one. 200 from one and 502 from the other means they resolved different upstreams. Usefully, the two platforms exercise different branches — php85 on Ubuntu 26.04, php84 on Debian 13.
+
+Original plan:
 
 `conf.d/php_sockets.conf:2` defines a single `upstream php_sockets` and `location/bubbly_extensionless-php.conf:18` hard-codes `fastcgi_pass php_sockets;`. `upstream` is http-context only, so a site block cannot define its own — every site shares one FPM socket. The `[OPTION]` list also invites the wrong fix: uncommenting two `server unix:…` lines makes nginx round-robin between PHP versions rather than route per site.
 
