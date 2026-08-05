@@ -21,5 +21,11 @@
   "MD033": false,
 
   // MD041 — first line h1: not required (excluded in old .mdlrc.style.rb)
-  "MD041": false
+  "MD041": false,
+
+  // MD049 — emphasis style: underscore, _italic_
+  "MD049": { "style": "underscore" },
+
+  // MD050 — strong style: asterisk, **bold**
+  "MD050": { "style": "asterisk" }
 }

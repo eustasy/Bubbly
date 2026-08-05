@@ -1,6 +1,6 @@
 # Bubbly
 
-*For configuring Certbot with Nginx as quickly and securely as possible.*
+_For configuring Certbot with Nginx as quickly and securely as possible._
 
 [![Nginx Config](https://github.com/eustasy/Bubbly/actions/workflows/nginx.yml/badge.svg)](https://github.com/eustasy/Bubbly/actions/workflows/nginx.yml)
 [![Normal (Shell)](https://github.com/eustasy/Bubbly/actions/workflows/sh.yml/badge.svg)](https://github.com/eustasy/Bubbly/actions/workflows/sh.yml)

@@ -19,7 +19,7 @@ This matches the documented reason for `ssl_protocols` (the protocol list is fix
 
 **Consequences for [[multisite-refactor-plan]] item C:**
 
-- Per-site TLS *profiles* in the Mozilla sense are not achievable on one socket. A site cannot be TLS 1.3-only while its neighbour allows 1.2, and cannot choose its own groups. Genuinely different profiles need separate listen sockets — a distinct IP or port.
+- Per-site TLS _profiles_ in the Mozilla sense are not achievable on one socket. A site cannot be TLS 1.3-only while its neighbour allows 1.2, and cannot choose its own groups. Genuinely different profiles need separate listen sockets — a distinct IP or port.
 - Per-site `ssl_ciphers` does work, but only bites on TLS 1.2, since `ssl_ciphers` never governs TLS 1.3 ciphersuites (those need `ssl_conf_command Ciphersuites=…`, available at this floor but subject to the same SNI-timing caveat and unmeasured).
 - Which server is "the default" is accidental today. With no `default_server` flag in any template, the probe found that a connection with **no SNI is served `alpha.test`'s certificate** — the alphabetically-first `sites-enabled` file, whose first block is merely the `www`→apex redirect. That block therefore dictates protocols and groups for every site on the box, and onboarding a site sorting earlier silently changes them.
 

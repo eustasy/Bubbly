@@ -50,7 +50,7 @@ Bubbly 3.x targets **Ubuntu 26.04 LTS** — in practice **Nginx 1.25.1+** (for t
 
 Don't add fallback spellings or `[OPTION]` pairs for pre-floor versions. Where a directive needs something newer than a still-common distro provides, mark it `# [WARNING]` naming the minimum and the older equivalent — as done for `http2 on;` in `sites-available/bubbly_https.conf` and `ssl_ecdh_curve` in `directive/bubbly_rock-hard-ssl.conf`. The README's Requirements section is the operator-facing version of this; keep the two in sync.
 
-PHP versions are co-installable out of the box — Debian and Ubuntu version the packages throughout (`/etc/php/8.5/`, `php8.4-fpm.service`, `/run/php/php8.4-fpm.sock`), so nothing special is needed to run several at once. Each release only *carries* one, though: Ubuntu 26.04 has 8.5 (matching the `[DEFAULT]` in `php_sockets.conf`), Ubuntu 24.04 has 8.3, Debian 13 has 8.4. Extra versions come from Ondřej Surý's packages (`ppa:ondrej/php`, or packages.sury.org/php on Ubuntu 26.04 and Debian).
+PHP versions are co-installable out of the box — Debian and Ubuntu version the packages throughout (`/etc/php/8.5/`, `php8.4-fpm.service`, `/run/php/php8.4-fpm.sock`), so nothing special is needed to run several at once. Each release only _carries_ one, though: Ubuntu 26.04 has 8.5 (matching the `[DEFAULT]` in `php_sockets.conf`), Ubuntu 24.04 has 8.3, Debian 13 has 8.4. Extra versions come from Ondřej Surý's packages (`ppa:ondrej/php`, or packages.sury.org/php on Ubuntu 26.04 and Debian).
 
 ## CI
 
@@ -64,6 +64,7 @@ There is currently **no** PHP version matrix in any workflow — the `.github/wo
 - **Preserve multi-line, aligned formatting in config files** when fixing bugs. If a fix would force collapsing nice columns to a single line, find another way (e.g. `set` accumulators) or ask first.
 - **Tabs**, not spaces, inside Nginx `.conf` files (the existing files are tab-indented).
 - **`example.com`** is the placeholder domain used throughout `sites-available/` templates; the README tells operators to search-and-replace it.
+- **Markdown emphasis is `_italic_` with underscores and `**bold**` with asterisks**, pinned as MD049/MD050 in `.qlty/configs/.markdownlint.json`. Mixing styles fails `md.yml`, and the formatter and linter disagree if the rule is left on its "consistent" default.
 - **The TLS profile lives in `directive/bubbly_ssl-profile.conf` and is included from a `server` block — never at the `http` level.** Debian and Ubuntu set `ssl_protocols`, `ssl_prefer_server_ciphers` and `keepalive_timeout` in their own `nginx.conf`, and repeating any of those in `conf.d/` is a fatal "directive is duplicate". Only settings the distribution does not touch (the session cache, the resolver) may go in `conf.d/bubbly_ssl.conf`.
 - **`ssl_protocols` and `ssl_ecdh_curve` only take effect from the default server** for a listening socket, because the handshake starts before SNI selects a server — measured on Nginx 1.26 and 1.28. That is why `bubbly_default.conf` includes the profile, and why sites include it too as a safety net. `ssl_ciphers` is the one exception and may be overridden per server, for TLS 1.2 only, as long as the override sits after the profile include. CI asserts all three behaviours, so a regression fails the build rather than silently invalidating the design.
 
