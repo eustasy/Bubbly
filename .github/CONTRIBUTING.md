@@ -1,6 +1,8 @@
 # Contributing
 
-We love pull requests from everyone. Check out our [open issues](https://github.com/eustasy/Bubbly/issues), particularly anything tagged as Bytesize, for things you can get to work on.
+We love pull requests from everyone. Check out our [open issues](https://github.com/eustasy/Bubbly/issues), particularly anything tagged as Bytesize, for things you can get to work on. By participating in this project, you agree to abide by the project [code of conduct](https://github.com/eustasy/Bubbly?tab=coc-ov-file).
+
+That code of conduct, the [security policy](https://github.com/eustasy/Bubbly?tab=security-ov-file), and the issue and pull request templates are shared across every eustasy repository from [eustasy/.github](https://github.com/eustasy/.github) — which is why you will not find them in this one.
 
 ## Making Changes
 
@@ -16,11 +18,13 @@ Everything is checked by CI, on Ubuntu 26.04 and Debian 13: `nginx -t` against t
 
 ### Filing an Issue
 
-[`File an Issue`](https://github.com/eustasy/Bubbly/issues/new)
+Largely self-documenting: you are offered a form for the kind of issue you are filing — bug report, feature request, maintenance, or question.
+
+[`File an Issue`](https://github.com/eustasy/Bubbly/issues/new/choose)
 
 ### Creating a Pull Request
 
-First, [make the changes](#making-changes) in your fork.
+First, [make the changes](#making-changes) in your fork. The description is then pre-filled from a template, much as filing an issue is.
 
 [`Create a Pull Request`](https://github.com/eustasy/Bubbly/compare/)
 
@@ -68,4 +72,4 @@ Various headers are delivered from various configuration files. This list should
 
 ## Contact Points
 
-For any security concerns arising from the state of this repository, please contact [security@eustasy.org](mailto:security@eustasy.org)
+For any security concerns arising from the state of this repository, please contact [security@eustasy.org](mailto:security@eustasy.org), or follow the [security policy](https://github.com/eustasy/Bubbly?tab=security-ov-file).

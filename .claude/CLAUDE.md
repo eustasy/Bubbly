@@ -44,6 +44,10 @@ The README tells operators to grep for these. Don't quietly drop or rephrase the
 
 `directive/bubbly_security-headers_csp.conf` builds the Content-Security-Policy across many `set $bubbly_csp "$bubbly_csp …";` lines so each policy directive stays on its own readable line, then emits a single `add_header Content-Security-Policy $bubbly_csp always;`. If you extend the policy, append another `set` line — don't collapse it into a single quoted multi-line value (multi-line quoted strings produce a header value containing literal newlines, which is invalid HTTP).
 
+## Community health files live in the org, not here
+
+`CODE_OF_CONDUCT.md`, `SECURITY.md`, `SUPPORT.md`, the issue forms and the pull request template all come from [eustasy/.github](https://github.com/eustasy/.github) and are inherited by every eustasy repository. They are genuinely absent from this repo and genuinely in force — don't treat a reference to them as a broken link and delete it. Link them repo-scoped: `https://github.com/eustasy/Bubbly?tab=coc-ov-file`, `?tab=security-ov-file`.
+
 ## Supported platforms (version floor)
 
 Bubbly 3.x targets **Ubuntu 26.04 LTS** — in practice **Nginx 1.25.1+** (for the `http2` directive) and **OpenSSL 3.5+** (for `X25519MLKEM768` in `ssl_ecdh_curve`). Ubuntu 24.04, Ubuntu 22.04 and Debian 12 fail both gates and are out of support for 3.x; the README points those operators at the `2.2.0` tag. Debian 13 qualifies on Nginx 1.26, making it the *lowest* supported Nginx.
