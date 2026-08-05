@@ -296,7 +296,7 @@ jobs:
             sleep 1
             alpha="$(hammer alpha.test)"
             beta="$(curl -sS -o /dev/null -w '%{http_code}' --max-time 5 \
-              -H 'Host: beta.test' http://127.0.0.1/)"
+              -H 'Host: beta.test' "$probe")"
             echo "zone=$1  alpha=[$alpha]  beta=$beta  (beta expected $2)"
             case "$alpha" in
               *503*) ;;
