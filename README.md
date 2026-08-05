@@ -59,25 +59,29 @@ sudo apt install git certbot &&
 git clone https://github.com/eustasy/Bubbly
 ```
 
-## 2. Generate Statics
+## 2. Copy config blocks
 
-Generate the static keys once per server.
-
-```bash
-~/Bubbly/bubbly_generate-tickets.sh
-```
-
-As it will warn, this might take a while.
-
-Have a seat.
-
-## 3. Copy config blocks
-
-When you've gone and made something in the 15 minutes that could well take, or you've just set up a new SSH session, copy the Nginx configuration over to the Nginx area.
+Copy the Nginx configuration over to the Nginx area. Run this again whenever you pull a newer Bubbly.
 
 ```bash
 ~/Bubbly/bubbly_copy-configs.sh
 ```
+
+Among other things this installs `conf.d/bubbly_ssl.conf`, which Nginx loads by itself. It holds the TLS settings that apply to the whole server — protocols, key exchange groups, the default cipher list and session resumption — because Nginx cannot vary those per site. A handshake begins before SNI has chosen a site, so those values always come from the default server for the listening address, whatever a site file asks for.
+
+## 3. Enable the default server
+
+Once per server, before enabling any site. This gives Nginx something deliberate to answer with when a request matches no site at all: an unknown `Host` header, a connection with no SNI, or a probe aimed straight at your IP address.
+
+```bash
+sudo rm -f /etc/nginx/sites-enabled/default
+sudo ln -s /etc/nginx/sites-available/bubbly_default.conf /etc/nginx/sites-enabled/bubbly_default.conf
+sudo nginx -t && sudo service nginx reload
+```
+
+The `rm` removes the distribution's own default site, which also claims `default_server`; leaving both in place makes Nginx refuse to start with "a duplicate default server".
+
+Without a default server of your own, the role falls to whichever file in `sites-enabled/` sorts first, and that file's first `server` block silently decides the TLS protocol list and key exchange groups for **every** site on the machine. Adding a site whose filename sorts earlier would change them underneath you.
 
 ## 4. Configure & Enable Verification
 
@@ -126,6 +130,16 @@ sudo nginx -t && sudo service nginx reload
 ```
 
 Keep `example.com_http.conf` symlinked in `sites-enabled/` permanently. It handles all HTTP traffic (including ACME renewal challenges) so that certificate renewals keep working even if the certificate has already expired.
+
+## Optional: shared session ticket keys
+
+Nginx 1.23.2 and newer generate TLS session ticket keys themselves and rotate them periodically, storing them in the shared session cache, so there is nothing to set up. You only need a key of your own if you run **several Nginx instances behind a load balancer** that have to resume each other's tickets.
+
+```bash
+~/Bubbly/bubbly_generate-tickets.sh
+```
+
+Then uncomment `ssl_session_ticket_key` in `/etc/nginx/conf.d/bubbly_ssl.conf` and reload. To rotate later, generate a fresh key, keep the previous one as a second `ssl_session_ticket_key` line below it, and reload: the first key encrypts new tickets while the rest can still decrypt outstanding ones.
 
 ---
 

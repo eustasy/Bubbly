@@ -10,17 +10,17 @@ Bubbly is a set of Nginx configuration templates plus three helper bash scripts 
 
 The README walks through a fixed six-step setup. The three scripts at the repo root each correspond to a step:
 
-1. `bubbly_generate-tickets.sh` — creates `/etc/nginx/ssl/ticket.key` (80-byte random). Run once per server.
-2. `bubbly_copy-configs.sh` — `rsync -avh "$SCRIPT_DIR/nginx-config/" /etc/nginx/`. The script resolves its own directory, so it works regardless of CWD. Re-running it is the way to roll out config changes.
-3. `bubbly_renew-ssl.sh -d example.com -d www.example.com` — invokes `certbot certonly --authenticator webroot --webroot-path=/tmp/bubbly-authenticator …`. After issuance/renewal it `service nginx reload`s.
+1. `bubbly_copy-configs.sh` — `rsync -avh "$SCRIPT_DIR/nginx-config/" /etc/nginx/`. The script resolves its own directory, so it works regardless of CWD. Re-running it is the way to roll out config changes.
+2. `bubbly_renew-ssl.sh -d example.com -d www.example.com` — invokes `certbot certonly --authenticator webroot --webroot-path=/tmp/bubbly-authenticator …`. After issuance/renewal it `service nginx reload`s.
+3. `bubbly_generate-tickets.sh` — creates `/etc/nginx/ssl/ticket.key` (80-byte random). **Optional**, and no longer part of the main flow: Nginx 1.23.2+ generates and rotates ticket keys itself in the shared session cache. Only needed when several Nginx instances behind a load balancer must resume each other's tickets, and then `ssl_session_ticket_key` has to be uncommented in `conf.d/bubbly_ssl.conf`.
 
-Verify-then-promote uses two site templates under `nginx-config/sites-available/`: `bubbly_http.conf` (HTTP handler: ACME passthrough + redirect to HTTPS, kept active permanently) and `bubbly_https.conf` (the real HTTPS site: `www`→apex redirect and apex HTTPS server). Operators copy each template to `example.com_http.conf` / `example.com_https.conf`, search-and-replace `example.com` with their domain, symlink both into `sites-enabled/`, and run `sudo nginx -t && sudo service nginx reload`.
+Three site templates live under `nginx-config/sites-available/`. `bubbly_default.conf` is the catch-all default server, symlinked once per server, which answers unmatched Host headers and no-SNI connections; the distribution's own `sites-enabled/default` must be removed first or Nginx refuses to start with "a duplicate default server". Then verify-then-promote uses `bubbly_http.conf` (HTTP handler: ACME passthrough + redirect to HTTPS, kept active permanently) and `bubbly_https.conf` (the real HTTPS site: `www`→apex redirect and apex HTTPS server). Operators copy each template to `example.com_http.conf` / `example.com_https.conf`, search-and-replace `example.com` with their domain, symlink both into `sites-enabled/`, and run `sudo nginx -t && sudo service nginx reload`.
 
 ## Config layout convention (matters for include paths)
 
 `nginx-config/` mirrors `/etc/nginx/`. After `bubbly_copy-configs.sh`, every directory below appears at the same path under `/etc/nginx/`:
 
-- `conf.d/` — files Nginx auto-includes at the `http` context (limit zones, log formats, expires-map, php upstream, stub-status servers).
+- `conf.d/` — files Nginx auto-includes at the `http` context (socket-wide TLS in `bubbly_ssl.conf`, limit zones, expires-map, php upstream).
 - `directive/` — snippets meant to be `include`d inside a `server` or `location` block (gzip, SSL, security headers, logging variants, request-size limits).
 - `location/` — full `location { … }` blocks ready to be `include`d inside `server`.
 - `groups/` — bundles that `include` several `directive/`/`location/` files at once (`security-common.conf`, `performance-common.conf`).
@@ -64,6 +64,7 @@ There is currently **no** PHP version matrix in any workflow — the `.github/wo
 - **Preserve multi-line, aligned formatting in config files** when fixing bugs. If a fix would force collapsing nice columns to a single line, find another way (e.g. `set` accumulators) or ask first.
 - **Tabs**, not spaces, inside Nginx `.conf` files (the existing files are tab-indented).
 - **`example.com`** is the placeholder domain used throughout `sites-available/` templates; the README tells operators to search-and-replace it.
+- **TLS settings that cannot vary per site belong in `conf.d/bubbly_ssl.conf`, never in a site file or a `directive/` include.** Measured on Nginx 1.26 and 1.28: `ssl_protocols` and `ssl_ecdh_curve` are always taken from the default server for the listening socket, because the handshake starts before SNI selects a server. `ssl_ciphers` is the one exception and may be overridden per server, for TLS 1.2 only. CI asserts all three behaviours, so a regression there fails the build rather than silently invalidating the split.
 
 ## Useful commands
 

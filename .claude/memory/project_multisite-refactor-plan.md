@@ -116,6 +116,6 @@ Every site template says `Config from Bubbly v3.0-beta1`. Bump to `v3.0-beta2` i
 
 ## Open questions
 
-- Are per-site cipher *suites* still wanted once protocols are provably socket-wide? If yes, the only real answer is separate listen sockets (distinct IP or port); `ssl_conf_command Ciphersuites=…` is available at this floor but is subject to the same SNI-timing caveat as `ssl_ciphers`. Decide before starting C.
+- **Answered by measurement**, see [[tls-per-vhost-findings]]: `ssl_ciphers` does apply per vhost, while `ssl_protocols` and `ssl_ecdh_curve` come from the default server. The remaining question is a scope decision, not a technical one: should Bubbly support genuinely different TLS profiles per site — which now provably requires separate listen sockets, a distinct IP or port — or standardise on one socket-wide profile with per-site ciphers as the only variation? Recommendation: standardise, and document the separate-socket escape hatch as a `[WARNING]`.
 
 Answered 2026-08-05: Ubuntu 26.04 and Debian 13 package versions (recorded in [[nginx-version-floor]]); and whether OpenSSL 3.0 rejects a whole `ssl_ecdh_curve` list — moot, since no supported platform ships OpenSSL below 3.5.

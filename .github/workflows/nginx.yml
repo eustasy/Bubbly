@@ -53,7 +53,7 @@ jobs:
       - name: Install Nginx and tooling
         run: |
           apt-get update
-          apt-get install -y nginx openssl rsync sudo git ca-certificates
+          apt-get install -y nginx openssl curl rsync sudo git ca-certificates
           nginx -V
 
       - uses: actions/checkout@v7
@@ -63,11 +63,6 @@ jobs:
 
       - name: Deploy the config with bubbly_copy-configs.sh
         run: ./bubbly_copy-configs.sh
-
-      # [WARNING] When the session ticket key becomes opt-in, drop this step:
-      # the shipped config must then load without the key file existing.
-      - name: Generate the session ticket key with bubbly_generate-tickets.sh
-        run: ./bubbly_generate-tickets.sh
 
       - name: Confirm nginx.conf includes sites-enabled
         # Bubbly's whole sites-available/sites-enabled layout depends on this.
@@ -99,13 +94,25 @@ jobs:
       - name: Enable the templates as shipped
         run: |
           rm -f /etc/nginx/sites-enabled/default
-          ln -sf /etc/nginx/sites-available/bubbly_http.conf \
-            /etc/nginx/sites-enabled/bubbly_http.conf
-          ln -sf /etc/nginx/sites-available/bubbly_https.conf \
-            /etc/nginx/sites-enabled/bubbly_https.conf
+          for t in bubbly_default bubbly_http bubbly_https; do
+            ln -sf "/etc/nginx/sites-available/$t.conf" \
+              "/etc/nginx/sites-enabled/$t.conf"
+          done
 
-      - name: nginx -t (one site)
-        run: nginx -t
+      - name: nginx -t (one site, no session ticket key present)
+        # Proves the shipped config loads with no /etc/nginx/ssl/ticket.key,
+        # which it must, now that the key is opt-in. The generator script runs
+        # only afterwards, so this ordering is deliberate.
+        run: |
+          test ! -e /etc/nginx/ssl/ticket.key
+          nginx -t
+
+      - name: Generate the session ticket key with bubbly_generate-tickets.sh
+        # Exercises the script itself, and its execute bit.
+        run: |
+          ./bubbly_generate-tickets.sh
+          test -s /etc/nginx/ssl/ticket.key
+          nginx -t
 
       # Two more sites, set up exactly the way the README tells operators to:
       # copy the template, replace example.com, symlink it into sites-enabled.
@@ -162,29 +169,64 @@ jobs:
         run: nginx -t
 
       - name: Start Nginx
+        # Readiness is checked with a valid SNI name, because the default server
+        # now refuses handshakes that match no site.
         run: |
           nginx
           for _ in $(seq 1 20); do
-            if openssl s_client -connect 127.0.0.1:443 -brief </dev/null >/dev/null 2>&1; then
+            if openssl s_client -connect 127.0.0.1:443 -servername alpha.test -brief \
+                </dev/null >/dev/null 2>&1; then
               break
             fi
             sleep 0.5
           done
-          openssl s_client -connect 127.0.0.1:443 -brief </dev/null >/dev/null 2>&1 || {
+          openssl s_client -connect 127.0.0.1:443 -servername alpha.test -brief \
+            </dev/null >/dev/null 2>&1 || {
             echo "::error::Nginx did not accept TLS connections after starting"
             cat /var/log/nginx/error.log || true
             exit 1
           }
 
-      - name: Which server answers without SNI
-        # Without SNI the default server for 0.0.0.0:443 answers. No template
-        # sets default_server, so that is whichever sites-enabled file sorts
-        # first — alpha.test_https.conf, whose first block is the www redirect.
+      - name: The default server refuses anything unmatched
+        # bubbly_default.conf claims default_server on both ports, so a
+        # connection with no SNI, an unknown SNI name, or an unknown Host header
+        # reaches it rather than whichever site sorted first.
         run: |
-          out="$(openssl s_client -connect 127.0.0.1:443 -noservername -brief </dev/null 2>&1)"
-          echo "$out"
-          cn="$(echo "$out" | sed -n 's/^Peer certificate: .*CN *= *//p' | head -1)"
-          echo "::notice::With no SNI, :443 serves the certificate for ${cn:-unknown}"
+          status=0
+
+          for probe in "-noservername" "-servername nope.invalid"; do
+            # shellcheck disable=SC2086
+            if openssl s_client -connect 127.0.0.1:443 $probe -brief \
+                </dev/null >/tmp/rejected 2>&1; then
+              echo "::error::TLS handshake with '$probe' succeeded; ssl_reject_handshake is not in force"
+              cat /tmp/rejected
+              status=1
+            else
+              echo "ok   handshake refused for '$probe'"
+            fi
+          done
+
+          if curl -sS --max-time 10 -o /dev/null \
+              -H 'Host: nope.invalid' http://127.0.0.1/ 2>/tmp/curlerr; then
+            echo "::error::HTTP request for an unknown Host got a response; expected 444"
+            status=1
+          else
+            echo "ok   HTTP closed without a response for an unknown Host: $(cat /tmp/curlerr)"
+          fi
+
+          exit $status
+
+      - name: ACME passthrough still reaches a real site
+        # The renewal flow in the README depends on this surviving whatever the
+        # default server does with unmatched traffic.
+        run: |
+          mkdir -p /tmp/bubbly-authenticator/.well-known/acme-challenge
+          echo 'bubbly-ci-token' \
+            > /tmp/bubbly-authenticator/.well-known/acme-challenge/ci-probe
+          body="$(curl -sS --max-time 10 -H 'Host: alpha.test' \
+            http://127.0.0.1/.well-known/acme-challenge/ci-probe)"
+          echo "served: $body"
+          test "$body" = "bubbly-ci-token"
 
       - name: SNI selects the matching certificate
         run: |
@@ -205,50 +247,56 @@ jobs:
           done
           exit $status
 
-      - name: Measure whether per-vhost TLS settings apply
-        # beta.test asks for TLS 1.3 only, one CBC cipher, and prime256v1.
-        # alpha.test — the default server — asks for TLS 1.2 + 1.3, GCM and
-        # ChaCha ciphers, and X25519MLKEM768. Whichever set beta negotiates
-        # tells us which block won. Reported, not asserted: the answers are
-        # what item C needs, and turning them into assertions is that item's
-        # job once the behaviour is known.
+      - name: Assert how per-vhost TLS settings behave
+        # Measured 2026-08-05 and now asserted, because the socket-wide split in
+        # conf.d/bubbly_ssl.conf depends on it: if Nginx's behaviour changes,
+        # this should fail loudly rather than quietly invalidate the design.
+        # beta.test asks for TLS 1.3 only, one CBC cipher and prime256v1, while
+        # the socket-wide values are TLS 1.2 + 1.3, GCM/ChaCha and
+        # X25519MLKEM768.
         run: |
-          echo "--- alpha.test (default server, intermediate) over TLS 1.2 ---"
-          if openssl s_client -connect 127.0.0.1:443 -servername alpha.test -tls1_2 -brief \
-              </dev/null 2>&1 | tee /tmp/alpha12 | grep -q '^Protocol version'; then
-            echo "accepted, cipher $(sed -n 's/^Ciphersuite: *//p' /tmp/alpha12 | head -1)"
-          else
-            echo "refused"
-            cat /tmp/alpha12
-          fi
+          status=0
 
-          echo "--- beta.test (asks for TLS 1.3 only) over TLS 1.2 ---"
+          echo "--- baseline: alpha.test, no per-server overrides, over TLS 1.2 ---"
+          openssl s_client -connect 127.0.0.1:443 -servername alpha.test -tls1_2 -brief \
+            </dev/null 2>&1 | tee /tmp/alpha12 | grep -q '^Protocol version' || {
+            echo "::error::TLS 1.2 is unavailable server-wide, so the checks below cannot be interpreted"
+            cat /tmp/alpha12
+            exit 1
+          }
+          echo "ok   TLS 1.2 available, cipher $(sed -n 's/^Ciphersuite: *//p' /tmp/alpha12 | head -1)"
+
+          echo "--- beta.test over TLS 1.2, despite asking for TLS 1.3 only ---"
           if openssl s_client -connect 127.0.0.1:443 -servername beta.test -tls1_2 -brief \
               </dev/null 2>&1 | tee /tmp/beta12 | grep -q '^Protocol version'; then
-            suite="$(sed -n 's/^Ciphersuite: *//p' /tmp/beta12 | head -1)"
-            echo "::notice::beta.test accepted TLS 1.2 despite ssl_protocols TLSv1.3 — per-vhost ssl_protocols did NOT apply (cipher $suite)"
-            if [ "$suite" = "ECDHE-ECDSA-AES256-SHA384" ]; then
-              echo "::notice::per-vhost ssl_ciphers DID apply — beta's single cipher was used"
-            else
-              echo "::notice::per-vhost ssl_ciphers did NOT apply — the default server's list was used"
-            fi
+            echo "ok   accepted — per-vhost ssl_protocols is ignored, as expected"
           else
-            echo "::notice::beta.test refused TLS 1.2 — per-vhost ssl_protocols DID apply"
+            echo "::error::beta.test refused TLS 1.2, so per-vhost ssl_protocols now applies. Nginx behaviour has changed — revisit the socket-wide split in conf.d/bubbly_ssl.conf"
             cat /tmp/beta12
+            status=1
+          fi
+
+          suite="$(sed -n 's/^Ciphersuite: *//p' /tmp/beta12 | head -1)"
+          if [ "$suite" = "ECDHE-ECDSA-AES256-SHA384" ]; then
+            echo "ok   cipher $suite — per-vhost ssl_ciphers applies, as expected"
+          else
+            echo "::error::beta.test negotiated '$suite' rather than its own cipher, so the per-site override offered in directive/bubbly_rock-hard-ssl.conf no longer works"
+            status=1
           fi
 
           echo "--- beta.test over TLS 1.3, negotiated group ---"
           openssl s_client -connect 127.0.0.1:443 -servername beta.test -tls1_3 -brief \
-            </dev/null 2>&1 | tee /tmp/beta13
+            </dev/null > /tmp/beta13 2>&1
           group="$(sed -n 's/^Negotiated TLS1.3 group: *//p' /tmp/beta13 | head -1)"
-          case "$group" in
-            prime256v1 | P-256 | secp256r1)
-              echo "::notice::per-vhost ssl_ecdh_curve DID apply — group $group" ;;
-            "")
-              echo "::notice::could not read the negotiated group from openssl s_client -brief" ;;
-            *)
-              echo "::notice::per-vhost ssl_ecdh_curve did NOT apply — group $group" ;;
-          esac
+          if [ "$group" = "X25519MLKEM768" ]; then
+            echo "ok   group $group — per-vhost ssl_ecdh_curve is ignored, as expected"
+          else
+            echo "::error::beta.test negotiated group '${group:-unreadable}', expected the socket-wide X25519MLKEM768"
+            cat /tmp/beta13
+            status=1
+          fi
+
+          exit $status
 
   scripts:
     name: Helper scripts are executable
