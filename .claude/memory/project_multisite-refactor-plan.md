@@ -7,7 +7,7 @@ metadata:
 
 Plan agreed 2026-08-05 after auditing the config for "several sites, several PHP versions, different ciphers, one server". Per-item progress is in the Status line below; each completed item carries an "as built" note where the result differed from the plan. All work must respect [[nginx-version-floor]], the tab indentation and aligned-column conventions in [[feedback_formatting]], and the `[OPTION]`/`[DEFAULT]`/`[WARNING]` marker idiom.
 
-**Status:** A, B, C, D, E, F, G and I are **done** and pushed (2026-08-05), CI green on both platforms. When checking a run after pushing, select it by `headSha` — `gh run list --limit 1` races GitHub's run creation and returns the previous commit's run, which cost two wasted verification cycles here. F's config half landed with C, since moving the key to the http level would have made a missing key file break every site; its script half followed. Remaining sequence: H → docs. Also open: whether to enable a rate limit by default.
+**Status:** every item A–I is **done** and pushed (2026-08-05), CI green on both platforms. When checking a run after pushing, select it by `headSha` — `gh run list --limit 1` races GitHub's run creation and returns the previous commit's run, which cost two wasted verification cycles here. F's config half landed with C, since moving the key to the http level would have made a missing key file break every site; its script half followed. Remaining: docs only. **Decided 2026-08-05 (user):** no limit is enabled by default, permanently — Bubbly cannot know whether it is behind a proxy (which collapses every address-keyed zone into one bucket for the whole audience) or whether clients speak HTTP/2 (which turns a page load from dozens of connections into one), and both decide whether a rate is safe. Recorded as a convention in CLAUDE.md so it is not reversed by a later "helpful" default.
 
 ## A. Declare the floor — done 2026-08-05
 
@@ -160,7 +160,13 @@ Original plan:
 - Rejected alternative: one location file per version, which duplicates the 15-line fastcgi body N times.
 - Out of scope, worth a README note: separate FPM **pools** per site (own user, own `pm.max_children`). One shared pool lets a single busy site starve the others no matter what nginx does.
 
-## H. `bubbly_renew-ssl.sh` rate limits (independent, land anytime)
+## H. `bubbly_renew-ssl.sh` — done 2026-08-05
+
+**`--force-renew` stays**, on the user's reasoning: routine renewal belongs to the systemd timer Certbot installs, which runs `certbot renew` twice a day and reissues only near expiry, so a human running this script means they want a certificate *now* — first issuance, a name added, a different key type, recovery from a broken one. The limit that actually bites is documented instead: **5 certificates per exact same set of identifiers per 7 days, refilling one every 34 hours, and that one cannot be raised on request** (verified against letsencrypt.org/docs/rate-limits, page last updated 2026-08-05). Plus `--dry-run` for rehearsals and `--cert-name` for keeping a lineage's name stable, since Certbot otherwise names it after the first `-d` and a changed name list yields `example.com-0001` beside `example.com`.
+
+**Found while in the file: the ACME webroot was in `/tmp`.** `/tmp` is world-writable with the sticky bit, so any local user or process — a compromised PHP application running as www-data being the realistic case — could create `/tmp/bubbly-authenticator` before root did and own it. Whoever owns it can place files under `/.well-known/acme-challenge/`, which nginx serves, and that is enough to answer an HTTP-01 challenge and be issued a certificate for any name resolving to the machine. Moved to `/var/lib/bubbly-authenticator`, writable by root alone. The path lives in both the script and `location/bubbly_well-known-passthrough.conf`, so `repo-checks` compares them — if they drift, validation 404s with nothing in either file looking wrong. Script also gained `set -eu`.
+
+Original plan:
 
 `bubbly_renew-ssl.sh:13` passes `--force-renew` unconditionally. Per-site invocations on a multi-domain box burn Let's Encrypt allowances — 5 duplicate certificates per week for an identical name set, 50 certs per week per registered domain. Make it opt-in via a wrapper flag, or drop it and let certbot's own "not yet due" logic run, and document `--cert-name` for managing several lineages on one server.
 
