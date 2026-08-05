@@ -7,7 +7,7 @@ metadata:
 
 Plan agreed 2026-08-05 after auditing the config for "several sites, several PHP versions, different ciphers, one server". Nothing below is implemented yet. All work must respect [[nginx-version-floor]], the tab indentation and aligned-column conventions in [[feedback_formatting]], and the `[OPTION]`/`[DEFAULT]`/`[WARNING]` marker idiom.
 
-**Status:** A, B and C are **done** and pushed (2026-08-05), CI green on both platforms. F's ticket-key decision landed with C, since moving the key to the http level would have made a missing key file break every site; F's remaining work is script hardening. Remaining sequence: G → D, E, I (mutually independent) → F's leftovers → H → docs.
+**Status:** A, B, C and D are **done** and pushed (2026-08-05), CI green on both platforms. F's ticket-key decision landed with C, since moving the key to the http level would have made a missing key file break every site; F's remaining work is script hardening. Remaining sequence: G → E, I (mutually independent) → F's leftovers → H → docs.
 
 ## A. Declare the floor — done 2026-08-05
 
