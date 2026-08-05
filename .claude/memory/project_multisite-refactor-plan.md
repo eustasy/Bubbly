@@ -7,7 +7,7 @@ metadata:
 
 Plan agreed 2026-08-05 after auditing the config for "several sites, several PHP versions, different ciphers, one server". Per-item progress is in the Status line below; each completed item carries an "as built" note where the result differed from the plan. All work must respect [[nginx-version-floor]], the tab indentation and aligned-column conventions in [[feedback_formatting]], and the `[OPTION]`/`[DEFAULT]`/`[WARNING]` marker idiom.
 
-**Status:** A, B, C, D, E, F and G are **done** and pushed (2026-08-05), CI green on both platforms. When checking a run after pushing, select it by `headSha` — `gh run list --limit 1` races GitHub's run creation and returns the previous commit's run, which cost two wasted verification cycles here. F's config half landed with C, since moving the key to the http level would have made a missing key file break every site; its script half followed. Remaining sequence: I → F's leftovers → H → docs.
+**Status:** A, B, C, D, E, F and G are **done** and pushed (2026-08-05), CI green on both platforms. When checking a run after pushing, select it by `headSha` — `gh run list --limit 1` races GitHub's run creation and returns the previous commit's run, which cost two wasted verification cycles here. F's config half landed with C, since moving the key to the http level would have made a missing key file break every site; its script half followed. Remaining sequence: I → H → docs.
 
 ## A. Declare the floor — done 2026-08-05
 
