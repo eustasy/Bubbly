@@ -228,6 +228,41 @@ jobs:
           echo "served: $body"
           test "$body" = "bubbly-ci-token"
 
+      - name: Caching headers apply per site, not server-wide
+        # conf.d/expires-map.conf defines $expires but no longer applies it, so
+        # only sites that include groups/performance-common.conf get caching
+        # headers. bubbly_http.conf does not include it, and an ACME response is
+        # text/plain, which the map's 1y fallback used to catch — so it must now
+        # come back with no Expires header at all.
+        run: |
+          status=0
+
+          acme="$(curl -sSI --max-time 10 -H 'Host: alpha.test' \
+            http://127.0.0.1/.well-known/acme-challenge/ci-probe)"
+          echo "$acme"
+          if echo "$acme" | grep -qi '^expires:'; then
+            echo "::error::the ACME response carries an Expires header, so expires is still being applied server-wide"
+            status=1
+          else
+            echo "ok   no Expires header on the ACME response"
+          fi
+
+          # The HTTPS site does include performance-common, so text/html must
+          # still come back as the map specifies: epoch, meaning no-cache.
+          mkdir -p /path/to/alpha.test
+          echo '<!doctype html><title>ci</title>' > /path/to/alpha.test/index.html
+          html="$(curl -sSI -k --max-time 10 --resolve alpha.test:443:127.0.0.1 \
+            https://alpha.test/index.html)"
+          echo "$html"
+          if echo "$html" | grep -qi '^cache-control: *no-cache'; then
+            echo "ok   HTML over HTTPS is no-cache, as the map specifies"
+          else
+            echo "::error::the HTTPS site is missing the caching headers groups/performance-common.conf should apply"
+            status=1
+          fi
+
+          exit $status
+
       - name: SNI selects the matching certificate
         run: |
           status=0
