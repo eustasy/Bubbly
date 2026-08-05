@@ -7,7 +7,7 @@ metadata:
 
 Plan agreed 2026-08-05 after auditing the config for "several sites, several PHP versions, different ciphers, one server". Nothing below is implemented yet. All work must respect [[nginx-version-floor]], the tab indentation and aligned-column conventions in [[feedback_formatting]], and the `[OPTION]`/`[DEFAULT]`/`[WARNING]` marker idiom.
 
-**Status:** A, B, C and D are **done** and pushed (2026-08-05), CI green on both platforms. F's ticket-key decision landed with C, since moving the key to the http level would have made a missing key file break every site; F's remaining work is script hardening. Remaining sequence: G → E, I (mutually independent) → F's leftovers → H → docs.
+**Status:** A, B, C, D and E are **done** and pushed (2026-08-05), CI green on both platforms. When checking a run after pushing, select it by `headSha` — `gh run list --limit 1` races GitHub's run creation and returns the previous commit's run, which cost two wasted verification cycles here. F's ticket-key decision landed with C, since moving the key to the http level would have made a missing key file break every site; F's remaining work is script hardening. Remaining sequence: G → I → F's leftovers → H → docs.
 
 ## A. Declare the floor — done 2026-08-05
 
@@ -77,7 +77,15 @@ Original plan:
 
 `conf.d/expires-map.conf:52` applies `expires $expires;` at **http** context, so it hits every vhost on the machine — including sites never onboarded to Bubbly — with `default 1y` for unlisted content types such as `text/plain`. Delete that line, keep the `map`. `location/h5bp_expires.conf` (via `groups/performance-common.conf`) already applies it per site, so the opt-in path is preserved. Behaviour change for anyone relying on the global default — call it out in the README/release notes.
 
-## E. Per-site rate limits alongside the global ones
+## E. Per-site rate limits alongside the global ones — done 2026-08-05
+
+Built as planned: site-scoped zones keyed `$server_name$binary_remote_addr` (`siteReqPerSec1/10/20`, `siteConPerIP`) alongside the originals, plus `directive/bubbly_limits_site_20.conf`. Keyed on `$server_name` not `$host`, because `$host` comes from the request and a catch-all server would let one client mint unlimited keys and exhaust the zone. CI proves the difference: hammer alpha.test at 1r/s with no burst, then ask beta.test once — `503` with the server-wide zone, `200` with the site-scoped one, identically on both platforms.
+
+**`limit_req` and `limit_conn` never apply to a `return` response.** Discovered when the first version of the test hammered `/` and got five 308s with no 503 on either platform. `return` is handled in the rewrite phase, which precedes the preaccess phase where the limits are evaluated, so the response is finalised without consulting them — meaning Bubbly's HTTP-to-HTTPS redirect **cannot** be rate-limited by these directives at all. Both limits files carry a `[WARNING]` about it, and the CI test uses the ACME path, which serves a static file and so reaches preaccess.
+
+Memory: the zones now reserve 36MB as shipped (6MB across six request zones, 30MB across three connection zones), documented in `conf.d/bubbly_limits.conf` with the per-state arithmetic — roughly 128 bytes per `limit_req` state and 64 per `limit_conn` state on 64-bit. It is reserved address space with pages committed as used, but `conPerServer` holds one state per *site* and so does not need 10m.
+
+Original plan:
 
 `conf.d/bubbly_limits.conf` keys its zones on `$binary_remote_addr` alone, so one client's traffic to site A spends site B's budget and `limit_conn conPerIP 20` is a box-wide per-IP cap. Add site-scoped zones keyed `$server_name$binary_remote_addr` (`siteReqPerSec20`, `siteConPerIP`) and a `directive/bubbly_limits_site_20.conf` variant; keep the existing global zones and files for back-compat and document the trade-off with `[OPTION]`/`[WARNING]`. Zones consume shared memory whether used or not, so keep the new ones at the current 1m/10m sizes. Low risk: neither limits file is included by either group today, so this is entirely opt-in.
 
