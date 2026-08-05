@@ -147,7 +147,9 @@ Nginx 1.23.2 and newer generate TLS session ticket keys themselves and rotate th
 ~/Bubbly/bubbly_generate-tickets.sh
 ```
 
-Then uncomment `ssl_session_ticket_key` in `/etc/nginx/conf.d/bubbly_ssl.conf` and reload. To rotate later, generate a fresh key, keep the previous one as a second `ssl_session_ticket_key` line below it, and reload: the first key encrypts new tickets while the rest can still decrypt outstanding ones.
+Then uncomment `ssl_session_ticket_key` in `/etc/nginx/conf.d/bubbly_ssl.conf` and reload. Run the script again whenever you want to rotate: it moves the existing key to `ticket.old.key` and writes a fresh one, so tickets already issued keep working. Nginx encrypts with the first key listed and decrypts with any of them, so keep the new one on top. Both files are written `600` — the key decrypts session tickets, so anyone able to read it can decrypt captured resumed sessions.
+
+Whether or not you use an explicit key, every site shares one session cache, and on Nginx 1.23.2 and newer the automatic ticket keys live in that cache. So a session begun on one of your sites can be resumed against another. That is usually what you want across sites you own, but it does mean one site's TLS settings are not a boundary around it — a site needing its own boundary declares its own `ssl_session_cache` with a different zone name in its server block.
 
 ---
 

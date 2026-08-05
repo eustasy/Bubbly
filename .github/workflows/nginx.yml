@@ -112,11 +112,36 @@ jobs:
           test ! -e /etc/nginx/ssl/ticket.key
           nginx -t
 
-      - name: Generate the session ticket key with bubbly_generate-tickets.sh
-        # Exercises the script itself, and its execute bit.
+      - name: bubbly_generate-tickets.sh writes and rotates a key
+        # Exercises the script, its execute bit, the 600 modes, and the rotation
+        # the README documents. Run twice: the second run must move the first key
+        # aside and mint a different one, then both lines in
+        # conf.d/bubbly_ssl.conf can be uncommented and loaded.
         run: |
           ./bubbly_generate-tickets.sh
           test -s /etc/nginx/ssl/ticket.key
+          test ! -e /etc/nginx/ssl/ticket.old.key
+
+          ./bubbly_generate-tickets.sh
+          test -s /etc/nginx/ssl/ticket.key
+          test -s /etc/nginx/ssl/ticket.old.key
+
+          stat -c '%a %n' /etc/nginx/ssl /etc/nginx/ssl/ticket.key \
+            /etc/nginx/ssl/ticket.old.key
+          test "$(stat -c '%a' /etc/nginx/ssl/ticket.key)" = 600
+          test "$(stat -c '%a' /etc/nginx/ssl/ticket.old.key)" = 600
+          test "$(stat -c '%a' /etc/nginx/ssl)" = 700
+
+          # A rotation that produced the same bytes twice would be no rotation.
+          if cmp -s /etc/nginx/ssl/ticket.key /etc/nginx/ssl/ticket.old.key; then
+            echo "::error::the rotated key is identical to the previous one"
+            exit 1
+          fi
+          echo "ok   rotated to a different key, both 600, directory 700"
+
+          sed -i 's|^#ssl_session_ticket_key|ssl_session_ticket_key|' \
+            /etc/nginx/conf.d/bubbly_ssl.conf
+          grep -n '^ssl_session_ticket_key' /etc/nginx/conf.d/bubbly_ssl.conf
           nginx -t
 
       # Two more sites, set up exactly the way the README tells operators to:
