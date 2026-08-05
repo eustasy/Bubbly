@@ -11,8 +11,8 @@ If you want an instant A+ score on Qualys [SSL Labs](https://www.ssllabs.com/ssl
 
 ## Requirements
 
-- **Nginx 1.25.1+** for the `http2` directive,
-- **OpenSSL 3.5+** for the `X25519MLKEM768` post-quantum group.
+* **Nginx 1.25.1+** for the `http2` directive,
+* **OpenSSL 3.5+** for the `X25519MLKEM768` post-quantum group.
 
 > _Check with `nginx -V`, which reports the OpenSSL Nginx was built against, not the `openssl` on your `$PATH`. Consider deploying on an unsupported releases using [Bubbly 2.2.0](https://github.com/eustasy/Bubbly/tree/2.2.0)._
 
