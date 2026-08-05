@@ -250,9 +250,9 @@ jobs:
         # The renewal flow in the README depends on this surviving whatever the
         # default server does with unmatched traffic.
         run: |
-          mkdir -p /tmp/bubbly-authenticator/.well-known/acme-challenge
+          mkdir -p /var/lib/bubbly-authenticator/.well-known/acme-challenge
           echo 'bubbly-ci-token' \
-            > /tmp/bubbly-authenticator/.well-known/acme-challenge/ci-probe
+            > /var/lib/bubbly-authenticator/.well-known/acme-challenge/ci-probe
           body="$(curl -sS --max-time 10 -H 'Host: alpha.test' \
             http://127.0.0.1/.well-known/acme-challenge/ci-probe)"
           echo "served: $body"
@@ -611,6 +611,24 @@ jobs:
             echo "ok   the two lists match"
           else
             echo "::error::gzip_types and brotli_types have drifted; the diff above is gzip on the left"
+            exit 1
+          fi
+
+      - name: The ACME webroot matches in the script and the config
+        # If these drift, Certbot writes the challenge where Nginx is not looking
+        # and validation 404s — with nothing in either file looking wrong.
+        run: |
+          script=$(sed -n 's/^WEBROOT=//p' bubbly_renew-ssl.sh | head -1)
+          conf=$(sed -n 's|^[[:space:]]*root[[:space:]]*\(/[^;]*\);.*|\1|p' \
+            nginx-config/location/bubbly_well-known-passthrough.conf | head -1)
+          echo "bubbly_renew-ssl.sh: ${script:-<none>}"
+          echo "well-known-passthrough.conf: ${conf:-<none>}"
+          test -n "$script"
+          test -n "$conf"
+          if [ "$script" = "$conf" ]; then
+            echo "ok   both point at $script"
+          else
+            echo "::error::the ACME webroot differs: script says $script, config says $conf"
             exit 1
           fi
 

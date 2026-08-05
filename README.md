@@ -121,6 +121,8 @@ It will ask for the root password, and an email address, so hang around, it shou
 
 Certbot will set up a systemd timer that runs `certbot renew` automatically twice a day. The `--deploy-hook` passed by the script is stored in `/etc/letsencrypt/renewal/example.com.conf`, so Nginx will be reloaded automatically after each successful renewal — no cron job or manual renewal needed.
 
+Which is why this script always passes `--force-renew`: routine renewal is the timer's job, so running it by hand means you want a certificate now — a first issuance, a name added, a different key type, or recovery from a broken one. [Let's Encrypt allows 5 certificates per exact same set of names every 7 days](https://letsencrypt.org/docs/rate-limits/), refilling one every 34 hours, and that limit cannot be raised on request, so don't put this in a loop. Add `--dry-run` to rehearse against staging, which isn't rate limited.
+
 ## 6. Start using the Certificates
 
 Copy the live site template alongside the verify config you already have. You'll need to more carefully review the `[OPTION]`s in this file, as you'll also need to change the certificate location to match the domain name you requested. Consider taking a look at the `[OPTION]`s and `[WARNING]`s in other linked config files.
