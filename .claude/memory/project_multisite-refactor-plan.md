@@ -7,7 +7,7 @@ metadata:
 
 Plan agreed 2026-08-05 after auditing the config for "several sites, several PHP versions, different ciphers, one server". Nothing below is implemented yet. All work must respect [[nginx-version-floor]], the tab indentation and aligned-column conventions in [[feedback_formatting]], and the `[OPTION]`/`[DEFAULT]`/`[WARNING]` marker idiom.
 
-**Status:** A and B are **done** (2026-08-05, uncommitted). Remaining sequence: C → G → D, E, F, I (mutually independent) → H → docs. C and G come after B so their behavioural changes are actually verified by CI.
+**Status:** A, B and C are **done** and pushed (2026-08-05), CI green on both platforms. F's ticket-key decision landed with C, since moving the key to the http level would have made a missing key file break every site; F's remaining work is script hardening. Remaining sequence: G → D, E, I (mutually independent) → F's leftovers → H → docs.
 
 ## A. Declare the floor — done 2026-08-05
 
@@ -51,7 +51,13 @@ Brotli module installation still waits for item I to exist.
 
 Expect the first run to be informative: if the old workflow never parsed the site templates (nginx.org's `nginx.conf` includes `conf.d/*.conf` only, and nothing added a `sites-enabled` include), then this is the first time `bubbly_http.conf` and `bubbly_https.conf` have ever been given to a real nginx.
 
-## C. Split SSL into socket-wide vs per-site
+## C. Split SSL into socket-wide vs per-site — done 2026-08-05
+
+**As built, which differs from the plan below in one important way.** The socket-wide values could *not* go into `conf.d/` at the `http` level: Debian and Ubuntu already set `ssl_protocols`, `ssl_prefer_server_ciphers` and `keepalive_timeout` in their own `nginx.conf`, and repeating any of them there is a fatal `directive is duplicate`. CI caught it on both platforms. So the profile lives in `directive/bubbly_ssl-profile.conf`, included from a `server` block by both `sites-available/bubbly_default.conf` (authoritative, since the default server is where nginx reads protocols and groups from) and `directive/bubbly_rock-hard-ssl.conf` (a safety net, so an operator who skips the default server does not silently inherit the distribution's TLS 1.0/1.1). `conf.d/bubbly_ssl.conf` keeps only what the distribution does not touch: the shared session cache, ticket settings, and the OCSP resolver.
+
+`bubbly_default.conf` uses `ssl_reject_handshake on;` and needs no certificate. CI asserts that no-SNI and unknown-SNI handshakes are refused, that an unknown `Host` on port 80 gets closed with no response, that the ACME passthrough still serves a token for a real site, and all three per-vhost TLS behaviours from [[tls-per-vhost-findings]].
+
+Original plan, for reference:
 
 Why: nginx docs, [Virtual server selection](https://nginx.org/en/docs/http/server_names.html) — "the protocol list is set by the OpenSSL library before the server configuration could be applied according to the name requested through SNI, thus, protocols should be specified only for a default server." Per-site `ssl_protocols` is therefore an illusion: the default server for `0.0.0.0:443` wins, silently, with no config-test error. No template carries `default_server` today, so the winner is the alphabetically-first `sites-enabled/*` file's first 443 block — i.e. some site's `www`→apex redirect block — and onboarding a site that sorts earlier silently changes TLS for every site on the box.
 
