@@ -26,17 +26,6 @@ If you want an instant A+ score on Qualys [SSL Labs](https://www.ssllabs.com/ssl
 
 We recommend the use of the distribution's own Nginx, with no third-party repositories.
 
-## PHP
-
-Ubuntu 26.04 LTS ships PHP 8.5, which `conf.d/php_sockets.conf` selects by default. Run `ls /etc/php/` to list the versions installed and `ls /var/run/php/` the sockets that exist.
-
-Multiple PHP versions can be easily installed: `php8.5-fpm` and `php8.4-fpm` each get their own `/etc/php/` tree, systemd unit and socket. Each release only _carries_ one, though — 26.04 has 8.5, 24.04 has 8.3, Debian 13 has 8.4 — so extra versions come from Ondřej Surý:
-
-* Ubuntu 22.04 and 24.04: [`ppa:ondrej/php`](https://launchpad.net/~ondrej/+archive/ubuntu/php)
-* Ubuntu 26.04 and Debian: [packages.sury.org/php](https://packages.sury.org/php/), which the PPA is merging into
-
-Their version strings sort above the distribution's, so `apt` prefers their builds for every PHP package once enabled. To put a site on a given version, uncomment Option 2 in `location/bubbly_extensionless-php.conf` and set `$bubbly_php` in each site file. Give each site its own FPM pool while you are there, so one cannot exhaust the workers or read another's sessions.
-
 ## Installation
 
 ### 1. Install Certbot and Clone Bubbly
@@ -138,3 +127,16 @@ Either way, every site shares one session cache — and on 1.23.2+ the automatic
 ![Screenshot of SSLLabs.com](https://raw.githubusercontent.com/eustasy/Bubbly/main/screenshot_ssllabs.com.png)
 
 ![Screenshot of SecurityHeaders.io](https://raw.githubusercontent.com/eustasy/Bubbly/main/screenshot_securityheaders.io.png)
+
+## Configuration
+
+### PHP Versions
+
+Ubuntu 26.04 LTS ships PHP 8.5, which `conf.d/php_sockets.conf` selects by default. Run `ls /etc/php/` to list the versions installed and `ls /var/run/php/` the sockets that exist.
+
+Multiple PHP versions can be easily installed: `php8.5-fpm` and `php8.4-fpm` each get their own `/etc/php/` tree, systemd unit and socket. Each release only _carries_ one, though — 26.04 has 8.5, 24.04 has 8.3, Debian 13 has 8.4 — so extra versions come from Ondřej Surý:
+
+* Ubuntu 22.04 and 24.04: [`ppa:ondrej/php`](https://launchpad.net/~ondrej/+archive/ubuntu/php)
+* Ubuntu 26.04 and Debian: [packages.sury.org/php](https://packages.sury.org/php/), which the PPA is merging into
+
+Their version strings sort above the distribution's, so `apt` prefers their builds for every PHP package once enabled. To put a site on a given version, uncomment Option 2 in `location/bubbly_extensionless-php.conf` and set `$bubbly_php` in each site file. Give each site its own FPM pool while you are there, so one cannot exhaust the workers or read another's sessions.
