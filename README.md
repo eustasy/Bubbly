@@ -122,15 +122,42 @@ Then uncomment `ssl_session_ticket_key` in `/etc/nginx/conf.d/bubbly_ssl.conf` a
 
 Either way, every site shares one session cache — and on 1.23.2+ the automatic keys live in it — so a session begun on one site can be resumed against another. Fine across sites you own, but one site's TLS settings are therefore not a boundary around it; a site needing one declares its own `ssl_session_cache` zone.
 
----
-
-![Screenshot of SSLLabs.com](https://raw.githubusercontent.com/eustasy/Bubbly/main/screenshot_ssllabs.com.png)
-
-![Screenshot of SecurityHeaders.io](https://raw.githubusercontent.com/eustasy/Bubbly/main/screenshot_securityheaders.io.png)
-
 ## Configuration
 
+Every knob is marked `[OPTION]` in the configuration files, with `[DEFAULT]` on the active choice and `[WARNING]` where one can bite. Add an `include` inside the `server` block of your site file, or inside `location ~ \.php$` where noted.
+
+| Want | Advice | Change |
+| --- | --- | --- |
+| Brotli | Recommended | install `libnginx-mod-http-brotli-filter`, then uncomment in `groups/performance-common.conf` |
+| Per-site log files | Recommended with more than one site | include `directive/bubbly_logs.conf` |
+| A Content Security Policy | Recommended, carefully | Option 2 or 3 in `directive/bubbly_security-headers.conf` |
+| Only expected request methods | Optional hardening | include `location/bubbly_methods.conf` |
+| Uploads over 1 MB | Optional | include `directive/bubbly_uploads.conf` — 10M |
+| Custom 404 and 50x pages | Optional | include `location/bubbly_errors.conf`, and provide the files |
+| PHP that runs longer than 60s | Only if needed | raise `fastcgi_read_timeout` in `location/bubbly_extensionless-php.conf` |
+| A per-site connection cap | Only if needed | include `directive/bubbly_limits_server.conf` |
+| TLS 1.3 only | Only if essential | Option 1 in `directive/bubbly_ssl-profile.conf` — drops pre-2020 clients |
+| HSTS across subdomains | Only if essential | Option 2 in `directive/bubbly_security-headers.conf` |
+
+Nginx caps request bodies at 1 MB, so uploads fail with 413 before reaching PHP until `bubbly_uploads.conf` is included — and PHP's own `upload_max_filesize` and `post_max_size` have to allow them too. Without `bubbly_logs.conf`, the HTTPS block logs to the distribution's shared log and HTTP traffic is not logged at all. HSTS and TLS 1.3-only are marked essential-only because both are hard to walk back: the first commits subdomains that may not exist yet to HTTPS for two years, and the second refuses anything older than roughly 2020.
+
+### Behind a proxy or CDN
+
+_Essential when Nginx sits behind one; pointless otherwise._
+
+`$binary_remote_addr` is the proxy, so rate limits count your whole audience as one client and every log line records the proxy. `directive/bubbly_real-ip.conf` recovers the real address.
+
+> _Only trust ranges you control. Naming one you do not own lets anyone in it forge their address._
+
+### Rate limiting
+
+_Optional, and deliberately not enabled by default:_ a safe rate depends on whether you are behind a proxy and whether clients speak HTTP/2, neither of which Bubbly can know.
+
+Uncomment an include inside `location ~ \.php$` — see `location/bubbly_extensionless-php.conf` — so only the requests that cost something are counted, rather than every stylesheet and image alongside them. Zones, rates and sizes live in `conf.d/bubbly_limits.conf`.
+
 ### PHP Versions
+
+_Optional; nothing to do unless you want a version other than the one your release ships._
 
 Ubuntu 26.04 LTS ships PHP 8.5, which `conf.d/php_sockets.conf` selects by default. Run `ls /etc/php/` to list the versions installed and `ls /var/run/php/` the sockets that exist.
 
@@ -140,3 +167,9 @@ Multiple PHP versions can be easily installed: `php8.5-fpm` and `php8.4-fpm` eac
 * Ubuntu 26.04 and Debian: [packages.sury.org/php](https://packages.sury.org/php/), which the PPA is merging into
 
 Their version strings sort above the distribution's, so `apt` prefers their builds for every PHP package once enabled. To put a site on a given version, uncomment Option 2 in `location/bubbly_extensionless-php.conf` and set `$bubbly_php` in each site file. Give each site its own FPM pool while you are there, so one cannot exhaust the workers or read another's sessions.
+
+---
+
+![Screenshot of SSLLabs.com](https://raw.githubusercontent.com/eustasy/Bubbly/main/screenshot_ssllabs.com.png)
+
+![Screenshot of SecurityHeaders.io](https://raw.githubusercontent.com/eustasy/Bubbly/main/screenshot_securityheaders.io.png)
