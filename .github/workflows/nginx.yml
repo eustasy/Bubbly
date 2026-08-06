@@ -582,6 +582,18 @@ jobs:
 
           exit $status
 
+      - name: Every commented include parses where it is offered
+        # The templates offer includes commented out, which nothing would
+        # otherwise parse: a wrong path, or an include in a context the directive
+        # is not valid in, would sit undetected. Uncomment them all and load.
+        # Runs last, because it leaves the config with everything switched on.
+        run: |
+          sed -i 's|^\([[:space:]]*\)#include |\1include |' \
+            /etc/nginx/sites-available/*.conf /etc/nginx/groups/*.conf \
+            /etc/nginx/location/*.conf /etc/nginx/directive/*.conf
+          grep -c '^[[:space:]]*include ' /etc/nginx/sites-available/bubbly_https.conf
+          nginx -t
+
   repo-checks:
     name: Repo consistency
     runs-on: ubuntu-latest

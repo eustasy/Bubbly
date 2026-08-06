@@ -124,28 +124,28 @@ Either way, every site shares one session cache — and on 1.23.2+ the automatic
 
 ## Configuration
 
-Every knob is marked `[OPTION]` in the configuration files, with `[DEFAULT]` on the active choice and `[WARNING]` where one can bite. Add an `include` inside the `server` block of your site file, or inside `location ~ \.php$` where noted.
+Every knob is marked `[OPTION]` in the configuration files, with `[DEFAULT]` on the active choice and `[WARNING]` where one can bite. Six of the changes below are already sitting commented out at the bottom of your `_https.conf`, under `Optional Includes`, so most of this is uncommenting a line and reloading.
 
 | Want | Advice | Change |
 | --- | --- | --- |
 | Brotli | Recommended | install `libnginx-mod-http-brotli-filter`, then uncomment in `groups/performance-common.conf` |
-| Per-site log files | Recommended with more than one site | include `directive/bubbly_logs.conf` |
+| Per-site log files | Recommended with more than one site | uncomment `directive/bubbly_logs.conf`, then edit its paths — unedited it restates the defaults |
 | A Content Security Policy | Recommended, carefully | Option 2 or 3 in `directive/bubbly_security-headers.conf` |
-| Only expected request methods | Optional hardening | include `location/bubbly_methods.conf` |
-| Uploads over 1 MB | Optional | include `directive/bubbly_uploads.conf` — 10M |
-| Custom 404 and 50x pages | Optional | include `location/bubbly_errors.conf`, and provide the files |
+| Only expected request methods | Optional hardening | uncomment `location/bubbly_methods.conf` |
+| Uploads over 1 MB | Optional | uncomment `directive/bubbly_uploads.conf` — 10M |
+| Custom 404 and 50x pages | Optional | create the pages in the site root, then uncomment `location/bubbly_errors.conf` |
 | PHP that runs longer than 60s | Only if needed | raise `fastcgi_read_timeout` in `location/bubbly_extensionless-php.conf` |
-| A per-site connection cap | Only if needed | include `directive/bubbly_limits_server.conf` |
+| A per-site connection cap | Only if needed | uncomment `directive/bubbly_limits_server.conf` |
 | TLS 1.3 only | Only if essential | Option 1 in `directive/bubbly_ssl-profile.conf` — drops pre-2020 clients |
 | HSTS across subdomains | Only if essential | Option 2 in `directive/bubbly_security-headers.conf` |
 
-Nginx caps request bodies at 1 MB, so uploads fail with 413 before reaching PHP until `bubbly_uploads.conf` is included — and PHP's own `upload_max_filesize` and `post_max_size` have to allow them too. Without `bubbly_logs.conf`, the HTTPS block logs to the distribution's shared log and HTTP traffic is not logged at all. HSTS and TLS 1.3-only are marked essential-only because both are hard to walk back: the first commits subdomains that may not exist yet to HTTPS for two years, and the second refuses anything older than roughly 2020.
+Nginx caps request bodies at 1 MB, so uploads fail with 413 before reaching PHP until `bubbly_uploads.conf` is included — and PHP's own `upload_max_filesize` and `post_max_size` have to allow them too. Without `bubbly_logs.conf`, the HTTPS block logs to the distribution's shared log and HTTP traffic is not logged at all; `_http.conf` marks the `bubbly_logs_off.conf` line to swap if you want port 80 logged. Error pages come with a trap worth respecting: a missing `404.html` 404s, re-enters `error_page`, and Nginx aborts the loop with a 500. HSTS and TLS 1.3-only are essential-only because neither walks back easily — the first commits subdomains that may not exist yet to HTTPS for two years, the second refuses anything older than roughly 2020.
 
 ### Behind a proxy or CDN
 
 _Essential when Nginx sits behind one; pointless otherwise._
 
-`$binary_remote_addr` is the proxy, so rate limits count your whole audience as one client and every log line records the proxy. `directive/bubbly_real-ip.conf` recovers the real address.
+`$binary_remote_addr` is the proxy, so rate limits count your whole audience as one client and every log line records the proxy. Uncomment `directive/bubbly_real-ip.conf` — it is listed in both site templates — or include it from a file in `conf.d/` to cover every site at once, since one missed site leaves its logs and limits wrong.
 
 > _Only trust ranges you control. Naming one you do not own lets anyone in it forge their address._
 
