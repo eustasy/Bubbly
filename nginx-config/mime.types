@@ -1,4 +1,4 @@
-# src=https://github.com/h5bp/server-configs-nginx/blob/master/mime.types
+# src=https://github.com/h5bp/server-configs-nginx/blob/main/mime.types
 
 types {
 
