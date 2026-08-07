@@ -110,11 +110,11 @@
 						<div class="b-score-grade"><span>A</span></div>
 						<div class="b-score-meta">
 							<div class="b-score-src">securityheaders.io</div>
-							<div class="b-score-detail">HSTS · X-Frame-Options · Referrer-Policy · Permissions-Policy · CSP</div>
+							<div class="b-score-detail">HSTS · X-Frame-Options · X-Content-Type-Options · Referrer-Policy · Permissions-Policy</div>
 						</div>
 					</div>
 					<div class="b-score-card-foot">
-						<span>Six categories, four headers, zero warnings.</span>
+						<span>Four categories, six headers, zero warnings.</span>
 					</div>
 				</div>
 			</aside>
@@ -136,12 +136,12 @@
 				<p>Certbot's systemd timer runs <code>certbot renew</code> twice a day. Bubbly's hook reloads Nginx on success. Set it. Forget it.</p>
 			</li>
 			<li>
-				<h3>OCSP, HSTS, session tickets.</h3>
-				<p>Stapling, perfect forward secrecy, modern ciphers, strict transport — the whole battery. The defaults match Mozilla's "Modern" profile.</p>
+				<h3>OCSP, HSTS, post-quantum.</h3>
+				<p>Stapling, forward secrecy, strict transport, and a key exchange list led by <code>X25519MLKEM768</code>. Secure defaults that don't exclude any clients.</p>
 			</li>
 			<li>
-				<h3>Optional headers pack.</h3>
-				<p>CSP, X-Frame-Options, Referrer-Policy, Permissions-Policy. Include <code>directive/bubbly_security-headers.conf</code> in your server block, get the SecurityHeaders A.</p>
+				<h3>Headers pack, already on.</h3>
+				<p>HSTS, X-Frame-Options, Referrer-Policy, Permissions-Policy, and the cross-origin opener and resource policies pinned to same-origin. An immediate A on SecurityHeaders.io.</p>
 			</li>
 		</ul>
 	</section>
@@ -152,7 +152,7 @@
 			<h2 class="b-h2">vs. doing it by hand.</h2>
 			<p class="b-section-lede">
 				Certbot and acme.sh are great. They just don't ship the Nginx config you actually want.
-				Bubbly does — plus the headers, plus the ticket rotation, plus the renewal hook.
+				Bubbly does — plus the headers, and a default server that pins your security floor.
 			</p>
 		</div>
 		<div class="b-compare-wrap">
@@ -194,15 +194,15 @@
 						<td><span class="bc-cell ok"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--accent)" opacity="0.16"/><path d="M4.5 8.5 L 7 11 L 11.5 5.5" stroke="var(--accent)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg><em>own server</em></span></td>
 					</tr>
 					<tr>
-						<th scope="row">Persistent ticket key</th>
-						<td class="bc-pick"><span class="bc-cell ok"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--accent)" opacity="0.16"/><path d="M4.5 8.5 L 7 11 L 11.5 5.5" stroke="var(--accent)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></span></td>
+						<th scope="row">Session tickets</th>
+						<td class="bc-pick"><span class="bc-cell ok"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--accent)" opacity="0.16"/><path d="M4.5 8.5 L 7 11 L 11.5 5.5" stroke="var(--accent)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg><em>optional</em></span></td>
 						<td><span class="bc-cell no"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--color-danger-bg)"/><path d="M5 5 L 11 11 M 11 5 L 5 11" stroke="var(--color-danger)" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg></span></td>
 						<td><span class="bc-cell no"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--color-danger-bg)"/><path d="M5 5 L 11 11 M 11 5 L 5 11" stroke="var(--color-danger)" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg></span></td>
 						<td><span class="bc-cell meh"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--color-bg-tertiary)"/><path d="M4.5 8 L 11.5 8" stroke="var(--color-text-tertiary)" stroke-width="1.7" stroke-linecap="round" fill="none"/></svg></span></td>
 					</tr>
 					<tr>
 						<th scope="row">Security headers pack</th>
-						<td class="bc-pick"><span class="bc-cell ok"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--accent)" opacity="0.16"/><path d="M4.5 8.5 L 7 11 L 11.5 5.5" stroke="var(--accent)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg><em>optional</em></span></td>
+						<td class="bc-pick"><span class="bc-cell ok"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--accent)" opacity="0.16"/><path d="M4.5 8.5 L 7 11 L 11.5 5.5" stroke="var(--accent)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg><em>by default</em></span></td>
 						<td><span class="bc-cell no"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--color-danger-bg)"/><path d="M5 5 L 11 11 M 11 5 L 5 11" stroke="var(--color-danger)" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg></span></td>
 						<td><span class="bc-cell no"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--color-danger-bg)"/><path d="M5 5 L 11 11 M 11 5 L 5 11" stroke="var(--color-danger)" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg></span></td>
 						<td><span class="bc-cell no"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--color-danger-bg)"/><path d="M5 5 L 11 11 M 11 5 L 5 11" stroke="var(--color-danger)" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg><em>manual</em></span></td>
@@ -241,10 +241,24 @@
 		</div>
 
 		<div class="b-distro-tabs" role="tablist" aria-label="Distribution">
-			<button type="button" class="b-distro-tab on" role="tab" aria-selected="true" data-distro="ubuntu" data-pkg="sudo apt install git certbot">Ubuntu / Debian</button>
-			<button type="button" class="b-distro-tab" role="tab" aria-selected="false" data-distro="fedora" data-pkg="sudo dnf install git certbot">Fedora / RHEL</button>
-			<button type="button" class="b-distro-tab" role="tab" aria-selected="false" data-distro="arch" data-pkg="sudo pacman -S git certbot">Arch</button>
-			<button type="button" class="b-distro-tab" role="tab" aria-selected="false" data-distro="alpine" data-pkg="sudo apk add git certbot">Alpine</button>
+			<button type="button" class="b-distro-tab on" role="tab" aria-selected="true" data-distro="ubuntu" data-pkg="sudo apt install git certbot" data-note="Nginx here already includes sites-enabled/, so the symlinks below work as written.">Ubuntu / Debian</button>
+			<button type="button" class="b-distro-tab" role="tab" aria-selected="false" data-distro="fedora" data-pkg="sudo dnf install git certbot" data-note="Nginx here includes conf.d/ only. Create sites-available/ and sites-enabled/, then include /etc/nginx/sites-enabled/*.conf; from the http block of nginx.conf.">Fedora / RHEL</button>
+			<button type="button" class="b-distro-tab" role="tab" aria-selected="false" data-distro="arch" data-pkg="sudo pacman -S git certbot" data-note="Nginx here ships a single nginx.conf with no includes. Create sites-available/ and sites-enabled/, then include /etc/nginx/sites-enabled/*.conf; from the http block.">Arch</button>
+			<button type="button" class="b-distro-tab" role="tab" aria-selected="false" data-distro="alpine" data-pkg="sudo apk add git certbot" data-note="Nginx here uses http.d/ in place of sites-enabled/. Create sites-available/ and sites-enabled/, then include /etc/nginx/sites-enabled/*.conf; from the http block.">Alpine</button>
+		</div>
+
+		<div class="b-step-hint b-step-req">
+			<svg width="18" height="18" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="none" stroke="var(--accent)" stroke-width="1.5"/><circle cx="7" cy="7" r="1.6" fill="var(--accent)" opacity="0.7"/></svg>
+			<span>
+				Bubbly&nbsp;3 wants <b>Nginx&nbsp;1.25.1+</b> for <code>http2 on</code> and
+				<b>OpenSSL&nbsp;3.5+</b> for <code>X25519MLKEM768</code>. Check with
+				<code>nginx -V</code>, which reports the OpenSSL Nginx was built against, not the
+				one on your <code>$PATH</code>. <b>Ubuntu&nbsp;26.04&nbsp;LTS</b> and
+				<b>Debian&nbsp;13</b> clear both; Ubuntu&nbsp;24.04 and Debian&nbsp;12 clear
+				neither, and want <a href="https://github.com/eustasy/Bubbly/tree/2.2.0">Bubbly&nbsp;2.2.0</a>
+				instead. The config is written for Debian's layout —
+				<span id="b-distro-note">Nginx here already includes sites-enabled/, so the symlinks below work as written.</span>
+			</span>
 		</div>
 
 		<ol class="b-step-list">
@@ -259,7 +273,7 @@
 				<div class="b-step-body">
 					<p class="b-step-desc">Drop into <code>$HOME</code>, grab the dependencies, pull the repo.</p>
 					<div class="b-term" data-term="install"><div class="b-term-bar"><span class="b-term-dots"><i></i><i></i><i></i></span><span class="b-term-lang">bash</span><div class="b-term-bar-spacer"></div><button type="button" class="b-copy" title="Copy to clipboard"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true"><rect x="4" y="4" width="9" height="10" rx="1.5" stroke="currentColor" stroke-width="1.4"/><path d="M3 11 V 3 a 1.5 1.5 0 0 1 1.5 -1.5 H 11" stroke="currentColor" stroke-width="1.4" fill="none"/></svg> Copy</button></div><pre class="b-term-body"></pre></div>
-					<div class="b-step-hint"><svg width="18" height="18" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="none" stroke="var(--accent)" stroke-width="1.5"/><circle cx="7" cy="7" r="1.6" fill="var(--accent)" opacity="0.7"/></svg><span>Pick a distro above to swap the package manager.</span></div>
+					<div class="b-step-hint"><svg width="18" height="18" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="none" stroke="var(--accent)" stroke-width="1.5"/><circle cx="7" cy="7" r="1.6" fill="var(--accent)" opacity="0.7"/></svg><span>Distribution packages only — no third-party repositories. nginx.org's builds carry no Brotli module, and the module packages are compiled against one exact Nginx ABI.</span></div>
 				</div>
 			</li>
 			<li class="b-step">
@@ -267,13 +281,13 @@
 					<div class="b-step-bubble" aria-hidden="true"><span class="b-step-bubble-glint"></span><span class="b-step-num">2</span></div>
 					<div>
 						<div class="b-step-kicker">Step 2</div>
-						<h3 class="b-step-title">Generate session tickets.</h3>
+						<h3 class="b-step-title">Copy the config blocks.</h3>
 					</div>
 				</div>
 				<div class="b-step-body">
-					<p class="b-step-desc">One-time per server. It is slow on purpose — the entropy is the point.</p>
-					<div class="b-term" data-term="tickets"><div class="b-term-bar"><span class="b-term-dots"><i></i><i></i><i></i></span><span class="b-term-lang">bash</span><div class="b-term-bar-spacer"></div><button type="button" class="b-copy" title="Copy to clipboard"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true"><rect x="4" y="4" width="9" height="10" rx="1.5" stroke="currentColor" stroke-width="1.4"/><path d="M3 11 V 3 a 1.5 1.5 0 0 1 1.5 -1.5 H 11" stroke="currentColor" stroke-width="1.4" fill="none"/></svg> Copy</button></div><pre class="b-term-body"></pre></div>
-					<div class="b-step-hint"><svg width="18" height="18" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="none" stroke="var(--accent)" stroke-width="1.5"/><circle cx="7" cy="7" r="1.6" fill="var(--accent)" opacity="0.7"/></svg><span>Go make a coffee. Or two.</span></div>
+					<p class="b-step-desc">Mirrors the repo's <code>nginx-config/</code> into <code>/etc/nginx/</code> — <code>conf.d/</code>, <code>directive/</code>, <code>location/</code>, <code>groups/</code>, and <code>sites-available/</code> all land in place. Run it again whenever you pull a newer Bubbly.</p>
+					<div class="b-term" data-term="copy"><div class="b-term-bar"><span class="b-term-dots"><i></i><i></i><i></i></span><span class="b-term-lang">bash</span><div class="b-term-bar-spacer"></div><button type="button" class="b-copy" title="Copy to clipboard"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true"><rect x="4" y="4" width="9" height="10" rx="1.5" stroke="currentColor" stroke-width="1.4"/><path d="M3 11 V 3 a 1.5 1.5 0 0 1 1.5 -1.5 H 11" stroke="currentColor" stroke-width="1.4" fill="none"/></svg> Copy</button></div><pre class="b-term-body"></pre></div>
+					<div class="b-step-hint"><svg width="18" height="18" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="none" stroke="var(--accent)" stroke-width="1.5"/><circle cx="7" cy="7" r="1.6" fill="var(--accent)" opacity="0.7"/></svg><span>Nginx picks up <code>conf.d/bubbly_ssl.conf</code> by itself: the shared TLS session cache and the OCSP resolver. Protocols, groups and ciphers live in <code>directive/</code> instead — see the next step for why.</span></div>
 				</div>
 			</li>
 			<li class="b-step">
@@ -281,12 +295,13 @@
 					<div class="b-step-bubble" aria-hidden="true"><span class="b-step-bubble-glint"></span><span class="b-step-num">3</span></div>
 					<div>
 						<div class="b-step-kicker">Step 3</div>
-						<h3 class="b-step-title">Copy the config blocks.</h3>
+						<h3 class="b-step-title">Enable the default server.</h3>
 					</div>
 				</div>
 				<div class="b-step-body">
-					<p class="b-step-desc">Mirrors the repo's <code>nginx-config/</code> into <code>/etc/nginx/</code> — <code>conf.d/</code>, <code>directive/</code>, <code>location/</code>, <code>groups/</code>, and <code>sites-available/</code> all land in place.</p>
-					<div class="b-term" data-term="copy"><div class="b-term-bar"><span class="b-term-dots"><i></i><i></i><i></i></span><span class="b-term-lang">bash</span><div class="b-term-bar-spacer"></div><button type="button" class="b-copy" title="Copy to clipboard"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true"><rect x="4" y="4" width="9" height="10" rx="1.5" stroke="currentColor" stroke-width="1.4"/><path d="M3 11 V 3 a 1.5 1.5 0 0 1 1.5 -1.5 H 11" stroke="currentColor" stroke-width="1.4" fill="none"/></svg> Copy</button></div><pre class="b-term-body"></pre></div>
+					<p class="b-step-desc">Once per server, before any site. It answers whatever no site claims: an unknown <code>Host</code>, a connection with no SNI, a probe at your bare IP. The <code>rm</code> drops the distribution's own default, which also claims <code>default_server</code> — with two, Nginx refuses to start.</p>
+					<div class="b-term" data-term="default"><div class="b-term-bar"><span class="b-term-dots"><i></i><i></i><i></i></span><span class="b-term-lang">bash</span><div class="b-term-bar-spacer"></div><button type="button" class="b-copy" title="Copy to clipboard"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true"><rect x="4" y="4" width="9" height="10" rx="1.5" stroke="currentColor" stroke-width="1.4"/><path d="M3 11 V 3 a 1.5 1.5 0 0 1 1.5 -1.5 H 11" stroke="currentColor" stroke-width="1.4" fill="none"/></svg> Copy</button></div><pre class="b-term-body"></pre></div>
+					<div class="b-step-hint"><svg width="18" height="18" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="none" stroke="var(--accent)" stroke-width="1.5"/><circle cx="7" cy="7" r="1.6" fill="var(--accent)" opacity="0.7"/></svg><span>This matters more than it looks. A handshake begins before SNI picks a server, so the default server's protocol list and key exchange groups govern <b>every</b> site on the machine. Without one of your own the role falls to whichever <code>sites-enabled/</code> file sorts first — and a new site sorting earlier would move them underneath you.</span></div>
 				</div>
 			</li>
 			<li class="b-step">
@@ -300,7 +315,7 @@
 				<div class="b-step-body">
 					<p class="b-step-desc">Place the ACME challenge site so Let's Encrypt can find you.</p>
 					<div class="b-term" data-term="verifyA"><div class="b-term-bar"><span class="b-term-dots"><i></i><i></i><i></i></span><span class="b-term-lang">bash</span><div class="b-term-bar-spacer"></div><button type="button" class="b-copy" title="Copy to clipboard"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true"><rect x="4" y="4" width="9" height="10" rx="1.5" stroke="currentColor" stroke-width="1.4"/><path d="M3 11 V 3 a 1.5 1.5 0 0 1 1.5 -1.5 H 11" stroke="currentColor" stroke-width="1.4" fill="none"/></svg> Copy</button></div><pre class="b-term-body"></pre></div>
-					<div class="b-step-hint"><svg width="18" height="18" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="none" stroke="var(--accent)" stroke-width="1.5"/><circle cx="7" cy="7" r="1.6" fill="var(--accent)" opacity="0.7"/></svg><span>In nano: <kbd class="b-kbd">Ctrl</kbd> + <kbd class="b-kbd">\</kbd> to search-and-replace <code>example.com</code> with your domain.</span></div>
+					<div class="b-step-hint"><svg width="18" height="18" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="none" stroke="var(--accent)" stroke-width="1.5"/><circle cx="7" cy="7" r="1.6" fill="var(--accent)" opacity="0.7"/></svg><span>In nano: <kbd class="b-kbd">Ctrl</kbd> + <kbd class="b-kbd">\</kbd> to search-and-replace <code>example.com</code> with your domain. Migrating a site that is already serving? Leave it running and add <code>include location/bubbly_well-known-passthrough.conf;</code> to it instead.</span></div>
 				</div>
 			</li>
 			<li class="b-step compact">
@@ -320,7 +335,7 @@
 				<div class="b-step-body">
 					<p class="b-step-desc">It will ask for the root password and an email. Then it's done in a few seconds.</p>
 					<div class="b-term" data-term="renew"><div class="b-term-bar"><span class="b-term-dots"><i></i><i></i><i></i></span><span class="b-term-lang">bash</span><div class="b-term-bar-spacer"></div><button type="button" class="b-copy" title="Copy to clipboard"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true"><rect x="4" y="4" width="9" height="10" rx="1.5" stroke="currentColor" stroke-width="1.4"/><path d="M3 11 V 3 a 1.5 1.5 0 0 1 1.5 -1.5 H 11" stroke="currentColor" stroke-width="1.4" fill="none"/></svg> Copy</button></div><pre class="b-term-body"></pre></div>
-					<div class="b-step-hint"><svg width="18" height="18" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="none" stroke="var(--accent)" stroke-width="1.5"/><circle cx="7" cy="7" r="1.6" fill="var(--accent)" opacity="0.7"/></svg><span>Certbot installs a systemd timer running <code>certbot renew</code> twice daily. The deploy hook reloads Nginx after every successful renewal. No cron, no babysitting.</span></div>
+					<div class="b-step-hint"><svg width="18" height="18" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="none" stroke="var(--accent)" stroke-width="1.5"/><circle cx="7" cy="7" r="1.6" fill="var(--accent)" opacity="0.7"/></svg><span>Certbot installs a systemd timer running <code>certbot renew</code> twice daily. The deploy hook reloads Nginx after every successful renewal. No cron, no babysitting — which is why running the script by hand always passes <code>--force-renew</code>. Don't loop it: Let's Encrypt allows five certificates per identical set of names per week, and that limit cannot be raised. Add <code>--dry-run</code> to rehearse against staging.</span></div>
 				</div>
 			</li>
 			<li class="b-step">
@@ -336,6 +351,20 @@
 					<div class="b-term" data-term="swap"><div class="b-term-bar"><span class="b-term-dots"><i></i><i></i><i></i></span><span class="b-term-lang">bash</span><div class="b-term-bar-spacer"></div><button type="button" class="b-copy" title="Copy to clipboard"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true"><rect x="4" y="4" width="9" height="10" rx="1.5" stroke="currentColor" stroke-width="1.4"/><path d="M3 11 V 3 a 1.5 1.5 0 0 1 1.5 -1.5 H 11" stroke="currentColor" stroke-width="1.4" fill="none"/></svg> Copy</button></div><pre class="b-term-body"></pre></div>
 				</div>
 			</li>
+			<li class="b-step">
+				<div class="b-step-head">
+					<div class="b-step-bubble ghost" aria-hidden="true"><span class="b-step-bubble-glint"></span><span class="b-step-num">+</span></div>
+					<div>
+						<div class="b-step-kicker">Optional</div>
+						<h3 class="b-step-title">Share one ticket key across a fleet.</h3>
+					</div>
+				</div>
+				<div class="b-step-body">
+					<p class="b-step-desc">Skip this on a single server. Nginx 1.23.2+ generates ticket keys itself and rotates them in the shared session cache, which beats one static key. You only need your own when <b>several Nginx instances behind a load balancer</b> have to resume each other's tickets.</p>
+					<div class="b-term" data-term="tickets"><div class="b-term-bar"><span class="b-term-dots"><i></i><i></i><i></i></span><span class="b-term-lang">bash</span><div class="b-term-bar-spacer"></div><button type="button" class="b-copy" title="Copy to clipboard"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true"><rect x="4" y="4" width="9" height="10" rx="1.5" stroke="currentColor" stroke-width="1.4"/><path d="M3 11 V 3 a 1.5 1.5 0 0 1 1.5 -1.5 H 11" stroke="currentColor" stroke-width="1.4" fill="none"/></svg> Copy</button></div><pre class="b-term-body"></pre></div>
+					<div class="b-step-hint"><svg width="18" height="18" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="none" stroke="var(--accent)" stroke-width="1.5"/><circle cx="7" cy="7" r="1.6" fill="var(--accent)" opacity="0.7"/></svg><span>Run it again to rotate: the current key moves to <code>ticket.old.key</code> and a fresh one is written, so tickets already issued keep working. Nginx encrypts with the first key listed and decrypts with any of them — keep the newest on top. Both are <code>600</code>, since the key decrypts captured sessions.</span></div>
+				</div>
+			</li>
 		</ol>
 
 		<div class="b-step-coda">
@@ -343,6 +372,9 @@
 			<p>
 				That's it. The next time Let's Encrypt rotates your cert, Nginx will
 				reload itself. The next time you run <code>nginx -t</code>, it will pass.
+				Everything after this is optional — Brotli, per-site logs, a CSP, extra PHP
+				versions, limits behind a CDN — and each one is a line to uncomment, listed in
+				the <a href="https://github.com/eustasy/Bubbly#configuration">README's Configuration table</a>.
 				Go test it ↓
 			</p>
 		</div>
@@ -401,7 +433,7 @@
 						</div>
 						<ul class="b-score-headers">
 							<li><svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--accent)" opacity="0.14"/><path d="M4.5 8.5 L 7 11 L 11.5 5.5" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg> <code>Strict-Transport-Security</code></li>
-							<li><svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--accent)" opacity="0.14"/><path d="M4.5 8.5 L 7 11 L 11.5 5.5" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg> <code>Content-Security-Policy</code></li>
+							<li><svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--accent)" opacity="0.14"/><path d="M4.5 8.5 L 7 11 L 11.5 5.5" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg> <code>Content-Security-Policy</code> <small>opt-in</small></li>
 							<li><svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--accent)" opacity="0.14"/><path d="M4.5 8.5 L 7 11 L 11.5 5.5" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg> <code>X-Frame-Options</code></li>
 							<li><svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--accent)" opacity="0.14"/><path d="M4.5 8.5 L 7 11 L 11.5 5.5" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg> <code>X-Content-Type-Options</code></li>
 							<li><svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--accent)" opacity="0.14"/><path d="M4.5 8.5 L 7 11 L 11.5 5.5" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg> <code>Referrer-Policy</code></li>

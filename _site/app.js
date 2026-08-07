@@ -7,8 +7,11 @@
   // `{pkg}` → distro install line. `{d}` → user-supplied domain (defaults to example.com).
   const TEMPLATES = {
     install: "cd &&\n{pkg} &&\ngit clone https://github.com/eustasy/Bubbly",
-    tickets: "~/Bubbly/bubbly_generate-tickets.sh",
     copy: "~/Bubbly/bubbly_copy-configs.sh",
+    default:
+      "sudo rm -f /etc/nginx/sites-enabled/default\nsudo ln -s /etc/nginx/sites-available/bubbly_default.conf /etc/nginx/sites-enabled/bubbly_default.conf\nsudo nginx -t && sudo service nginx reload",
+    tickets:
+      "~/Bubbly/bubbly_generate-tickets.sh\n# then uncomment ssl_session_ticket_key in conf.d/bubbly_ssl.conf\nsudo nginx -t && sudo service nginx reload",
     verifyA:
       "sudo cp /etc/nginx/sites-available/bubbly_http.conf /etc/nginx/sites-available/{d}_http.conf\nsudo nano /etc/nginx/sites-available/{d}_http.conf",
     verifyB:
@@ -85,8 +88,11 @@
   }
 
   // ── Distro tabs ───────────────────────────────────────────────────────
+  // Each tab carries its package manager and, since only Debian's Nginx
+  // includes sites-enabled/, the layout caveat for that distribution.
   function initDistroTabs() {
     const tabs = Array.from(document.querySelectorAll(".b-distro-tab"));
+    const note = document.getElementById("b-distro-note");
     tabs.forEach(function (tab) {
       tab.addEventListener("click", function () {
         tabs.forEach(function (t) {
@@ -94,6 +100,7 @@
           t.setAttribute("aria-selected", t === tab ? "true" : "false");
         });
         currentPkg = tab.getAttribute("data-pkg") || currentPkg;
+        if (note) note.textContent = tab.getAttribute("data-note") || "";
         renderAllTerms();
       });
     });
