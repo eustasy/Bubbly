@@ -46,7 +46,7 @@ Copy the configuration into place. Run it again whenever you pull a newer Bubbly
 ~/Bubbly/bubbly_copy-configs.sh
 ```
 
-This installs `conf.d/bubbly_ssl.conf`, which Nginx loads by itself: the shared TLS session cache and the OCSP resolver. Protocols, key exchange groups and ciphers live in `directive/bubbly_ssl-profile.conf` instead, because Nginx takes those from the default server for the socket whatever a site file asks for — hence the next step.
+This installs `conf.d/bubbly_ssl.conf`, which Nginx loads by itself: the shared TLS session cache. Protocols, key exchange groups and ciphers live in `directive/bubbly_ssl-profile.conf` instead, because Nginx takes those from the default server for the socket whatever a site file asks for — hence the next step.
 
 ### 3. Enable the default server
 
@@ -136,10 +136,11 @@ Every knob is marked `[OPTION]` in the configuration files, with `[DEFAULT]` on 
 | Custom 404 and 50x pages | Optional | create the pages in the site root, then uncomment `location/bubbly_errors.conf` |
 | PHP that runs longer than 60s | Only if needed | raise `fastcgi_read_timeout` in `location/bubbly_extensionless-php.conf` |
 | A per-site connection cap | Only if needed | uncomment `directive/bubbly_limits_server.conf` |
+| OCSP stapling | Only with a CA that still runs OCSP | uncomment `ssl_trusted_certificate` and `directive/bubbly_ocsp-stapling.conf` in your `_https.conf` |
 | TLS 1.3 only | Only if essential | Option 1 in `directive/bubbly_ssl-profile.conf` — drops pre-2020 clients |
 | HSTS across subdomains | Only if essential | Option 2 in `directive/bubbly_security-headers.conf` |
 
-Nginx caps request bodies at 1 MB, so uploads fail with 413 before reaching PHP until `bubbly_uploads.conf` is included — and PHP's own `upload_max_filesize` and `post_max_size` have to allow them too. Without `bubbly_logs.conf`, the HTTPS block logs to the distribution's shared log and HTTP traffic is not logged at all; `_http.conf` marks the `bubbly_logs_off.conf` line to swap if you want port 80 logged. Error pages come with a trap worth respecting: a missing `404.html` 404s, re-enters `error_page`, and Nginx aborts the loop with a 500. HSTS and TLS 1.3-only are essential-only because neither walks back easily — the first commits subdomains that may not exist yet to HTTPS for two years, the second refuses anything older than roughly 2020.
+Nginx caps request bodies at 1 MB, so uploads fail with 413 before reaching PHP until `bubbly_uploads.conf` is included — and PHP's own `upload_max_filesize` and `post_max_size` have to allow them too. Without `bubbly_logs.conf`, the HTTPS block logs to the distribution's shared log and HTTP traffic is not logged at all; `_http.conf` marks the `bubbly_logs_off.conf` line to swap if you want port 80 logged. Error pages come with a trap worth respecting: a missing `404.html` 404s, re-enters `error_page`, and Nginx aborts the loop with a 500. OCSP stapling is off because Let's Encrypt retired OCSP — no responder URL has been issued since 2025-05-07 and the responders were shut down on 2025-08-06 — leaving Nginx to log `"ssl_stapling" ignored, no OCSP responder URL in the certificate` and staple nothing. It is still worth turning on behind a CA that publishes one; `openssl x509 -noout -ocsp_uri -in /etc/letsencrypt/live/example.com/cert.pem` answers that in one line. HSTS and TLS 1.3-only are essential-only because neither walks back easily — the first commits subdomains that may not exist yet to HTTPS for two years, the second refuses anything older than roughly 2020.
 
 ### Behind a proxy or CDN
 

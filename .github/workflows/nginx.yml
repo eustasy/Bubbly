@@ -82,8 +82,9 @@ jobs:
       - name: Generate self-signed certificates
         # bubbly_https.conf expects /etc/letsencrypt/live/<domain>/*.pem. A
         # self-signed certificate satisfies the file-existence and PEM-validity
-        # checks nginx -t performs. It has no issuer to fetch OCSP from, so
-        # nginx -t warns that ssl_stapling is ignored; that warning is expected.
+        # checks nginx -t performs. It carries no OCSP responder URL, so the
+        # final step — which uncomments every offered include, stapling among
+        # them — warns that ssl_stapling is ignored. That warning is expected.
         run: |
           for domain in example.com alpha.test beta.test; do
             mkdir -p "/etc/letsencrypt/live/$domain"
