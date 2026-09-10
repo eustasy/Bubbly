@@ -7,14 +7,14 @@ _For configuring Certbot with Nginx as quickly and securely as possible._
 [![Deploy _site to GitHub Pages](https://github.com/eustasy/Bubbly/actions/workflows/pages.yml/badge.svg)](https://github.com/eustasy/Bubbly/actions/workflows/pages.yml)
 [![Maintainability](https://qlty.sh/gh/eustasy/projects/Bubbly/maintainability.svg)](https://qlty.sh/gh/eustasy/projects/Bubbly)
 
-If you want an instant A+ score on Qualys [SSL Labs](https://www.ssllabs.com/ssltest/analyze.html?d=lewisgoddard.me.uk) and A score on [SecurityHeaders.io](https://securityheaders.io/?q=lewisgoddard.me.uk&followRedirects=on), then this is what you'll need to do. You won't need any familiarity with [Certbot](https://github.com/certbot/certbot), [Let's Encrypt](https://letsencrypt.org/), the ACME spec, or SSL in general, just basic Nginx configuration.
+If you want an instant A+ score on Qualys [SSL Labs](https://www.ssllabs.com/ssltest/analyze.html?d=ssl.eustasy.org&hideResults=on), and an A score on [Security Headers](https://securityheaders.com/?q=https%3A%2F%2Fssl.eustasy.org%2F&hide=on), then this is what you'll need to do. You won't need any familiarity with [Certbot](https://github.com/certbot/certbot), [Let's Encrypt](https://letsencrypt.org/), the ACME spec, or SSL in general, just basic Nginx configuration.
 
 ## Requirements
 
 * **Nginx 1.25.1+** for the `http2` directive,
 * **OpenSSL 3.5+** for the `X25519MLKEM768` post-quantum group.
 
-> _Check with `nginx -V`, which reports the OpenSSL Nginx was built against, not the `openssl` on your `$PATH`. Consider deploying on an unsupported releases using [Bubbly 2.2.0](https://github.com/eustasy/Bubbly/tree/2.2.0)._
+> _Check with `nginx -V`, which reports the OpenSSL Nginx was built against, not the `openssl` on your `$PATH`. Consider deploying on an unsupported release using [Bubbly 2.2.0](https://github.com/eustasy/Bubbly/tree/2.2.0)._
 
 | Platform | Nginx | OpenSSL | Supported |
 | --- | --- | --- | --- |
@@ -171,6 +171,6 @@ Their version strings sort above the distribution's, so `apt` prefers their buil
 
 ---
 
-![Screenshot of SSLLabs.com](https://raw.githubusercontent.com/eustasy/Bubbly/main/screenshot_ssllabs.com.png)
+[![Qualys SSL Labs rating ssl.eustasy.org A+, with 100 for certificate and protocol support and 90 for key exchange and cipher strength](https://raw.githubusercontent.com/eustasy/Bubbly/main/screenshot_ssllabs.png)](https://www.ssllabs.com/ssltest/analyze.html?d=ssl.eustasy.org&hideResults=on)
 
-![Screenshot of SecurityHeaders.io](https://raw.githubusercontent.com/eustasy/Bubbly/main/screenshot_securityheaders.io.png)
+[![Security Headers rating https://ssl.eustasy.org/ A+, this example having added the opt-in Content-Security-Policy to the shipped defaults](https://raw.githubusercontent.com/eustasy/Bubbly/main/screenshot_securityheaders.png)](https://securityheaders.com/?q=https%3A%2F%2Fssl.eustasy.org%2F&hide=on)

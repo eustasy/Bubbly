@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <title>Bubbly · Better SSL in Nginx, in 10 minutes</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="Drop-in Nginx configuration and Certbot setup scripts. A+ on SSL Labs and A on SecurityHeaders.io, the same day you ship.">
+<meta name="description" content="Drop-in Nginx configuration and Certbot setup scripts. A+ on SSL Labs and A on Security Headers, the same day you ship.">
 
 <link rel="icon" type="image/png" href="assets/favicon-96x96.png" sizes="96x96">
 <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
@@ -61,7 +61,7 @@
 					<span class="b-eyebrow-dot">·</span>
 					<span>MIT</span>
 					<span class="b-eyebrow-dot">·</span>
-					<span>v3.0 · beta</span>
+					<span>v3.0</span>
 				</div>
 				<h1 class="b-h1">
 					Better SSL in&nbsp;Nginx,<br>
@@ -69,7 +69,7 @@
 				</h1>
 				<p class="b-lead">
 					Drop-in configuration files and setup scripts for Certbot.
-					An <b>A+</b> on SSL&nbsp;Labs and an <b>A</b> on SecurityHeaders.io —
+					An <b>A+</b> on SSL&nbsp;Labs and an <b>A</b> on Security&nbsp;Headers —
 					the same day you ship.
 				</p>
 
@@ -109,12 +109,12 @@
 					<div class="b-score-row">
 						<div class="b-score-grade"><span>A</span></div>
 						<div class="b-score-meta">
-							<div class="b-score-src">securityheaders.io</div>
+							<div class="b-score-src">securityheaders.com</div>
 							<div class="b-score-detail">HSTS · X-Frame-Options · X-Content-Type-Options · Referrer-Policy · Permissions-Policy</div>
 						</div>
 					</div>
 					<div class="b-score-card-foot">
-						<span>Four categories, six headers, zero warnings.</span>
+						<span>Four categories, five headers, no warnings.</span>
 					</div>
 				</div>
 			</aside>
@@ -141,7 +141,7 @@
 			</li>
 			<li>
 				<h3>Headers pack, already on.</h3>
-				<p>HSTS, X-Frame-Options, Referrer-Policy, Permissions-Policy, and the cross-origin opener and resource policies pinned to same-origin. An immediate A on SecurityHeaders.io.</p>
+				<p>HSTS, X-Frame-Options, Referrer-Policy, Permissions-Policy, and the cross-origin opener and resource policies pinned to same-origin. An immediate A on Security Headers.</p>
 			</li>
 		</ul>
 	</section>
@@ -373,7 +373,8 @@
 				That's it. The next time Let's Encrypt rotates your cert, Nginx will
 				reload itself. The next time you run <code>nginx -t</code>, it will pass.
 				Everything after this is optional — Brotli, per-site logs, a CSP, extra PHP
-				versions, limits behind a CDN — and each one is a line to uncomment, listed in
+				versions, limits behind a CDN, OCSP stapling if your CA still runs a responder —
+				and each one is a line to uncomment, listed in
 				the <a href="https://github.com/eustasy/Bubbly#configuration">README's Configuration table</a>.
 				Go test it ↓
 			</p>
@@ -386,8 +387,9 @@
 			<h2 class="b-h2">Goes straight to the top of the class.</h2>
 			<p class="b-section-lede">
 				Tested against <a href="https://www.ssllabs.com/ssltest/">SSL&nbsp;Labs</a>
-				and <a href="https://securityheaders.io/">SecurityHeaders.io</a> with the
-				defaults shipped in the repo — no extra tuning.
+				and <a href="https://securityheaders.com/">Security&nbsp;Headers</a> with the
+				defaults shipped in the repo. The A+ below is this example adding the
+				opt-in CSP; the shipped defaults alone score an A.
 			</p>
 		</div>
 		<div class="b-results-grid">
@@ -395,7 +397,7 @@
 			<figure class="b-shot">
 				<div class="b-shot-chrome">
 					<span class="b-shot-dots"><i></i><i></i><i></i></span>
-					<a class="b-shot-url" href="https://www.ssllabs.com/ssltest/analyze.html?d=lewisgoddard.me.uk" target="_blank" rel="noopener noreferrer">ssllabs.com/ssltest/analyze.html?d=lewisgoddard.me.uk</a>
+					<a class="b-shot-url" href="https://www.ssllabs.com/ssltest/analyze.html?d=ssl.eustasy.org&amp;hideResults=on" target="_blank" rel="noopener noreferrer">ssllabs.com/ssltest/analyze.html?d=ssl.eustasy.org</a>
 				</div>
 				<div class="b-shot-body">
 					<div class="b-score-block">
@@ -403,7 +405,7 @@
 							<div class="b-score-grade plus xl"><span>A+</span></div>
 							<div>
 								<div class="b-score-block-src">Qualys SSL Labs</div>
-								<a class="b-score-block-url" href="https://www.ssllabs.com/ssltest/">ssllabs.com/ssltest</a>
+								<a class="b-score-block-url" href="https://www.ssllabs.com/ssltest/analyze.html?d=ssl.eustasy.org&amp;hideResults=on">ssllabs.com/ssltest</a>
 							</div>
 						</div>
 						<ul class="b-score-bars">
@@ -414,21 +416,21 @@
 						</ul>
 					</div>
 				</div>
-				<figcaption>Qualys SSL Labs · screenshot</figcaption>
+				<figcaption><a href="https://www.ssllabs.com/ssltest/analyze.html?d=ssl.eustasy.org&amp;hideResults=on">Qualys SSL Labs · ssl.eustasy.org</a></figcaption>
 			</figure>
 
 			<figure class="b-shot">
 				<div class="b-shot-chrome">
 					<span class="b-shot-dots"><i></i><i></i><i></i></span>
-					<a class="b-shot-url" href="https://securityheaders.io/?q=lewisgoddard.me.uk&followRedirects=on" target="_blank" rel="noopener noreferrer">securityheaders.io/?q=lewisgoddard.me.uk</a>
+					<a class="b-shot-url" href="https://securityheaders.com/?q=https%3A%2F%2Fssl.eustasy.org%2F&amp;hide=on" target="_blank" rel="noopener noreferrer">securityheaders.com/?q=https://ssl.eustasy.org/</a>
 				</div>
 				<div class="b-shot-body">
 					<div class="b-score-block">
 						<div class="b-score-block-head">
-							<div class="b-score-grade xl"><span>A</span></div>
+							<div class="b-score-grade plus xl"><span>A+</span></div>
 							<div>
-								<div class="b-score-block-src">SecurityHeaders.io</div>
-								<a class="b-score-block-url" href="https://securityheaders.io/">securityheaders.io</a>
+								<div class="b-score-block-src">Security Headers</div>
+								<a class="b-score-block-url" href="https://securityheaders.com/?q=https%3A%2F%2Fssl.eustasy.org%2F&amp;hide=on">securityheaders.com</a>
 							</div>
 						</div>
 						<ul class="b-score-headers">
@@ -441,7 +443,7 @@
 						</ul>
 					</div>
 				</div>
-				<figcaption>SecurityHeaders.io · screenshot</figcaption>
+				<figcaption><a href="https://securityheaders.com/?q=https%3A%2F%2Fssl.eustasy.org%2F&amp;hide=on">Security Headers · ssl.eustasy.org</a></figcaption>
 			</figure>
 
 		</div>
