@@ -1,11 +1,16 @@
 [sqlfluff]
+# Single source of truth for the dialect: qlty.toml no longer pins --dialect on
+# the command, so switch mysql/postgres/sqlite/… here with no other edits.
 dialect = mysql
 templater = raw
 max_line_length = 140
-indent_unit = space
-tab_space_size = 4
 
 [sqlfluff:indentation]
+# indent_unit / tab_space_size are only honoured under [sqlfluff:indentation],
+# NOT under [sqlfluff] (where sqlfluff silently ignores them). Default is 4
+# spaces; a project that indents SQL with tabs sets `indent_unit = tab` here.
+indent_unit = space
+tab_space_size = 4
 indented_joins = false
 indented_using_on = true
 template_blocks_indent = false

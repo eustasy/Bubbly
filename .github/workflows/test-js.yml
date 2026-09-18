@@ -1,0 +1,52 @@
+# eustasy/.Normal 4.0beta13
+name: "Test: JS / TS"
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "**.js"
+      - "**.ts"
+      - "**.mjs"
+      - "**.cjs"
+      - "**.mts"
+      - "**.cts"
+      - "tests/**"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/test-js.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "**.js"
+      - "**.ts"
+      - "**.mjs"
+      - "**.cjs"
+      - "**.mts"
+      - "**.cts"
+      - "tests/**"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/test-js.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  test-js:
+    # Remove the `if: false` below to activate this workflow.
+    if: false
+    name: Vitest + coverage
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - uses: eustasy/.normal/js/setup@v4
+
+      # Insert project-specific steps here — fixtures, config files, migrations.
+
+      - uses: eustasy/.normal/js/test@v4
+        with:
+          coverage-token: ${{ secrets.QLTY_COVERAGE_TOKEN }}

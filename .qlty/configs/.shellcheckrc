@@ -1,0 +1,28 @@
+# ShellCheck <https://github.com/koalaman/shellcheck/wiki>
+# Deployed by eustasy/.Normal. qlty picks this up via shellcheck's
+# `config_files = [".shellcheckrc", "shellcheckrc"]`.
+#
+# Note on indentation: ShellCheck is a *linter* and never rewrites your files.
+# Shell indentation is owned by shfmt, pinned to 2 spaces by the
+# `[plugins.definitions.shfmt.drivers.format]` override in .qlty/qlty.toml and
+# mirrored in .editorconfig. Change it there, not here.
+
+# Follow `source`/`.` into other files instead of reporting SC1091 for every
+# library a script pulls in. Required for any repo that splits shell into
+# helpers; harmless for single-file scripts.
+external-sources=true
+
+# Resolve relative `source` paths against the sourcing script's own directory.
+# Without this, resolution depends on the caller's working directory, so the
+# same script lints clean locally and fails in CI (or vice versa).
+source-path=SCRIPTDIR
+
+# The shell dialect is deliberately NOT set here. A `shell=` directive overrides
+# every shebang in the repo, which silently lints `#!/bin/sh` scripts as bash
+# and hides real portability bugs. Let each script's shebang decide, and use a
+# per-file `# shellcheck shell=bash` directive for extensionless or sourced
+# fragments that have no shebang of their own.
+
+# Per-project overrides: append to this file after running install.sh, e.g.
+#   disable=SC2154        # vars assigned in a sourced file this repo can't see
+#   enable=require-variable-braces

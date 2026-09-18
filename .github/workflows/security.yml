@@ -1,6 +1,5 @@
-# eustasy/.Normal 4.0beta8
-name: Normal (Security)
-
+# eustasy/.Normal 4.0beta13
+name: "Normal: Security"
 on:
   workflow_dispatch:
   push:
@@ -22,7 +21,4 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
-      - uses: qltysh/qlty-action/install@08a0a862c159eae9b9003081da6663d96efef637 # v2.3.0
-
-      - name: Security scan
-        run: qlty check --all --no-formatters --filter=gitleaks,trivy,bandit,osv-scanner
+      - uses: eustasy/.normal/security@v4

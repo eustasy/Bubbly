@@ -1,0 +1,19 @@
+# eustasy/.Normal 4.0beta13
+# zizmor policy, deployed to the repository root by install.sh. zizmor discovers
+# .github/zizmor.yml automatically, so no --config flag or qlty.toml change is
+# needed.
+#
+# .Normal's own actions are referenced by moving tag (eustasy/.normal/php@v4)
+# rather than by commit hash, so that a fix lands in every repository on a tag
+# move. zizmor's default policy
+# requires hash-pinning for every action, which would fail each caller at high
+# severity, so the eustasy namespace is granted ref-pin. actions/* is listed too:
+# supplying any config replaces zizmor's default policy wholesale, and without this
+# line the blanket hash-pin would also revoke the exemption actions/* had by default.
+rules:
+  unpinned-uses:
+    config:
+      policies:
+        eustasy/*: ref-pin
+        actions/*: ref-pin
+        "*": hash-pin

@@ -1,14 +1,36 @@
 {
-  "editor.formatOnSave": true,
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  // Show the 140-col ruler everywhere (matches .editorconfig max_line_length).
   "editor.rulers": [140],
-  "[php]": {
-    "editor.defaultFormatter": "junstyle.php-cs-fixer"
-  },
-  "php-cs-fixer.executablePath": "${workspaceFolder}/vendor/bin/php-cs-fixer",
-  "php-cs-fixer.config": "${workspaceFolder}/.qlty/configs/.php-cs-fixer.php",
-  "php-cs-fixer.onsave": true,
+
+  // Formatter ownership mirrors .qlty/qlty.toml: each language is formatted by
+  // exactly one tool. formatOnSave is enabled ONLY per-language below — there is
+  // no global formatOnSave / defaultFormatter — so files whose CI owner has no
+  // editor formatter (md → markdownlint, css/scss → stylelint, html → html-validate,
+  // xml → xmllint, yml/yaml → yamllint/actionlint) are left untouched on save
+  // instead of being silently reformatted (and column-aligned) by Prettier.
+
+  // Prettier — JSON + JS/TS only (the only languages qlty.toml lets Prettier own).
   "prettier.configPath": ".qlty/configs/.prettierrc.json",
+  "[javascript]": { "editor.formatOnSave": true, "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[javascriptreact]": { "editor.formatOnSave": true, "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[typescript]": { "editor.formatOnSave": true, "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[typescriptreact]": { "editor.formatOnSave": true, "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[json]": { "editor.formatOnSave": true, "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[jsonc]": { "editor.formatOnSave": true, "editor.defaultFormatter": "esbenp.prettier-vscode" },
+
+  // Shell — shfmt (CI-only; there is no shfmt formatter bundled here). Explicitly
+  // OFF so a shell-formatting extension picked up on one machine can't reindent
+  // scripts on save with its own default (tabs) and fight CI's 2 spaces. The
+  // EditorConfig extension still applies .editorconfig's 2-space setting while
+  // you type. Run `qlty fmt` to apply the real formatting.
+  "[shellscript]": { "editor.formatOnSave": false },
+
+  // PHP — php-cs-fixer.
+  "[php]": { "editor.formatOnSave": true, "editor.defaultFormatter": "junstyle.php-cs-fixer" },
+  "php-cs-fixer.executablePath": "${workspaceFolder}/vendor/bin/php-cs-fixer",
+  "php-cs-fixer.config": "${workspaceFolder}/.qlty/configs/.php-cs-fixer.dist.php",
+  "php-cs-fixer.onsave": true,
+
   "extensions.recommendations": [
     "esbenp.prettier-vscode",
     "junstyle.php-cs-fixer",

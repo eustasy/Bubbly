@@ -1,14 +1,19 @@
-# eustasy/.Normal 4.0beta8
-name: Normal (Shell)
-
+# eustasy/.Normal 4.0beta13
+name: "Normal: Shell"
 on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths: ["**.sh"]
+    paths:
+      - "**.sh"
+      - ".github/workflows/sh.yml"
+      - ".qlty/qlty.toml"
   pull_request:
     branches: [main]
-    paths: ["**.sh"]
+    paths:
+      - "**.sh"
+      - ".github/workflows/sh.yml"
+      - ".qlty/qlty.toml"
 
 permissions:
   contents: read
@@ -22,10 +27,4 @@ jobs:
         with:
           persist-credentials: false
 
-      - uses: qltysh/qlty-action/install@08a0a862c159eae9b9003081da6663d96efef637 # v2.3.0
-
-      - name: Lint (shellcheck)
-        run: qlty check --all --no-formatters --filter=shellcheck
-
-      - name: Format check (shfmt)
-        run: qlty check --all --filter=shfmt
+      - uses: eustasy/.normal/sh@v4

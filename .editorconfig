@@ -24,6 +24,18 @@ indent_style = space
 indent_size = 4
 tab_width = 4
 
+# Shell — 2-space, spaces. shfmt owns shell formatting; it has no config file
+# of its own, so without this block it fell through to `[*]` (4 spaces) when it
+# found .editorconfig and to its own built-in default (tabs) when it did not.
+# That discovery is what made shell indentation flip between machines.
+# .qlty/qlty.toml now passes shfmt `-i 2` on the command line so CI never
+# depends on finding this file — keep the two values in sync. The CLI flag also
+# covers extensionless scripts, which no .editorconfig glob can match.
+[*.{sh,bash,ksh,zsh,bats}]
+indent_style = space
+indent_size = 2
+tab_width = 2
+
 # nginx config files use tabs
 [nginx-config/**]
 indent_style = tab

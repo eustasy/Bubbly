@@ -1,0 +1,14 @@
+# eustasy/.Normal 4.0beta13
+# actionlint config, deployed to the repository root by install.sh.
+#
+# test-*/type-* workflows ship deactivated behind `if: false`, which is the
+# documented way to activate them (delete the line). actionlint 1.7.9's if-cond
+# rule reports that as dead config, so it is scoped out for those two filename
+# patterns only. Every other rule, and every other workflow, is untouched.
+paths:
+  .github/workflows/test-*.yml:
+    ignore:
+      - 'condition "false" is always evaluated to false'
+  .github/workflows/type-*.yml:
+    ignore:
+      - 'condition "false" is always evaluated to false'

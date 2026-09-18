@@ -103,18 +103,46 @@ name = "shfmt"
 name = "gitleaks"
 
 [[plugin]]
-name = "bandit"
-
-[[plugin]]
 name = "trivy"
 
 [[plugin]]
 name = "osv-scanner"
 
+# ── Plugin definition overrides ──────────────────────────────────────────────
+# qlty's built-in sqlfluff driver hardcodes `--dialect ansi` in its lint and fix
+# scripts. sqlfluff gives CLI flags precedence over config files, so that flag
+# silently overrides `dialect = ...` in .qlty/configs/.sqlfluff — leaving ANSI
+# unable to parse dialect-specific syntax (e.g. MySQL backticks, `int(1)`,
+# `ENGINE=InnoDB`), which surfaces as a parse *error* rather than lint findings.
+# Re-declaring just the driver `script` merges over the built-in definition
+# (output/output_format/etc. are preserved), dropping the flag so .sqlfluff's
+# `dialect` becomes the single source of truth again.
+[plugins.definitions.sqlfluff.drivers.lint]
+script = "sqlfluff lint ${target} --format json --nofail"
+
+[plugins.definitions.sqlfluff.drivers.fix]
+script = "sqlfluff fix --disable-progress-bar --quiet ${target}"
+
+# qlty's built-in shfmt driver runs `shfmt -w -s ${target}` with no indentation
+# flags. shfmt has no config file of its own, so with no flags it discovers
+# .editorconfig at format time — and falls back to its own default (TABS) when
+# it finds none. That is the tab/space flip: the same script came out tab- or
+# space-indented depending on whether .editorconfig was visible from where the
+# formatter ran (Windows checkout vs WSL vs CI), and extensionless scripts never
+# matched an .editorconfig glob at all. Passing `-i 2` pins the indent AND makes
+# shfmt ignore .editorconfig entirely (any formatting flag disables it), so
+# there is exactly one source of truth. `-w -s` are kept from the built-in
+# script; no other formatting flag is set, so shfmt's remaining defaults
+# (binary_next_line, switch_case_indent, space_redirects, keep_padding,
+# function_next_line all off) are unchanged. Keep `-i 2` in sync with the
+# [*.{sh,bash,ksh,zsh,bats}] block in .editorconfig, which is what editors read.
+[plugins.definitions.shfmt.drivers.format]
+script = "shfmt -w -s -i 2 ${target}"
+
 # ── Per-plugin file excludes ─────────────────────────────────────────────────
 # qlty has no plugin-level `exclude_patterns` key (it is silently ignored); scope
 # file skips to specific plugins with [[exclude]] blocks instead. These are NOT
-# global, so dependency/security scanners (osv-scanner, gitleaks, trivy, bandit,
+# global, so dependency/security scanners (osv-scanner, gitleaks, trivy,
 # actionlint, zizmor) still see every file.
 
 # 1. Tool-managed config directories. No project source lives here — only tooling

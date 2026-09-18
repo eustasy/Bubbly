@@ -1,14 +1,21 @@
-# eustasy/.Normal 4.0beta8
-name: Normal (HTML)
-
+# eustasy/.Normal 4.0beta13
+name: "Normal: HTML"
 on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths: ["**.html", "**.htm"]
+    paths:
+      - "**.html"
+      - "**.htm"
+      - ".github/workflows/html.yml"
+      - ".qlty/configs/.htmlvalidate.json"
   pull_request:
     branches: [main]
-    paths: ["**.html", "**.htm"]
+    paths:
+      - "**.html"
+      - "**.htm"
+      - ".github/workflows/html.yml"
+      - ".qlty/configs/.htmlvalidate.json"
 
 permissions:
   contents: read
@@ -22,9 +29,4 @@ jobs:
         with:
           persist-credentials: false
 
-      - uses: actions/setup-node@v7
-        with:
-          node-version: lts/*
-
-      - name: Lint HTML (html-validate)
-        run: git ls-files -- '*.html' '*.htm' | xargs -r npx --yes html-validate --config .qlty/configs/.htmlvalidate.json
+      - uses: eustasy/.normal/html@v4
