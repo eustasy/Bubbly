@@ -11,8 +11,8 @@ If you want an instant A+ score on Qualys [SSL Labs](https://www.ssllabs.com/ssl
 
 ## Requirements
 
-* **Nginx 1.25.1+** for the `http2` directive,
-* **OpenSSL 3.5+** for the `X25519MLKEM768` post-quantum group.
+- **Nginx 1.25.1+** for the `http2` directive,
+- **OpenSSL 3.5+** for the `X25519MLKEM768` post-quantum group.
 
 > _Check with `nginx -V`, which reports the OpenSSL Nginx was built against, not the `openssl` on your `$PATH`. Consider deploying on an unsupported release using [Bubbly 2.2.0](https://github.com/eustasy/Bubbly/tree/2.2.0)._
 
@@ -164,8 +164,8 @@ Ubuntu 26.04 LTS ships PHP 8.5, which `conf.d/php_sockets.conf` selects by defau
 
 Multiple PHP versions can be easily installed: `php8.5-fpm` and `php8.4-fpm` each get their own `/etc/php/` tree, systemd unit and socket. Each release only _carries_ one, though — 26.04 has 8.5, 24.04 has 8.3, Debian 13 has 8.4 — so extra versions come from Ondřej Surý:
 
-* Ubuntu 22.04 and 24.04: [`ppa:ondrej/php`](https://launchpad.net/~ondrej/+archive/ubuntu/php)
-* Ubuntu 26.04 and Debian: [packages.sury.org/php](https://packages.sury.org/php/), which the PPA is merging into
+- Ubuntu 22.04 and 24.04: [`ppa:ondrej/php`](https://launchpad.net/~ondrej/+archive/ubuntu/php)
+- Ubuntu 26.04 and Debian: [packages.sury.org/php](https://packages.sury.org/php/), which the PPA is merging into
 
 Their version strings sort above the distribution's, so `apt` prefers their builds for every PHP package once enabled. To put a site on a given version, uncomment Option 2 in `location/bubbly_extensionless-php.conf` and set `$bubbly_php` in each site file. Give each site its own FPM pool while you are there, so one cannot exhaust the workers or read another's sessions.
 

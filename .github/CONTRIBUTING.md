@@ -42,33 +42,33 @@ The directives are not reproduced here either — read them in the file, where t
 
 Various headers are delivered from various configuration files. This list should help source any undesired headers you see being sent. Some headers can be sent from multiple locations.
 
-* [`nginx-config/directive/bubbly_security-headers.conf`](https://github.com/eustasy/Bubbly/blob/main/nginx-config/directive/bubbly_security-headers.conf)
-* * `Access-Control-Allow-Origin`
-* * `Content-Security-Policy-Report-Only`
-* * `Content-Security-Policy`
-* * `Cross-Origin-Embedder-Policy`
-* * `Cross-Origin-Opener-Policy`
-* * `Cross-Origin-Resource-Policy`
-* * `X-Content-Type-Options`
-* * `X-Frame-Options`
-* * `Feature-Policy`
-* * `Permissions-Policy`
-* * `Referrer-Policy`
-* * `Server`
-* * `Strict-Transport-Security`
-* * `X-XSS-Protection`
-* [`nginx-config/location/h5bp_expires.conf`](https://github.com/eustasy/Bubbly/blob/main/nginx-config/location/h5bp_expires.conf)
-* * `Cache-Control`
-* * `Expires`
-* [`nginx-config/directive/h5bp_no-transform.conf`](https://github.com/eustasy/Bubbly/blob/main/nginx-config/directive/h5bp_no-transform.conf)
-* * `Cache-Control`
-* [`nginx-config/directive/bubbly_gzip.conf`](https://github.com/eustasy/Bubbly/blob/main/nginx-config/directive/bubbly_gzip.conf)
-* * `Content-Encoding`
-* * `Vary` — also the one sent on Brotli responses, which have no `brotli_vary` of their own
-* [`nginx-config/directive/bubbly_brotli.conf`](https://github.com/eustasy/Bubbly/blob/main/nginx-config/directive/bubbly_brotli.conf)
-* * `Content-Encoding`
-* [`nginx-config/location/bubbly_extensionless-php.conf`](https://github.com/eustasy/Bubbly/blob/main/nginx-config/location/bubbly_extensionless-php.conf)
-* * Suppresses `X-Powered-By`
+- [`nginx-config/directive/bubbly_security-headers.conf`](https://github.com/eustasy/Bubbly/blob/main/nginx-config/directive/bubbly_security-headers.conf)
+- - `Access-Control-Allow-Origin`
+- - `Content-Security-Policy-Report-Only`
+- - `Content-Security-Policy`
+- - `Cross-Origin-Embedder-Policy`
+- - `Cross-Origin-Opener-Policy`
+- - `Cross-Origin-Resource-Policy`
+- - `X-Content-Type-Options`
+- - `X-Frame-Options`
+- - `Feature-Policy`
+- - `Permissions-Policy`
+- - `Referrer-Policy`
+- - `Server`
+- - `Strict-Transport-Security`
+- - `X-XSS-Protection`
+- [`nginx-config/location/h5bp_expires.conf`](https://github.com/eustasy/Bubbly/blob/main/nginx-config/location/h5bp_expires.conf)
+- - `Cache-Control`
+- - `Expires`
+- [`nginx-config/directive/h5bp_no-transform.conf`](https://github.com/eustasy/Bubbly/blob/main/nginx-config/directive/h5bp_no-transform.conf)
+- - `Cache-Control`
+- [`nginx-config/directive/bubbly_gzip.conf`](https://github.com/eustasy/Bubbly/blob/main/nginx-config/directive/bubbly_gzip.conf)
+- - `Content-Encoding`
+- - `Vary` — also the one sent on Brotli responses, which have no `brotli_vary` of their own
+- [`nginx-config/directive/bubbly_brotli.conf`](https://github.com/eustasy/Bubbly/blob/main/nginx-config/directive/bubbly_brotli.conf)
+- - `Content-Encoding`
+- [`nginx-config/location/bubbly_extensionless-php.conf`](https://github.com/eustasy/Bubbly/blob/main/nginx-config/location/bubbly_extensionless-php.conf)
+- - Suppresses `X-Powered-By`
 
 ## Contact Points
 

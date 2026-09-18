@@ -24,9 +24,9 @@ sudo chmod 700 "$KEY_DIR"
 # and can still decrypt with the rest, so keeping the previous one means tickets
 # already issued survive the reload.
 if sudo test -f "$KEY"; then
-    sudo mv -f "$KEY" "$KEY_OLD"
-    sudo chmod 600 "$KEY_OLD"
-    echo "Rotated the previous key to $KEY_OLD"
+  sudo mv -f "$KEY" "$KEY_OLD"
+  sudo chmod 600 "$KEY_OLD"
+  echo "Rotated the previous key to $KEY_OLD"
 fi
 
 sudo openssl rand -out "$KEY" 80
@@ -38,7 +38,7 @@ echo "Nginx encrypts with the first ssl_session_ticket_key listed and decrypts"
 echo "with any of them, so list the new key first:"
 echo "    ssl_session_ticket_key $KEY;"
 if sudo test -f "$KEY_OLD"; then
-    echo "    ssl_session_ticket_key $KEY_OLD;"
+  echo "    ssl_session_ticket_key $KEY_OLD;"
 fi
 echo
 echo "Then: sudo nginx -t && sudo service nginx reload"
