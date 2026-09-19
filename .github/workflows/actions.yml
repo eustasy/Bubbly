@@ -1,30 +1,32 @@
 # eustasy/.Normal 4.0beta16
-name: "Normal: JSON"
+name: "Normal: Actions"
 on:
   workflow_dispatch:
   push:
     branches: [main]
     paths:
-      - "**.json"
-      - ".github/workflows/json.yml"
+      - ".github/workflows/**"
+      - ".github/actionlint.yaml"
+      - ".github/zizmor.yml"
       - ".qlty/qlty.toml"
   pull_request:
     branches: [main]
     paths:
-      - "**.json"
-      - ".github/workflows/json.yml"
+      - ".github/workflows/**"
+      - ".github/actionlint.yaml"
+      - ".github/zizmor.yml"
       - ".qlty/qlty.toml"
 
 permissions:
   contents: read
 
 jobs:
-  json:
-    name: Format check
+  actions:
+    name: Lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
         with:
           persist-credentials: false
 
-      - uses: eustasy/.normal/json@v4
+      - uses: eustasy/.normal/actions@v4

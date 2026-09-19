@@ -1,4 +1,4 @@
-# eustasy/.Normal 4.0beta13
+# eustasy/.Normal 4.0beta16
 # actionlint config, deployed to the repository root by install.sh.
 #
 # test-*/type-* workflows ship deactivated behind `if: false`, which is the

@@ -185,9 +185,13 @@ file_patterns = [
 # 3. actionlint + zizmor already lint workflows with GitHub-aware rules, so
 #    yamllint's generic style checks (e.g. the YAML 1.1 truthy false-positive on
 #    `on:`) are just noise on the install.sh-deployed workflow + dependabot files.
+#    The zizmor and actionlint configs are deployed the same way and are read by
+#    those tools, not by a YAML style guide, so they are scoped out too.
 [[exclude]]
 plugins = ["yamllint"]
 file_patterns = [
   "**/.github/workflows/**",
   "**/.github/dependabot.yml",
+  "**/.github/zizmor.yml",
+  "**/.github/actionlint.yaml",
 ]
