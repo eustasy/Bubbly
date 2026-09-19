@@ -31,7 +31,10 @@ jobs:
     name: nginx -t (${{ matrix.name }})
     runs-on: ubuntu-latest
     container:
-      image: ${{ matrix.image }}
+      # Unpinned on purpose: the matrix is the point. This tests nginx -t
+      # against each distribution's CURRENT nginx package, so pinning a
+      # digest would freeze the thing under test.
+      image: ${{ matrix.image }} # zizmor: ignore[unpinned-images]
     strategy:
       fail-fast: false
       matrix:
@@ -304,6 +307,7 @@ jobs:
           status=0
 
           mkdir -p /run/php
+          # shellcheck disable=SC2012  # /etc/php holds version dirs (8.2, 8.3); no odd names
           ver="$(ls /etc/php | head -1)"
           real="php$(echo "$ver" | tr -d .)"
           fake=php82
@@ -313,6 +317,7 @@ jobs:
           test -S "/run/php/php$ver-fpm.sock"
 
           # Switch the PHP location to Option 2, the per-site variable.
+          # shellcheck disable=SC2016  # $bubbly_php is an nginx variable, not a shell one
           sed -i -e 's|^\tfastcgi_pass php_sockets;|\t#fastcgi_pass php_sockets;|' \
                  -e 's|^\t#fastcgi_pass \$bubbly_php;|\tfastcgi_pass $bubbly_php;|' \
             /etc/nginx/location/bubbly_extensionless-php.conf
