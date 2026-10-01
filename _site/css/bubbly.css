@@ -180,10 +180,17 @@ html, body { background: var(--color-bg); }
 	margin: var(--space-2) 0 0; font-size: var(--font-size-xs);
 	color: var(--color-text-tertiary); max-width: none;
 }
-.b-domain-help code {
+.b-domain-help code, .b-domain-www code {
 	color: var(--accent); background: transparent; border: 0; padding: 0;
 	font-weight: 600;
 }
+.b-domain-www {
+	display: flex; align-items: center; gap: var(--space-2);
+	margin-top: var(--space-2);
+	font-size: var(--font-size-xs); color: var(--color-text-secondary);
+}
+.b-domain-www input { margin: 0; accent-color: var(--accent); cursor: pointer; }
+.b-domain-www label { cursor: pointer; }
 
 .b-cta-row { display: flex; gap: var(--space-3); flex-wrap: wrap; }
 .b-cta-row .btn-primary { background: var(--accent); border-color: var(--accent); }
@@ -452,6 +459,7 @@ html, body { background: var(--color-bg); }
 	gap: var(--space-4);
 	position: relative;
 }
+.b-step[hidden] { display: none; }
 .b-step-head { display: flex; align-items: center; gap: var(--space-4); }
 .b-step-bubble {
 	flex: 0 0 auto;

@@ -83,6 +83,10 @@
 					<p class="b-domain-help">
 						We'll template <code data-domain>example.com</code> through every command below.
 					</p>
+					<div class="b-domain-www">
+						<input id="b-www-input" type="checkbox" checked>
+						<label for="b-www-input">Redirect <code>www.<span data-domain>example.com</span></code> to it, too</label>
+					</div>
 				</div>
 
 				<div class="b-cta-row">
@@ -349,6 +353,12 @@
 				<div class="b-step-body">
 					<p class="b-step-desc">Add the HTTPS site alongside the HTTP one you already have. Keep <code>example.com_http.conf</code> symlinked — it answers ACME renewal challenges forever. Read the <code>[OPTION]</code>s and <code>[WARNING]</code>s; point the cert paths at your domain.</p>
 					<div class="b-term" data-term="swap"><div class="b-term-bar"><span class="b-term-dots"><i></i><i></i><i></i></span><span class="b-term-lang">bash</span><div class="b-term-bar-spacer"></div><button type="button" class="b-copy" title="Copy to clipboard"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true"><rect x="4" y="4" width="9" height="10" rx="1.5" stroke="currentColor" stroke-width="1.4"/><path d="M3 11 V 3 a 1.5 1.5 0 0 1 1.5 -1.5 H 11" stroke="currentColor" stroke-width="1.4" fill="none"/></svg> Copy</button></div><pre class="b-term-body"></pre></div>
+				</div>
+			</li>
+			<li class="b-step compact" data-www>
+				<div class="b-step-body">
+					<p class="b-step-desc">Then the <code>www</code> redirect, a template of its own. Same search-and-replace.</p>
+					<div class="b-term" data-term="www"><div class="b-term-bar"><span class="b-term-dots"><i></i><i></i><i></i></span><span class="b-term-lang">bash</span><div class="b-term-bar-spacer"></div><button type="button" class="b-copy" title="Copy to clipboard"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true"><rect x="4" y="4" width="9" height="10" rx="1.5" stroke="currentColor" stroke-width="1.4"/><path d="M3 11 V 3 a 1.5 1.5 0 0 1 1.5 -1.5 H 11" stroke="currentColor" stroke-width="1.4" fill="none"/></svg> Copy</button></div><pre class="b-term-body"></pre></div>
 				</div>
 			</li>
 			<li class="b-step">

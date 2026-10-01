@@ -103,7 +103,7 @@ jobs:
       - name: Enable the templates as shipped
         run: |
           rm -f /etc/nginx/sites-enabled/default
-          for t in bubbly_default bubbly_http bubbly_https; do
+          for t in bubbly_default bubbly_http bubbly_https bubbly_www; do
             ln -sf "/etc/nginx/sites-available/$t.conf" \
               "/etc/nginx/sites-enabled/$t.conf"
           done
@@ -155,7 +155,7 @@ jobs:
       - name: Add two more sites
         run: |
           for domain in alpha.test beta.test; do
-            for kind in http https; do
+            for kind in http https www; do
               sed "s/example\.com/$domain/g" \
                 "/etc/nginx/sites-available/bubbly_$kind.conf" \
                 > "/etc/nginx/sites-available/${domain}_$kind.conf"
@@ -171,10 +171,12 @@ jobs:
         run: |
           nginx -T > /tmp/effective.conf
           for name in example.com alpha.test beta.test; do
-            grep -q "server_name $name;" /tmp/effective.conf || {
-              echo "::error::$name is missing from the effective config"
-              exit 1
-            }
+            for server_name in "$name" "www.$name"; do
+              grep -q "server_name $server_name;" /tmp/effective.conf || {
+                echo "::error::$server_name is missing from the effective config"
+                exit 1
+              }
+            done
           done
 
       # ── Runtime TLS probe ──────────────────────────────────────────────────
@@ -261,6 +263,38 @@ jobs:
             http://127.0.0.1/.well-known/acme-challenge/ci-probe)"
           echo "served: $body"
           test "$body" = "bubbly-ci-token"
+
+      - name: www redirects to the apex, over HTTP and HTTPS
+        # bubbly_www.conf is optional and separate from bubbly_https.conf, so
+        # its redirect is checked on its own. HTTP www is bubbly_http.conf's.
+        # The path and query must survive, $request_uri carrying both.
+        run: |
+          status=0
+          expected='308 https://alpha.test/some/path?q=1'
+
+          https_got="$(curl -sS -k --max-time 10 -o /dev/null \
+            -w '%{http_code} %{redirect_url}' \
+            --resolve www.alpha.test:443:127.0.0.1 \
+            'https://www.alpha.test/some/path?q=1')"
+          if [ "$https_got" = "$expected" ]; then
+            echo "ok   HTTPS www: $https_got"
+          else
+            echo "::error::HTTPS www.alpha.test answered '$https_got', expected '$expected'"
+            status=1
+          fi
+
+          http_got="$(curl -sS --max-time 10 -o /dev/null \
+            -w '%{http_code} %{redirect_url}' \
+            -H 'Host: www.alpha.test' \
+            'http://127.0.0.1/some/path?q=1')"
+          if [ "$http_got" = "$expected" ]; then
+            echo "ok   HTTP www: $http_got"
+          else
+            echo "::error::HTTP www.alpha.test answered '$http_got', expected '$expected'"
+            status=1
+          fi
+
+          exit $status
 
       - name: Caching headers apply per site, not server-wide
         # conf.d/expires-map.conf defines $expires but no longer applies it, so

@@ -71,7 +71,7 @@ sudo cp /etc/nginx/sites-available/bubbly_http.conf /etc/nginx/sites-available/e
 sudo nano /etc/nginx/sites-available/example.com_http.conf
 ```
 
-Use `Ctrl` and `\` to initiate a search and replace for `example.com` with your domain.
+Use `Ctrl` and `\` to initiate a search and replace for `example.com` with your domain. It answers `www.example.com` too; for a subdomain, or any site that serves no `www`, delete that name from its `server_name`.
 
 ```bash
 sudo ln -s /etc/nginx/sites-available/example.com_http.conf /etc/nginx/sites-enabled/example.com_http.conf
@@ -86,7 +86,7 @@ Or, to keep an existing site running while you migrate, add `include location/bu
 ~/Bubbly/bubbly_renew-ssl.sh -d example.com -d www.example.com
 ```
 
-It will ask for the root password and an email address, and takes a few seconds.
+Leave off `-d www.example.com` for a subdomain, or any site that serves no `www`. It will ask for the root password and an email address, and takes a few seconds.
 
 Certbot installs a systemd timer that runs `certbot renew` twice a day, and the `--deploy-hook` recorded in `/etc/letsencrypt/renewal/example.com.conf` reloads Nginx after each success. No cron job needed.
 
@@ -105,6 +105,15 @@ Use `Ctrl` and `\` to initiate a search and replace for `example.com` with your 
 
 ```bash
 sudo ln -s /etc/nginx/sites-available/example.com_https.conf /etc/nginx/sites-enabled/example.com_https.conf
+sudo nginx -t && sudo service nginx reload
+```
+
+If the certificate names `www.example.com`, add the template that redirects it to `example.com` the same way.
+
+```bash
+sudo cp /etc/nginx/sites-available/bubbly_www.conf /etc/nginx/sites-available/example.com_www.conf
+sudo nano /etc/nginx/sites-available/example.com_www.conf
+sudo ln -s /etc/nginx/sites-available/example.com_www.conf /etc/nginx/sites-enabled/example.com_www.conf
 sudo nginx -t && sudo service nginx reload
 ```
 

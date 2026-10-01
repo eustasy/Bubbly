@@ -5,6 +5,7 @@
 
   // ── Terminal templates ────────────────────────────────────────────────
   // `{pkg}` → distro install line. `{d}` → user-supplied domain (defaults to example.com).
+  // A function is passed whether www.{d} redirects too, and returns the template.
   const TEMPLATES = {
     install: "cd &&\n{pkg} &&\ngit clone https://github.com/eustasy/Bubbly",
     copy: "~/Bubbly/bubbly_copy-configs.sh",
@@ -12,16 +13,24 @@
       "sudo rm -f /etc/nginx/sites-enabled/default\nsudo ln -s /etc/nginx/sites-available/bubbly_default.conf /etc/nginx/sites-enabled/bubbly_default.conf\nsudo nginx -t && sudo service nginx reload",
     tickets:
       "~/Bubbly/bubbly_generate-tickets.sh\n# then uncomment ssl_session_ticket_key in conf.d/bubbly_ssl.conf\nsudo nginx -t && sudo service nginx reload",
-    verifyA:
-      "sudo cp /etc/nginx/sites-available/bubbly_http.conf /etc/nginx/sites-available/{d}_http.conf\nsudo nano /etc/nginx/sites-available/{d}_http.conf",
+    verifyA: function (www) {
+      return (
+        "sudo cp /etc/nginx/sites-available/bubbly_http.conf /etc/nginx/sites-available/{d}_http.conf\nsudo nano /etc/nginx/sites-available/{d}_http.conf" +
+        (www ? "" : "\n# then delete www.{d} from its server_name")
+      )
+    },
     verifyB:
       "sudo ln -s /etc/nginx/sites-available/{d}_http.conf /etc/nginx/sites-enabled/{d}_http.conf\nsudo nginx -t && sudo service nginx reload",
-    renew: "~/Bubbly/bubbly_renew-ssl.sh -d {d} -d www.{d}",
+    renew: function (www) {
+      return "~/Bubbly/bubbly_renew-ssl.sh -d {d}" + (www ? " -d www.{d}" : "")
+    },
     swap: "sudo cp /etc/nginx/sites-available/bubbly_https.conf /etc/nginx/sites-available/{d}_https.conf\nsudo nano /etc/nginx/sites-available/{d}_https.conf\nsudo ln -s /etc/nginx/sites-available/{d}_https.conf /etc/nginx/sites-enabled/{d}_https.conf\nsudo nginx -t && sudo service nginx reload",
+    www: "sudo cp /etc/nginx/sites-available/bubbly_www.conf /etc/nginx/sites-available/{d}_www.conf\nsudo nano /etc/nginx/sites-available/{d}_www.conf\nsudo ln -s /etc/nginx/sites-available/{d}_www.conf /etc/nginx/sites-enabled/{d}_www.conf\nsudo nginx -t && sudo service nginx reload",
   }
 
   let currentDomain = "example.com"
   let currentPkg = "sudo apt install git certbot"
+  let currentWww = true
 
   function fill(tpl) {
     return tpl.split("{pkg}").join(currentPkg).split("{d}").join(currentDomain)
@@ -55,7 +64,7 @@
       const key = block.getAttribute("data-term")
       const tpl = TEMPLATES[key]
       if (!tpl) return
-      const text = fill(tpl)
+      const text = fill(typeof tpl === "function" ? tpl(currentWww) : tpl)
       block.dataset.text = text
       const body = block.querySelector(".b-term-body")
       if (body) renderTermBody(body, text)
@@ -68,12 +77,14 @@
     const input = document.getElementById("b-dom-input")
     const clear = document.getElementById("b-domain-clear")
     if (!input) return
-    const echo = document.querySelector("[data-domain]")
+    const echoes = document.querySelectorAll("[data-domain]")
 
     function update() {
       const v = (input.value || "").trim()
       currentDomain = v || "example.com"
-      if (echo) echo.textContent = currentDomain
+      echoes.forEach(function (echo) {
+        echo.textContent = currentDomain
+      })
       if (wrap) wrap.setAttribute("data-filled", v ? "1" : "0")
       renderAllTerms()
     }
@@ -85,6 +96,26 @@
         update()
         input.focus()
       })
+  }
+
+  // ── www toggle ────────────────────────────────────────────────────────
+  // Subdomains rarely have a www of their own, so the redirect is optional:
+  // its name on the certificate, and the template that serves it.
+  function initWww() {
+    const input = document.getElementById("b-www-input")
+    if (!input) return
+
+    function update() {
+      currentWww = input.checked
+      document.querySelectorAll("[data-www]").forEach(function (el) {
+        el.hidden = !currentWww
+      })
+      renderAllTerms()
+    }
+
+    input.addEventListener("change", update)
+    // A reload can restore the box unticked, so sync with it from the start.
+    update()
   }
 
   // ── Distro tabs ───────────────────────────────────────────────────────
@@ -193,6 +224,7 @@
   function boot() {
     renderAllTerms()
     initDomain()
+    initWww()
     initDistroTabs()
     initCopyButtons()
     initBubbles()
