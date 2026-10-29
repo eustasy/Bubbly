@@ -1,4 +1,4 @@
-# eustasy/.Normal 4.0beta16
+# eustasy/.Normal 5.0
 name: "Test: JS / TS"
 on:
   workflow_dispatch:
@@ -43,10 +43,10 @@ jobs:
         with:
           persist-credentials: false
 
-      - uses: eustasy/.normal/js/setup@v4
+      - uses: eustasy/.normal/js/setup@v5
 
       # Insert project-specific steps here — fixtures, config files, migrations.
 
-      - uses: eustasy/.normal/js/test@v4
+      - uses: eustasy/.normal/js/test@v5
         with:
           coverage-token: ${{ secrets.QLTY_COVERAGE_TOKEN }}

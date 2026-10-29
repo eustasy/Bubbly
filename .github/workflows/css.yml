@@ -1,4 +1,4 @@
-# eustasy/.Normal 4.0beta16
+# eustasy/.Normal 5.0
 name: "Normal: CSS/SCSS"
 on:
   workflow_dispatch:
@@ -31,4 +31,4 @@ jobs:
         with:
           persist-credentials: false
 
-      - uses: eustasy/.normal/css@v4
+      - uses: eustasy/.normal/css@v5

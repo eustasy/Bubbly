@@ -1,4 +1,4 @@
-# eustasy/.Normal 4.0beta16
+# eustasy/.Normal 5.0
 name: "Normal: Markdown"
 on:
   workflow_dispatch:
@@ -29,4 +29,4 @@ jobs:
         with:
           persist-credentials: false
 
-      - uses: eustasy/.normal/md@v4
+      - uses: eustasy/.normal/md@v5

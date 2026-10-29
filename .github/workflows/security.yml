@@ -1,4 +1,4 @@
-# eustasy/.Normal 4.0beta16
+# eustasy/.Normal 5.0
 name: "Normal: Security"
 on:
   workflow_dispatch:
@@ -21,4 +21,4 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
-      - uses: eustasy/.normal/security@v4
+      - uses: eustasy/.normal/security@v5

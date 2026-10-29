@@ -1,4 +1,4 @@
-# eustasy/.Normal 4.0beta16
+# eustasy/.Normal 5.0
 name: "Normal: JSON"
 on:
   workflow_dispatch:
@@ -27,4 +27,4 @@ jobs:
         with:
           persist-credentials: false
 
-      - uses: eustasy/.normal/json@v4
+      - uses: eustasy/.normal/json@v5

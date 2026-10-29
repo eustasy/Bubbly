@@ -1,4 +1,4 @@
-# eustasy/.Normal 4.0beta16
+# eustasy/.Normal 5.0
 name: "Normal: HTML"
 on:
   workflow_dispatch:
@@ -29,4 +29,4 @@ jobs:
         with:
           persist-credentials: false
 
-      - uses: eustasy/.normal/html@v4
+      - uses: eustasy/.normal/html@v5
