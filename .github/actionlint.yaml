@@ -1,8 +1,8 @@
-# eustasy/.Normal 5.0
+# eustasy/.Normal 5.1
 # actionlint config, deployed to the repository root by install.sh.
 #
 # test-*/type-* workflows ship deactivated behind `if: false`, which is the
-# documented way to activate them (delete the line). actionlint 1.7.9's if-cond
+# documented way to activate them (delete the line). actionlint's if-cond
 # rule reports that as dead config, so it is scoped out for those two filename
 # patterns only. Every other rule, and every other workflow, is untouched.
 paths:

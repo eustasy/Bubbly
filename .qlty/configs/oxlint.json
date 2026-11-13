@@ -6,7 +6,7 @@
   },
   "plugins": ["typescript", "unicorn", "import"],
   "rules": {
-    // Carried over from old .eslintrc.json
+    // Project conventions
     "no-cond-assign": "error",
     "no-console": "off",
 

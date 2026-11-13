@@ -1,6 +1,6 @@
 [sqlfluff]
-# Single source of truth for the dialect: qlty.toml no longer pins --dialect on
-# the command, so switch mysql/postgres/sqlite/… here with no other edits.
+# Single source of truth for the dialect: qlty.toml overrides the sqlfluff driver
+# so no --dialect flag is passed, and mysql/postgres/sqlite/… is switched here alone.
 dialect = mysql
 templater = raw
 max_line_length = 140

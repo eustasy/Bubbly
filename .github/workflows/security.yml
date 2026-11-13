@@ -1,4 +1,4 @@
-# eustasy/.Normal 5.0
+# eustasy/.Normal 5.1
 name: "Normal: Security"
 on:
   workflow_dispatch:
@@ -6,6 +6,10 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  # Weekly, so CVEs published against unchanged dependencies are still caught
+  # in repositories that rarely see a push.
+  schedule:
+    - cron: "0 6 * * 1"
 
 permissions:
   contents: read
