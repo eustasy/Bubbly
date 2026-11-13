@@ -17,10 +17,10 @@
   // MD029 — ordered list prefix: ordered (1. 2. 3.)
   "MD029": { "style": "ordered" },
 
-  // MD033 — inline HTML allowed (excluded in old .mdlrc.style.rb)
+  // MD033 — inline HTML allowed
   "MD033": false,
 
-  // MD041 — first line h1: not required (excluded in old .mdlrc.style.rb)
+  // MD041 — first line h1: not required
   "MD041": false,
 
   // MD049 — emphasis style: underscore, _italic_

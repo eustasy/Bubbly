@@ -16,8 +16,7 @@ select = [
 
 # flake8-bandit's S101 flags bare `assert`, idiomatic in pytest but a real bug in
 # production code (assertions are stripped under `python -O`). Allow it only under
-# tests/ so it still fires everywhere else. ruff is now the sole runner of the bandit
-# ruleset — the standalone bandit plugin was dropped as redundant with the "S" select.
+# tests/ so it still fires everywhere else. The "S" select is the only bandit runner.
 [lint.per-file-ignores]
 "**/tests/**" = ["S101"]
 

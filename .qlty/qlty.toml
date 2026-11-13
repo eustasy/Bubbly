@@ -1,7 +1,6 @@
 config_version = "0"
 
 # Exclude patterns apply to all plugins (linting and formatting).
-# Sources: old .eslintignore, .stylelintignore, and .codeclimate.yml defaults.
 exclude_patterns = [
   # Minified / bundled / custom overrides
   "**/*.min.*",
@@ -33,7 +32,6 @@ exclude_patterns = [
 ]
 
 # ── Smells ──────────────────────────────────────────────────────────────────
-# Matches Phoenix thresholds.
 
 [smells]
 [smells.nested_control_flow]
