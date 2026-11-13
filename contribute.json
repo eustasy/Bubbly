@@ -1,11 +1,11 @@
 {
   "name": "Bubbly: Certbot for Nginx",
-  "description": "",
+  "description": "Better SSL in Nginx in 10 minutes. Configuration files and setup scripts for Certbot.",
   "repository": {
     "url": "https://github.com/eustasy/Bubbly",
     "license": "MIT",
     "type": "git",
-    "tests": "https://github.com/eustasy/Bubbly/actions/workflows/normal.yml",
+    "tests": "https://github.com/eustasy/Bubbly/actions/workflows/nginx.yml",
     "clone": "https://github.com/eustasy/Bubbly.git"
   },
   "bugs": {
