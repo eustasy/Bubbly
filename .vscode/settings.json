@@ -35,7 +35,7 @@
     "esbenp.prettier-vscode",
     "junstyle.php-cs-fixer",
     "EditorConfig.EditorConfig",
-    "dbaeumer.vscode-eslint",
+    "oxc.oxc-vscode",
     "ms-python.python",
     "charliermarsh.ruff"
   ]

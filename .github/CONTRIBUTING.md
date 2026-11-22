@@ -51,7 +51,6 @@ Various headers are delivered from various configuration files. This list should
 - - `Cross-Origin-Resource-Policy`
 - - `X-Content-Type-Options`
 - - `X-Frame-Options`
-- - `Feature-Policy`
 - - `Permissions-Policy`
 - - `Referrer-Policy`
 - - `Server`

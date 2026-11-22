@@ -110,8 +110,8 @@ jobs:
 
       - name: nginx -t (one site, no session ticket key present)
         # Proves the shipped config loads with no /etc/nginx/ssl/ticket.key,
-        # which it must, now that the key is opt-in. The generator script runs
-        # only afterwards, so this ordering is deliberate.
+        # which it must, the key being opt-in. The generator script runs only
+        # afterwards, so this ordering is deliberate.
         run: |
           test ! -e /etc/nginx/ssl/ticket.key
           nginx -t
@@ -206,7 +206,7 @@ jobs:
 
       - name: Start Nginx
         # Readiness is checked with a valid SNI name, because the default server
-        # now refuses handshakes that match no site.
+        # refuses handshakes that match no site.
         run: |
           nginx
           for _ in $(seq 1 20); do
@@ -297,11 +297,11 @@ jobs:
           exit $status
 
       - name: Caching headers apply per site, not server-wide
-        # conf.d/expires-map.conf defines $expires but no longer applies it, so
-        # only sites that include groups/performance-common.conf get caching
-        # headers. bubbly_http.conf does not include it, and an ACME response is
-        # text/plain, which the map's 1y fallback used to catch — so it must now
-        # come back with no Expires header at all.
+        # conf.d/expires-map.conf defines $expires without applying it, so only
+        # sites that include groups/performance-common.conf get caching headers.
+        # bubbly_http.conf does not include it, so an ACME response — text/plain,
+        # which the map's 1y fallback would catch — must come back with no
+        # Expires header at all.
         run: |
           status=0
 
@@ -575,10 +575,9 @@ jobs:
           # Each handshake is written to a file and grepped separately, never
           # piped into grep. This job runs with bash's `-o pipefail`, under which
           # `grep -q` exiting on its first match can kill openssl with SIGPIPE
-          # and fail the whole pipeline even though the handshake succeeded —
-          # which is exactly how this check once reported the opposite result on
-          # one platform and not the other. `|| true` is needed because openssl
-          # also exits non-zero when a handshake is legitimately refused.
+          # and fail the whole pipeline even though the handshake succeeded,
+          # reporting the opposite of what happened. `|| true` is needed because
+          # openssl also exits non-zero when a handshake is legitimately refused.
           echo "--- baseline: alpha.test, no per-server overrides, over TLS 1.2 ---"
           openssl s_client -connect 127.0.0.1:443 -servername alpha.test -tls1_2 -brief \
             </dev/null > /tmp/alpha12 2>&1 || true
@@ -667,9 +666,8 @@ jobs:
           fi
 
       - name: Documentation links point at files that exist
-        # Three links to .github/ templates and a code of conduct sat in
-        # CONTRIBUTING.md returning 404, and a rename left every link on the
-        # master branch. Checked here so docs rot fails the build instead.
+        # Every repo link in the Markdown must resolve to a file in the tree, and
+        # none may name the master branch, so docs rot fails the build.
         run: |
           status=0
           paths=$(grep -rhoE 'Bubbly/blob/[^/]+/[^)]+' --include='*.md' \

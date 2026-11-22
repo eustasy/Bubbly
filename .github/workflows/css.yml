@@ -1,4 +1,4 @@
-# eustasy/.Normal 5.0
+# eustasy/.Normal 5.1
 name: "Normal: CSS/SCSS"
 on:
   workflow_dispatch:

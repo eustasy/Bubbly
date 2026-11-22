@@ -12,7 +12,7 @@ insert_final_newline = true
 trim_trailing_whitespace = true
 max_line_length = 140
 
-# 2-space indented (Prettier-managed)
+# 2-space indented
 [*.{js,ts,mjs,cjs,mts,cts,json,css,scss,html,xml,md,yml,yaml}]
 indent_style = space
 indent_size = 2
